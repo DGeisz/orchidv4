@@ -23,9 +23,9 @@ mod tests;
 pub struct WsServer;
 
 impl WsServer {
-    pub async fn run_server(
+    pub async fn run_server<F: Fn() -> Box<dyn WsCommandParserPort>>(
         addr: &'static str,
-        generate_consumption_port: fn() -> Box<dyn WsCommandParserPort>,
+        generate_consumption_port: F,
     ) {
         /*
         First initialize the channels used for
@@ -97,7 +97,6 @@ impl WsServer {
         Create a multi-threaded runtime and spawn
         a background task to handle all ws connections
         */
-
         tokio::spawn(async move {
             let listener = TcpListener::bind(addr)
                 .await

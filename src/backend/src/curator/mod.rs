@@ -16,7 +16,14 @@ pub struct Curator {
     afm_generator: Box<dyn AFMGeneratorControl>,
 }
 
-impl Curator {}
+impl Curator {
+    pub fn new(afm_generator: Box<dyn AFMGeneratorControl>) -> Box<dyn CuratorControl> {
+        Box::new(Curator {
+            afm_generator,
+            afms: HashMap::new(),
+        })
+    }
+}
 
 impl CuratorControl for Curator {
     fn get_file_tree(&self) {

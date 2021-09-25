@@ -4,7 +4,7 @@ use crate::abstract_file_master::port::AFMControl;
 pub mod generator;
 pub mod port;
 
-pub struct AbstractFileMaster {}
+pub struct AbstractFileMaster;
 
 impl AbstractFileMaster {
     pub fn new() -> Box<dyn AFMControl> {

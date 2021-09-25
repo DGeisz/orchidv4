@@ -1,10 +1,11 @@
 //! ws_io is an IA that uses websocket connections to interface
 //! with the orchid backend
 
+use crate::backend_io::ws_io::sub_ias::ws_command_adapter::WsCommandAdapter;
+use crate::backend_io::ws_io::sub_ias::ws_command_parser::WsCommandParser;
 use crate::backend_io::ws_io::sub_ias::ws_server::WsServer;
-use crate::curator::curator_control::CuratorControl;
+use crate::curator::port::CuratorControl;
 use crate::curator::Curator;
-use crate::utils::id_generator::UuidGenerator;
 
 pub mod b_msgs;
 pub mod sub_ias;
@@ -14,9 +15,12 @@ pub struct WsIo;
 
 impl WsIo {
     pub async fn run_ws_io(addr: &'static str, curator: Box<dyn CuratorControl>) {
-        /* TODO implement this fucker */
-        // WsServer::run_server(addr, || {})
-        unimplemented!()
+        WsServer::run_server(addr, move || {
+            let ws_command_adapter = WsCommandAdapter::new(curator);
+
+            WsCommandParser::new(ws_command_adapter)
+        })
+        .await
     }
 }
 
