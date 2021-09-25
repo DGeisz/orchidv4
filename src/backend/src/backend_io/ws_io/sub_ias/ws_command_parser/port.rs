@@ -12,3 +12,7 @@ pub trait WsCommandParserPort {
     /// text meant to be sent back through all ws clients
     fn consume_ws_message(&mut self, message: String) -> MessageConsumptionResponse;
 }
+
+pub fn mock_ws_message_consumer() -> MockWsCommandParserPort {
+    MockWsCommandParserPort::new()
+}

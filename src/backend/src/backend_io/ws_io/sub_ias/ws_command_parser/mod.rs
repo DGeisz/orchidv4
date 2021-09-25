@@ -1,15 +1,11 @@
-use crate::backend_io::ws_io::sub_ias::ws_command_parser::ws_message_consumer::WsMessageConsumer;
-use crate::backend_io::ws_io::ws_com_res::ws_commands::WsCommand;
-use crate::backend_io::ws_io::ws_com_res::ws_response::WsResponse;
-use crate::backend_io::ws_io::ws_command_adapter::ws_command_consumer::WsCommandConsumer;
-use crate::backend_io::ws_io::ws_command_parser::ws_message_consumer::{
-    MessageConsumptionResponse, WsMessageConsumer,
-};
+use crate::backend_io::ws_io::b_msgs::ws_commands::WsCommand;
+use crate::backend_io::ws_io::sub_ias::ws_command_adapter::port::WsCommandAdapterPort;
+use crate::backend_io::ws_io::sub_ias::ws_command_parser::b_msgs::message_consumption_response::MessageConsumptionResponse;
+use crate::backend_io::ws_io::sub_ias::ws_command_parser::port::WsCommandParserPort;
 use log::trace;
 
 pub mod b_msgs;
 pub mod port;
-pub mod ws_message_consumer;
 
 #[cfg(test)]
 mod tests;
@@ -18,16 +14,16 @@ mod tests;
 /// the raw text from websocket messages
 /// into meaningful commands
 pub struct WsCommandParser {
-    command_consumer: Box<dyn WsCommandConsumer>,
+    command_consumer: Box<dyn WsCommandAdapterPort>,
 }
 
 impl WsCommandParser {
-    pub fn new(command_consumer: Box<dyn WsCommandConsumer>) -> Box<dyn WsMessageConsumer> {
+    pub fn new(command_consumer: Box<dyn WsCommandAdapterPort>) -> Box<dyn WsCommandParserPort> {
         Box::new(WsCommandParser { command_consumer })
     }
 }
 
-impl WsMessageConsumer for WsCommandParser {
+impl WsCommandParserPort for WsCommandParser {
     fn consume_ws_message(&mut self, message: String) -> MessageConsumptionResponse {
         /*
         Attempt to deserialize the message

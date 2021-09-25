@@ -1,7 +1,8 @@
-use crate::backend_io::ws_io::ws_command_parser::ws_message_consumer::{
-    mock_ws_message_consumer, MessageConsumptionResponse, WsMessageConsumer,
+use crate::backend_io::ws_io::sub_ias::ws_command_parser::b_msgs::message_consumption_response::MessageConsumptionResponse;
+use crate::backend_io::ws_io::sub_ias::ws_command_parser::port::{
+    mock_ws_message_consumer, WsCommandParserPort,
 };
-use crate::backend_io::ws_io::ws_server::run_server;
+use crate::backend_io::ws_io::sub_ias::ws_server::WsServer;
 use futures_util::{SinkExt, StreamExt};
 use log::info;
 use mockall::predicate::eq;
@@ -286,12 +287,12 @@ async fn multi_client_test() {
         write.unwrap();
     });
 
-    let (_, t) = tokio::join!(run_server(addr, create_ws_message_mock), task);
+    let (_, t) = tokio::join!(WsServer::run_server(addr, create_ws_message_mock), task);
 
     t.unwrap()
 }
 
-pub fn create_ws_message_mock() -> Box<dyn WsMessageConsumer> {
+pub fn create_ws_message_mock() -> Box<dyn WsCommandParserPort> {
     let mut mock = mock_ws_message_consumer();
 
     let req1 = String::from("FirstReq");
