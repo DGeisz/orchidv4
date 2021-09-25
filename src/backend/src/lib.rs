@@ -1,7 +1,5 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
+#![allow(warnings)] // Comment out to enable warnings
+
+pub mod backend_io;
+pub mod curator;
+pub mod utils;

@@ -9,6 +9,7 @@ $drag-min-width: 100px;
 
 .editor-body {
     @extend %flexRow;
+    max-width: 100vw;
     flex: 1;
 }
 
