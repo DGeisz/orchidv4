@@ -1,3 +1,4 @@
+use crate::backend_io::ws_io::sub_ias::ws_command_parser::ws_message_consumer::WsMessageConsumer;
 use crate::backend_io::ws_io::ws_com_res::ws_commands::WsCommand;
 use crate::backend_io::ws_io::ws_com_res::ws_response::WsResponse;
 use crate::backend_io::ws_io::ws_command_adapter::ws_command_consumer::WsCommandConsumer;
@@ -6,6 +7,8 @@ use crate::backend_io::ws_io::ws_command_parser::ws_message_consumer::{
 };
 use log::trace;
 
+pub mod b_msgs;
+pub mod port;
 pub mod ws_message_consumer;
 
 #[cfg(test)]

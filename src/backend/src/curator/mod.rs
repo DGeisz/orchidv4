@@ -11,4 +11,8 @@ pub struct Curator {}
 
 impl Curator {}
 
-impl CuratorControl for Curator {}
+impl CuratorControl for Curator {
+    fn get_directory_info(&self) {
+        unimplemented!()
+    }
+}
