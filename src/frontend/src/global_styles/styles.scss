@@ -1,0 +1,42 @@
+@import "src/global_styles/palette";
+@import "src/global_styles/basic_layouts";
+
+html {
+    height: 100%;
+}
+
+body {
+    background-color: $soapstone !important;
+    height: 100%;
+}
+
+.app-container {
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none !important;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row !important;
+    width: 400px;
+}
+
+.outerContainer {
+    @extend %flexGrid5;
+    padding: 0 10px;
+}
+
+.contentContainer {
+    max-width: 800px;
+    width: 100%;
+}
+

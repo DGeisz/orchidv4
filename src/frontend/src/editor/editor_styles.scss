@@ -1,0 +1,49 @@
+@import "src/global_styles/basic_layouts";
+@import "src/global_styles/palette";
+
+$drag-min-width: 100px;
+
+.editor-container {
+    @extend %flexGrid1;
+}
+
+.editor-body {
+    @extend %flexRow;
+    flex: 1;
+}
+
+
+.editor-left {
+    @extend %flexRow;
+    min-width: $drag-min-width;
+    background-color: $heavySoap;
+}
+
+.e-left-left {
+    @extend %flexGrid1;
+}
+
+.e-left-collapsed {
+    background-color: $heavySoap;
+    padding: 5px;
+    height: 100%;
+}
+
+.editor-left-top {
+    padding: 5px;
+}
+
+.fe-menu-toggle {
+    cursor: pointer;
+}
+
+.e-left-right-bar {
+    width: 3px;
+    cursor: ew-resize;
+    transform: translateX(2px);
+}
+
+.editor-right {
+    @extend %flexGrid1;
+    min-width: $drag-min-width;
+}

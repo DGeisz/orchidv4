@@ -1,0 +1,42 @@
+@import "src/global_styles/basic_layouts";
+@import "src/global_styles/basic_visual";
+@import "src/global_styles/palette";
+
+.eh-container {
+    @extend %flexRow;
+    border-bottom: 1px solid $softGray;
+}
+
+.eh-left {
+    flex: 1;
+    flex-direction: row;
+    display: -webkit-flex;
+    align-items: center;
+}
+
+$logo-size: 35px;
+
+.eh-logo {
+    width: $logo-size;
+    height: $logo-size;
+    margin-right: 10px;
+}
+
+.eh-header-option {
+    @extend %smooth-transition;
+    @extend %no-highlight;
+    font-weight: 500;
+    font-size: 11pt;
+    color: $mediumGray;
+    cursor: pointer;
+}
+
+.eh-header-option:hover {
+    color: $hardGray;
+}
+
+
+.eh-right {
+    @extend %flexGrid6;
+    margin-right: 20px;
+}
