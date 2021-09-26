@@ -4,6 +4,7 @@ use crate::curator::sub_ias::file_system_adapter::sprs::orchid_file_tree::{
 };
 use crate::curator::sub_ias::file_system_adapter::utils::clean_file_name::clean_file_name;
 use std::cmp::Ordering;
+use std::env;
 use std::fs;
 use std::fs::ReadDir;
 use std::path::PathBuf;
@@ -15,10 +16,34 @@ pub mod port;
 pub mod sprs;
 pub mod utils;
 
+#[cfg(test)]
+pub mod tests;
+
 pub struct FileSystemAdapter;
 
 impl FileSystemAdapter {
-    fn get_file_tree(&self, path: PathBuf) -> Result<Vec<Box<OrchidFileTree>>, OFTError> {
+    pub fn new() -> Box<dyn FSAControl> {
+        Box::new(FileSystemAdapter)
+    }
+
+    /* First return is the path of the current dir,
+    second is the final component of the path (pathless directory) */
+    fn get_current_directory(&self) -> Result<(PathBuf, String), OFTError> {
+        /* First get the current dir with full path */
+        if let Ok(path) = env::current_dir() {
+            /* Now just get the last part of the path (current dir) */
+            if let Some(dir_os_str) = path.clone().iter().last() {
+                /* Now convert the boi to a regular string */
+                if let Some(dir_str) = dir_os_str.to_str() {
+                    return Ok((path, dir_str.to_string()));
+                }
+            }
+        }
+
+        Err(OFTError::Err)
+    }
+
+    fn get_file_tree_from_path(&self, path: PathBuf) -> Result<Vec<Box<OrchidFileTree>>, OFTError> {
         match fs::read_dir(path.clone()) {
             Ok(files) => {
                 let mut oft_vec = Vec::new();
@@ -31,7 +56,7 @@ impl FileSystemAdapter {
                                     let mut new_path = path.clone();
                                     new_path.push(file_name.clone());
 
-                                    if let Ok(children) = self.get_file_tree(new_path) {
+                                    if let Ok(children) = self.get_file_tree_from_path(new_path) {
                                         oft_vec.push(Box::new(OrchidFileTree::Folder {
                                             folder_name: file_name,
                                             children,
@@ -79,12 +104,14 @@ impl FileSystemAdapter {
                             ..
                         },
                     ) => a_name.cmp(b_name),
-                    (OrchidFileTree::File { .. }, ..) => Ordering::Less,
-                    (OrchidFileTree::OrchidModule { .. }, ..) => Ordering::Less,
                     (OrchidFileTree::Folder { .. }, ..) => Ordering::Less,
-                    (.., OrchidFileTree::File { .. }) => Ordering::Greater,
-                    (.., OrchidFileTree::OrchidModule { .. }) => Ordering::Greater,
-                    (.., OrchidFileTree::Folder { .. }) => Ordering::Greater,
+                    (OrchidFileTree::OrchidModule { .. }, OrchidFileTree::Folder { .. }) => {
+                        Ordering::Greater
+                    }
+                    (OrchidFileTree::OrchidModule { .. }, OrchidFileTree::File { .. }) => {
+                        Ordering::Less
+                    }
+                    (OrchidFileTree::File { .. }, ..) => Ordering::Greater,
                 });
 
                 Ok(oft_vec)
@@ -97,7 +124,14 @@ impl FileSystemAdapter {
 impl FSAControl for FileSystemAdapter {
     fn get_file_tree(&self) -> Result<OrchidFileTree, OFTError> {
         /* First just start off by reading what's in the current directory */
+        let (current_path, current_dir) = self.get_current_directory()?;
 
-        unimplemented!()
+        /* Then get the children in this dir */
+        let children = self.get_file_tree_from_path(current_path)?;
+
+        Ok(OrchidFileTree::Folder {
+            folder_name: current_dir,
+            children,
+        })
     }
 }

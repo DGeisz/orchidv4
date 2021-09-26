@@ -9,22 +9,22 @@ pub fn clean_file_name(file_name: &String) -> String {
     for (i, char) in no_suffix.chars().enumerate() {
         if i == 0 {
             clean_name.push(char.to_ascii_uppercase())
-        }
-
-        if char == '_' {
-            underscore_count += 1;
         } else {
-            if underscore_count == 0 {
-                clean_name.push(char);
-            } else if underscore_count == 1 {
-                clean_name.push(' ');
-                clean_name.push(char);
+            if char == '_' {
+                underscore_count += 1;
             } else {
-                clean_name.push(' ');
-                clean_name.push(char.to_ascii_uppercase());
-            }
+                if underscore_count == 0 {
+                    clean_name.push(char);
+                } else if underscore_count == 1 {
+                    clean_name.push(' ');
+                    clean_name.push(char);
+                } else {
+                    clean_name.push(' ');
+                    clean_name.push(char.to_ascii_uppercase());
+                }
 
-            underscore_count = 0;
+                underscore_count = 0;
+            }
         }
     }
 

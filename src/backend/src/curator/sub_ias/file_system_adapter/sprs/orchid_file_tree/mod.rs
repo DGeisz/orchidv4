@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub enum OrchidFileTree {
     File {
         file_name: String,
@@ -17,6 +17,7 @@ pub enum OrchidFileTree {
     },
 }
 
+#[derive(Debug)]
 pub enum OFTError {
     Err,
 }
