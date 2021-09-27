@@ -1,4 +1,4 @@
-use crate::curator::sub_ias::id_generator::port::IdGenControl;
+use crate::curator::sub_agents::id_generator::port::IdGenControl;
 use std::rc::Rc;
 use uuid::Uuid;
 

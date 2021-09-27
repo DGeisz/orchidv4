@@ -1,5 +1,5 @@
-use crate::backend_io::ws_io::b_msgs::ws_commands::WsCommand;
-use crate::backend_io::ws_io::b_msgs::ws_response::WsResponse;
+use crate::backend_io::ws_io::basic_msgs::ws_commands::WsCommand;
+use crate::backend_io::ws_io::basic_msgs::ws_response::WsResponse;
 use mockall::*;
 
 #[automock]

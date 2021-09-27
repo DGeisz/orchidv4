@@ -1,10 +1,10 @@
-use crate::backend_io::ws_io::b_msgs::ws_commands::WsCommand;
-use crate::backend_io::ws_io::sub_ias::ws_command_adapter::port::WsCommandAdapterPort;
-use crate::backend_io::ws_io::sub_ias::ws_command_parser::b_msgs::message_consumption_response::MessageConsumptionResponse;
-use crate::backend_io::ws_io::sub_ias::ws_command_parser::port::WsCommandParserPort;
+use crate::backend_io::ws_io::basic_msgs::ws_commands::WsCommand;
+use crate::backend_io::ws_io::sub_agents::ws_command_adapter::port::WsCommandAdapterPort;
+use crate::backend_io::ws_io::sub_agents::ws_command_parser::basic_msgs::message_consumption_response::MessageConsumptionResponse;
+use crate::backend_io::ws_io::sub_agents::ws_command_parser::port::WsCommandParserPort;
 use log::trace;
 
-pub mod b_msgs;
+pub mod basic_msgs;
 pub mod port;
 
 #[cfg(test)]

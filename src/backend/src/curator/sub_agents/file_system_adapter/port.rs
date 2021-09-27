@@ -1,4 +1,4 @@
-use crate::curator::sub_ias::file_system_adapter::sprs::orchid_file_tree::{
+use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_tree::{
     OFTError, OrchidFileTree,
 };
 

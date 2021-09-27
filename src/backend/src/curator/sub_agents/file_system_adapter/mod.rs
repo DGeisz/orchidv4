@@ -1,8 +1,8 @@
-use crate::curator::sub_ias::file_system_adapter::port::FSAControl;
-use crate::curator::sub_ias::file_system_adapter::sprs::orchid_file_tree::{
+use crate::curator::sub_agents::file_system_adapter::port::FSAControl;
+use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_tree::{
     OFTError, OrchidFileTree,
 };
-use crate::curator::sub_ias::file_system_adapter::utils::clean_file_name::clean_file_name;
+use crate::curator::sub_agents::file_system_adapter::utils::clean_file_name::clean_file_name;
 use std::cmp::Ordering;
 use std::env;
 use std::fs;
@@ -13,7 +13,7 @@ use tokio::io::{Error, ErrorKind};
 pub const ORCHID_FILE_EXTENSION: &str = ".orch";
 
 pub mod port;
-pub mod sprs;
+pub mod portable_reps;
 pub mod utils;
 
 #[cfg(test)]

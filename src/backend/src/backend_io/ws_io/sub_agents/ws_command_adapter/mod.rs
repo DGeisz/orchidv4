@@ -1,6 +1,6 @@
-use crate::backend_io::ws_io::b_msgs::ws_commands::WsCommand;
-use crate::backend_io::ws_io::b_msgs::ws_response::WsResponse;
-use crate::backend_io::ws_io::sub_ias::ws_command_adapter::port::WsCommandAdapterPort;
+use crate::backend_io::ws_io::basic_msgs::ws_commands::WsCommand;
+use crate::backend_io::ws_io::basic_msgs::ws_response::WsResponse;
+use crate::backend_io::ws_io::sub_agents::ws_command_adapter::port::WsCommandAdapterPort;
 use crate::curator::port::CuratorControl;
 
 pub mod port;

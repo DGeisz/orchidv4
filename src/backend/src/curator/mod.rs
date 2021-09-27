@@ -1,13 +1,13 @@
 use crate::abstract_file_master::generator::port::AFMGeneratorControl;
 use crate::abstract_file_master::port::AFMControl;
 use crate::curator::port::CuratorControl;
-use crate::curator::sub_ias::file_system_adapter::sprs::orchid_file_tree::{
+use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_tree::{
     OFTError, OrchidFileTree,
 };
 use std::collections::HashMap;
 
 pub mod port;
-pub mod sub_ias;
+pub mod sub_agents;
 
 #[cfg(test)]
 mod tests;

@@ -1,8 +1,8 @@
-use crate::backend_io::ws_io::sub_ias::ws_command_parser::b_msgs::message_consumption_response::MessageConsumptionResponse;
-use crate::backend_io::ws_io::sub_ias::ws_command_parser::port::{
+use crate::backend_io::ws_io::sub_agents::ws_command_parser::basic_msgs::message_consumption_response::MessageConsumptionResponse;
+use crate::backend_io::ws_io::sub_agents::ws_command_parser::port::{
     mock_ws_message_consumer, WsCommandParserPort,
 };
-use crate::backend_io::ws_io::sub_ias::ws_server::WsServer;
+use crate::backend_io::ws_io::sub_agents::ws_server::WsServer;
 use futures_util::{SinkExt, StreamExt};
 use log::info;
 use mockall::predicate::eq;

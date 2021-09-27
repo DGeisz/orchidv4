@@ -1,4 +1,4 @@
-use crate::curator::sub_ias::file_system_adapter::ORCHID_FILE_EXTENSION;
+use crate::curator::sub_agents::file_system_adapter::ORCHID_FILE_EXTENSION;
 
 pub fn clean_file_name(file_name: &String) -> String {
     let no_suffix = file_name.trim().trim_end_matches(ORCHID_FILE_EXTENSION);

@@ -1,5 +1,5 @@
-use crate::curator::sub_ias::file_system_adapter::sprs::orchid_file_tree::OrchidFileTree;
-use crate::curator::sub_ias::file_system_adapter::FileSystemAdapter;
+use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_tree::OrchidFileTree;
+use crate::curator::sub_agents::file_system_adapter::FileSystemAdapter;
 use std::panic::panic_any;
 
 /* Helper function that checks a child file for a
@@ -50,12 +50,12 @@ fn test_get_file_tree() {
                     folder_name: "ex_folder".to_string(),
                     children: vec![
                         Box::new(OrchidFileTree::File {
-                            file_name: "ex_orch1.orch".to_string(),
-                            formatted_name: "Ex orch1".to_string(),
+                            file_name: "ex__orch1.orch".to_string(),
+                            formatted_name: "Ex Orch1".to_string(),
                         }),
                         Box::new(OrchidFileTree::File {
-                            file_name: "ex_orch2.orch".to_string(),
-                            formatted_name: "Ex orch2".to_string(),
+                            file_name: "ex__orch2.orch".to_string(),
+                            formatted_name: "Ex Orch2".to_string(),
                         }),
                     ],
                 }),
@@ -87,14 +87,14 @@ fn test_get_file_tree() {
                 /* Check children are in correct order*/
                 check_oft_file(
                     children.get(0).unwrap(),
-                    "ex_orch1.orch".to_string(),
-                    "Ex orch1".to_string(),
+                    "ex__orch1.orch".to_string(),
+                    "Ex Orch1".to_string(),
                 );
 
                 check_oft_file(
                     children.get(0).unwrap(),
-                    "ex_orch1.orch".to_string(),
-                    "Ex orch1".to_string(),
+                    "ex__orch1.orch".to_string(),
+                    "Ex Orch1".to_string(),
                 );
             }
         } else {

@@ -5,8 +5,8 @@
 //! any output from the consumption port back through open
 //! websocket connections.
 
-use crate::backend_io::ws_io::sub_ias::ws_command_parser::b_msgs::message_consumption_response::MessageConsumptionResponse;
-use crate::backend_io::ws_io::sub_ias::ws_command_parser::port::WsCommandParserPort;
+use crate::backend_io::ws_io::sub_agents::ws_command_parser::basic_msgs::message_consumption_response::MessageConsumptionResponse;
+use crate::backend_io::ws_io::sub_agents::ws_command_parser::port::WsCommandParserPort;
 use futures_util::{SinkExt, StreamExt};
 use log::{error, info, trace};
 use std::net::SocketAddr;

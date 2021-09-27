@@ -1,5 +1,5 @@
 use backend::abstract_file_master::generator::AFMGenerator;
-use backend::backend_io::ws_io::sub_ias::ws_command_parser::port::WsCommandParserPort;
+use backend::backend_io::ws_io::sub_agents::ws_command_parser::port::WsCommandParserPort;
 use backend::backend_io::ws_io::WsIo;
 use backend::curator::Curator;
 
