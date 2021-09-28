@@ -4,6 +4,8 @@ import { OrchidFileTree } from "./sub_agents/file_explorer_ws/portable_reps/orch
 import { res_is_oft } from "./sub_agents/file_explorer_ws/basic_msgs/fe_ws_res";
 import OftExplorer from "./building_blocks/oft_explorer/oft_explorer";
 import "./file_explorer_styles.scss";
+import { OrchidFilePath } from "./sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
+import { FileCursorContext } from "./context/cursor_context/cursor_context";
 
 const FileExplorer: React.FC = () => {
     const [oft, set_oft] = useState<OrchidFileTree>();
@@ -26,15 +28,25 @@ const FileExplorer: React.FC = () => {
         file_explorer_ws.get_root_oft();
     }, []);
 
-    useEffect(() => {
-        console.log("This is oft", oft);
-    }, [oft]);
+    /* For cursor context */
+    const [file_cursor, set_file_cursor] = useState<OrchidFilePath>(null);
 
     if (!!oft) {
         return (
-            <div className="fe-container">
-                <OftExplorer oft={oft} indents={0} />
-            </div>
+            <FileCursorContext.Provider
+                value={{ file_cursor, set_file_cursor }}
+            >
+                <div className="fe-container">
+                    <OftExplorer
+                        oft={oft}
+                        indents={0}
+                        default_open={false}
+                        parent_path={null}
+                        move_cursor_up_externally={() => {}}
+                        move_cursor_down_externally={() => {}}
+                    />
+                </div>
+            </FileCursorContext.Provider>
         );
     } else {
         /*TODO: Add small spinner*/

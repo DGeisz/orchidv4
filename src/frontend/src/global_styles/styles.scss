@@ -34,25 +34,25 @@ $scroll-bar-size: 10px;
 //    color: $hardGray !important;
 //}
 
-/* width */
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-    background: $mediumGray;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
+///* width */
+//::-webkit-scrollbar {
+//    width: 10px;
+//}
+//
+///* Track */
+//::-webkit-scrollbar-track {
+//    background: #f1f1f1;
+//}
+//
+///* Handle */
+//::-webkit-scrollbar-thumb {
+//    background: $mediumGray;
+//}
+//
+///* Handle on hover */
+//::-webkit-scrollbar-thumb:hover {
+//    background: #555;
+//}
 
 .logo-container {
     display: flex;
