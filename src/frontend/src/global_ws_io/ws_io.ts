@@ -61,7 +61,6 @@ export class WsIo {
                 /* Immediately pass data of res to
                  * response handler */
 
-                console.log("This is ws message: ", e);
                 !!this.response_handler && this.response_handler(e.data);
             };
         }

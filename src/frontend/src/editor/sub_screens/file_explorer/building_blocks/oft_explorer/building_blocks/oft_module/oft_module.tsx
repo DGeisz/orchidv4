@@ -7,8 +7,7 @@ interface Props {
     path: OrchidFilePath;
     indents: number;
     default_open: boolean;
-    move_cursor_up_externally: (old_file: string) => void;
-    move_cursor_down_externally: (old_file: string) => void;
+    set_get_open_nodes: (set: () => () => OrchidFilePath[]) => void;
 }
 
 const OftModule: React.FC<Props> = (props) => {

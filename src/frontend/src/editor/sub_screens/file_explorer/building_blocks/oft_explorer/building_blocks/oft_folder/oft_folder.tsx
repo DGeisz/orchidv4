@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     convert_to_path_link,
     get_oft_name,
@@ -21,17 +21,46 @@ interface Props {
     path: OrchidFilePath;
     indents: number;
     default_open: boolean;
-    move_cursor_up_externally: (old_file: string) => void;
-    move_cursor_down_externally: (old_file: string) => void;
+    set_get_open_nodes: (set: () => () => OrchidFilePath[]) => void;
 }
 
 const OftFolder: React.FC<Props> = (props) => {
     const folder = props.folder.Folder;
-    const { file_cursor, set_file_cursor } = useContext(FileCursorContext);
+    const { file_cursor, set_file_cursor, set_keydown_handler } =
+        useContext(FileCursorContext);
+
+    const [get_open_nodes_list, set_get_open_nodes_list] = useState<
+        (() => OrchidFilePath[])[]
+    >([]);
+
+    useEffect(() => {
+        props.set_get_open_nodes(() => () => {
+            let open_nodes = get_open_nodes_list.reduce<OrchidFilePath[]>(
+                (previousValue, currentValue) => {
+                    if (!!currentValue) {
+                        return [...previousValue, ...currentValue()];
+                    } else {
+                        return previousValue;
+                    }
+                },
+                []
+            );
+
+            open_nodes.unshift(props.path);
+
+            return open_nodes;
+        });
+    }, [get_open_nodes_list]);
 
     const [folder_open, set_open] = useState<boolean>(props.default_open);
 
-    const toggle = () => set_open(!folder_open);
+    const toggle = () => {
+        if (folder_open) {
+            set_get_open_nodes_list([]);
+        }
+
+        set_open(!folder_open);
+    };
     const children_default_open = folder.children.length === 1;
 
     const on_activate = () => {
@@ -40,54 +69,25 @@ const OftFolder: React.FC<Props> = (props) => {
 
     const is_cursor = check_file_path_eq(file_cursor, props.path);
 
-    const child_move_cursor_up = (old_file: string) => {
-        /* Get index of the child */
-        const child_i = folder.children.findIndex(
-            (child) => get_oft_name(child) === old_file
-        );
+    useEffect(() => {
+        if (is_cursor) {
+            set_keydown_handler(() => (e: KeyboardEvent) => {
+                if (e.key === "Enter") {
+                    toggle();
+                }
+            });
 
-        if (child_i === 0) {
-            /* If the this is the first index, we
-             * simply make this folder the cursor */
-            set_file_cursor(remove_last_link(file_cursor));
-        } else if (child_i > 0) {
-            /* Make a new path link for the child at the previous
-             * index, and switch the last link to that link */
-            set_file_cursor(
-                switch_last_link(
-                    file_cursor,
-                    convert_to_path_link(folder.children[child_i - 1])
-                )
-            );
+            return () => set_keydown_handler(() => () => {});
         }
-    };
-
-    const child_move_cursor_down = (old_file: string) => {
-        /* Get index of child */
-        const child_i = folder.children.findIndex(
-            (child) => get_oft_name(child) === old_file
-        );
-
-        if (child_i === folder.children.length - 1) {
-            /* if this is the last element, pop the child off the path,
-             * and externally call move cursor down */
-            set_file_cursor(remove_last_link(file_cursor));
-            props.move_cursor_down_externally(get_oft_name(props.folder));
-        } else if (child_i >= 0) {
-            /* Switch the last path link with a new link
-             * corresponding to the file beneath it */
-            set_file_cursor(
-                switch_last_link(
-                    file_cursor,
-                    convert_to_path_link(folder.children[child_i + 1])
-                )
-            );
-        }
-    };
+    }, [is_cursor, folder_open]);
 
     return (
         <div className="oft-node-container">
-            <OftTitleContainer indents={props.indents} title_active={is_cursor}>
+            <OftTitleContainer
+                indents={props.indents}
+                title_active={is_cursor}
+                on_activate={on_activate}
+            >
                 <div className="oft-chev-container" onMouseDown={toggle}>
                     {folder.children.length > 0 &&
                         (folder_open ? (
@@ -99,7 +99,6 @@ const OftFolder: React.FC<Props> = (props) => {
                 <div
                     className="oft-icon-title-container"
                     onDoubleClick={toggle}
-                    onMouseDown={on_activate}
                 >
                     <FaFolder className="oft-folder-icon" />
                     <div className="oft-text">{folder.folder_name}</div>
@@ -114,8 +113,15 @@ const OftFolder: React.FC<Props> = (props) => {
                             oft={child_oft}
                             indents={props.indents + 1}
                             default_open={children_default_open}
-                            move_cursor_up_externally={child_move_cursor_up}
-                            move_cursor_down_externally={child_move_cursor_down}
+                            set_get_open_nodes={(set) => {
+                                set_get_open_nodes_list((prev) => {
+                                    const next = [...prev];
+
+                                    next[index] = set();
+
+                                    return next;
+                                });
+                            }}
                         />
                     ))}
                 </div>

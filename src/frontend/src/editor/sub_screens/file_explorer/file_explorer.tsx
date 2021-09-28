@@ -1,14 +1,26 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { FileExplorerWs } from "./sub_agents/file_explorer_ws/file_explorer_ws";
 import { OrchidFileTree } from "./sub_agents/file_explorer_ws/portable_reps/orchid_file_tree";
 import { res_is_oft } from "./sub_agents/file_explorer_ws/basic_msgs/fe_ws_res";
 import OftExplorer from "./building_blocks/oft_explorer/oft_explorer";
 import "./file_explorer_styles.scss";
-import { OrchidFilePath } from "./sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
+import {
+    check_file_path_eq,
+    OrchidFilePath,
+} from "./sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
 import { FileCursorContext } from "./context/cursor_context/cursor_context";
+import { TopLevelFocus } from "../../context/top_level_focus/top_level_focus";
 
-const FileExplorer: React.FC = () => {
+interface Props {
+    set_keydown_handler: (handler: () => (e: KeyboardEvent) => void) => void;
+}
+
+const FileExplorer: React.FC<Props> = (props) => {
     const [oft, set_oft] = useState<OrchidFileTree>();
+
+    const [cursor_keydown, set_cursor_keydown] = useState<
+        (e: KeyboardEvent) => void
+    >(() => {});
 
     const file_explorer_ws = useMemo(
         () =>
@@ -31,10 +43,56 @@ const FileExplorer: React.FC = () => {
     /* For cursor context */
     const [file_cursor, set_file_cursor] = useState<OrchidFilePath>(null);
 
+    const [get_open_nodes, set_get_open_nodes] = useState<
+        () => OrchidFilePath[]
+    >(() => () => []);
+
+    useEffect(() => {
+        props.set_keydown_handler(() => (e: KeyboardEvent) => {
+            switch (e.key) {
+                case "ArrowDown": {
+                    const open_nodes = get_open_nodes();
+
+                    const cursor_index = open_nodes.findIndex((node) =>
+                        check_file_path_eq(node, file_cursor)
+                    );
+
+                    if (
+                        cursor_index > -1 &&
+                        cursor_index < open_nodes.length - 1
+                    ) {
+                        set_file_cursor(open_nodes[cursor_index + 1]);
+                    }
+
+                    break;
+                }
+                case "ArrowUp": {
+                    const open_nodes = get_open_nodes();
+
+                    const cursor_index = open_nodes.findIndex((node) =>
+                        check_file_path_eq(node, file_cursor)
+                    );
+
+                    if (cursor_index > 0) {
+                        set_file_cursor(open_nodes[cursor_index - 1]);
+                    }
+
+                    break;
+                }
+            }
+
+            !!cursor_keydown && cursor_keydown(e);
+        });
+    }, [get_open_nodes, file_cursor, cursor_keydown]);
+
     if (!!oft) {
         return (
             <FileCursorContext.Provider
-                value={{ file_cursor, set_file_cursor }}
+                value={{
+                    file_cursor,
+                    set_file_cursor,
+                    set_keydown_handler: set_cursor_keydown,
+                }}
             >
                 <div className="fe-container">
                     <OftExplorer
@@ -42,8 +100,7 @@ const FileExplorer: React.FC = () => {
                         indents={0}
                         default_open={false}
                         parent_path={null}
-                        move_cursor_up_externally={() => {}}
-                        move_cursor_down_externally={() => {}}
+                        set_get_open_nodes={set_get_open_nodes}
                     />
                 </div>
             </FileCursorContext.Provider>

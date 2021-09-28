@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./editor_styles.scss";
 import { DraggableCore } from "react-draggable";
 import EditorHeader from "./building_blocks/editor_header/editor_header";
@@ -14,10 +14,45 @@ const Editor: React.FC = () => {
     const [width, set_width] = useState<number>(200);
     const [file_explorer_visible, show_file_explorer] = useState<boolean>(true);
 
+    const [fe_keydown_handler, set_fe_keydown_handler] = useState<
+        (e: KeyboardEvent) => void
+    >(() => () => {});
+
     /* For top level focus context */
     const [top_level_focus, set_focus] = useState<TopLevelFocusOption>(
         TopLevelFocusOption.file_explorer
     );
+
+    useEffect(() => {
+        function keydown_handler(e: KeyboardEvent) {
+            if (
+                ["Backspace", "ArrowLeft", "ArrowRight", "Enter"].indexOf(
+                    e.key
+                ) > -1
+            ) {
+                e.preventDefault();
+            }
+
+            switch (top_level_focus) {
+                case TopLevelFocusOption.file_explorer: {
+                    fe_keydown_handler(e);
+                    break;
+                }
+                case TopLevelFocusOption.file_window_container: {
+                }
+            }
+        }
+
+        function keypress_handler(e: KeyboardEvent) {}
+
+        document.addEventListener("keydown", keydown_handler);
+        document.addEventListener("keypress", keypress_handler);
+
+        return () => {
+            document.removeEventListener("keydown", keydown_handler);
+            document.removeEventListener("keypress", keypress_handler);
+        };
+    }, [top_level_focus, fe_keydown_handler]);
 
     return (
         <TopLevelFocus.Provider
@@ -50,7 +85,11 @@ const Editor: React.FC = () => {
                                                 show_file_explorer(false)
                                             }
                                         />
-                                        <FileExplorer />
+                                        <FileExplorer
+                                            set_keydown_handler={
+                                                set_fe_keydown_handler
+                                            }
+                                        />
                                     </div>
                                 </div>
                                 <div

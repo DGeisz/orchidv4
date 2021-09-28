@@ -60,14 +60,15 @@ export function convert_to_path_link(oft: OrchidFileTree): OrchidFilePath {
     } else if (is_orchid_folder(oft)) {
         return {
             Folder: {
-                ...oft.Folder,
+                folder_name: oft.Folder.folder_name,
                 child: null,
             },
         };
     } else if (is_orchid_module(oft)) {
         return {
             OrchidModule: {
-                ...oft.OrchidModule,
+                folder_name: oft.OrchidModule.folder_name,
+                formatted_name: oft.OrchidModule.formatted_name,
                 child: null,
             },
         };

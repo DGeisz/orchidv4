@@ -9,6 +9,7 @@ import { palette } from "../../../../../../../global_styles/palette";
 interface Props {
     indents: number;
     title_active: boolean;
+    on_activate: () => void;
 }
 
 const OftTitleContainer: React.FC<Props> = (props) => {
@@ -25,6 +26,7 @@ const OftTitleContainer: React.FC<Props> = (props) => {
                         : palette.softestForestGreen
                     : undefined,
             }}
+            onMouseDown={props.on_activate}
         >
             {[...Array(props.indents)].map((_, index) => (
                 <div className="oft-node-indent" key={index} />

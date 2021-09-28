@@ -19,8 +19,7 @@ interface Props {
     parent_path: OrchidFilePath;
     indents: number;
     default_open: boolean;
-    move_cursor_up_externally: (old_file: string) => void;
-    move_cursor_down_externally: (old_file: string) => void;
+    set_get_open_nodes: (set: () => () => OrchidFilePath[]) => void;
 }
 
 const OftExplorer: React.FC<Props> = (props) => {
@@ -42,8 +41,7 @@ const OftExplorer: React.FC<Props> = (props) => {
                 file={oft}
                 indents={indents}
                 path={new_path}
-                move_cursor_down_externally={props.move_cursor_down_externally}
-                move_cursor_up_externally={props.move_cursor_up_externally}
+                set_get_open_nodes={props.set_get_open_nodes}
             />
         );
     } else if (is_orchid_folder(oft)) {
@@ -64,8 +62,7 @@ const OftExplorer: React.FC<Props> = (props) => {
                 path={new_path}
                 indents={indents}
                 default_open={props.default_open}
-                move_cursor_down_externally={props.move_cursor_down_externally}
-                move_cursor_up_externally={props.move_cursor_up_externally}
+                set_get_open_nodes={props.set_get_open_nodes}
             />
         );
     } else if (is_orchid_module(oft)) {
@@ -86,8 +83,7 @@ const OftExplorer: React.FC<Props> = (props) => {
                 path={new_path}
                 indents={indents}
                 default_open={props.default_open}
-                move_cursor_down_externally={props.move_cursor_down_externally}
-                move_cursor_up_externally={props.move_cursor_up_externally}
+                set_get_open_nodes={props.set_get_open_nodes}
             />
         );
     }
