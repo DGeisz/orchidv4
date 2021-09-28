@@ -1,5 +1,6 @@
 @import "src/global_styles/palette";
 @import "src/global_styles/basic_layouts";
+@import "src/global_styles/basic_visual";
 
 html {
     height: 100%;
@@ -20,6 +21,37 @@ a {
 
 input[type="file"] {
     display: none;
+}
+
+$scroll-bar-size: 10px;
+
+//::-webkit-scrollbar {
+//    width: $scroll-bar-size;
+//    height: $scroll-bar-size;
+//}
+//
+//::-webkit-scrollbar-thumb {
+//    color: $hardGray !important;
+//}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: $mediumGray;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .logo-container {

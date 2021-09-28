@@ -1,0 +1,63 @@
+@import "src/global_styles/basic_layouts";
+@import "src/global_styles/basic_visual";
+@import "src/global_styles/palette";
+
+.oft-node-container {
+}
+
+.oft-node-indent {
+    width: 20px;
+    min-width: 20px;
+}
+
+.oft-node-title-container {
+    @extend %flexRow;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.oft-icon-title-container {
+    @extend %flexRow;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.oft-folder-icon {
+    color: $mediumForestGreen;
+    font-size: 12pt !important;
+    min-width: 12pt;
+}
+
+.oft-file-icon {
+    color: $mediumPink;
+    font-size: 12pt !important;
+    min-width: 12pt;
+}
+
+.oft-chev-container {
+    @extend %grid5;
+    width: 16px !important;
+    min-width: 16px;
+    margin-right: 3px !important;
+}
+
+.oft-chev-right {
+    font-size: 9pt;
+}
+
+.oft-chev-down {
+    font-size: 9pt;
+}
+
+.oft-text {
+    @extend %no-highlight;
+    font-size: 10pt;
+    font-weight: 500;
+    margin-left: 4px;
+    color: $hardGray;
+}
+
+.oft-indented-children {
+    //margin-left: 20px;
+}

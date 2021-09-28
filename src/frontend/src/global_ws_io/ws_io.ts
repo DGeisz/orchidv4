@@ -12,6 +12,8 @@ export class WsIo {
         this.link_id = v4();
         this.addr = addr;
 
+        console.log("Creating websocket!");
+
         this.ws = new WebSocket(this.addr);
         this.configure_ws();
     }
@@ -58,6 +60,8 @@ export class WsIo {
             this.ws.onmessage = (e) => {
                 /* Immediately pass data of res to
                  * response handler */
+
+                console.log("This is ws message: ", e);
                 !!this.response_handler && this.response_handler(e.data);
             };
         }

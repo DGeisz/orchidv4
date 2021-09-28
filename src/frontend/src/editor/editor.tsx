@@ -4,6 +4,7 @@ import { DraggableCore } from "react-draggable";
 import EditorHeader from "./building_blocks/editor_header/editor_header";
 import { HiMenu } from "react-icons/hi";
 import { palette } from "../global_styles/palette";
+import FileExplorer from "./sub_screens/file_explorer/file_explorer";
 
 const Editor: React.FC = () => {
     const [width, set_width] = useState<number>(200);
@@ -32,6 +33,7 @@ const Editor: React.FC = () => {
                                             show_file_explorer(false)
                                         }
                                     />
+                                    <FileExplorer />
                                 </div>
                             </div>
                             <div

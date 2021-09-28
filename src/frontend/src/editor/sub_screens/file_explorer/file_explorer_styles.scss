@@ -1,0 +1,8 @@
+@import "src/global_styles/basic_layouts";
+
+.fe-container {
+    padding: 10px 5px 0;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 100%;
+}
