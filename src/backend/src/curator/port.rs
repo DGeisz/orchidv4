@@ -6,7 +6,7 @@ use mockall::*;
 /// Control port for the curator
 #[automock]
 pub trait CuratorControl {
-    fn get_file_tree(&self) -> Result<OrchidFileTree, OFTError>;
+    fn get_root_file_tree(&self) -> Result<OrchidFileTree, OFTError>;
 }
 
 pub fn mock_curator_control() -> MockCuratorControl {

@@ -24,10 +24,10 @@ fn check_oft_file(
 /// This test is assumed to be run using "cargo test",
 /// meaning, from the top level of the this cargo project.
 #[test]
-fn test_get_file_tree() {
+fn test_get_root_file_tree() {
     let fsa = FileSystemAdapter::new();
 
-    let file_tree = fsa.get_file_tree().unwrap();
+    let file_tree = fsa.get_root_file_tree().unwrap();
 
     if let OrchidFileTree::Folder {
         folder_name,

@@ -3,5 +3,5 @@ use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_
 };
 
 pub trait FSAControl {
-    fn get_file_tree(&self) -> Result<OrchidFileTree, OFTError>;
+    fn get_root_file_tree(&self) -> Result<OrchidFileTree, OFTError>;
 }

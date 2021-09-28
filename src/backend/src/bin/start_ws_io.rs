@@ -1,14 +1,19 @@
 use backend::abstract_file_master::generator::AFMGenerator;
 use backend::backend_io::ws_io::sub_agents::ws_command_parser::port::WsCommandParserPort;
 use backend::backend_io::ws_io::WsIo;
+use backend::curator::sub_agents::file_system_adapter::FileSystemAdapter;
 use backend::curator::Curator;
 
 /* First create a function that assembles the backend
    and returns a message port to be used by WsIo
 */
 fn assemble_backend() -> Box<dyn WsCommandParserPort> {
+    /* Create the afm generator */
     let afm_generator = AFMGenerator::new();
-    let curator = Curator::new(afm_generator);
+    /* Create the file system adapter */
+    let fsa = FileSystemAdapter::new();
+    /* Put that all together into the curator */
+    let curator = Curator::new(afm_generator, fsa);
 
     WsIo::gen_consumption_port(curator)
 }

@@ -122,7 +122,7 @@ impl FileSystemAdapter {
 }
 
 impl FSAControl for FileSystemAdapter {
-    fn get_file_tree(&self) -> Result<OrchidFileTree, OFTError> {
+    fn get_root_file_tree(&self) -> Result<OrchidFileTree, OFTError> {
         /* First just start off by reading what's in the current directory */
         let (current_path, current_dir) = self.get_current_directory()?;
 
