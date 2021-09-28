@@ -11,8 +11,6 @@ import OftTitleContainer from "../oft_title_container/oft_title_container";
 import {
     check_file_path_eq,
     OrchidFilePath,
-    remove_last_link,
-    switch_last_link,
 } from "../../../../sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
 import { FileCursorContext } from "../../../../context/cursor_context/cursor_context";
 

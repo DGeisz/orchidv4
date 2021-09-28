@@ -25,34 +25,41 @@ input[type="file"] {
 
 $scroll-bar-size: 10px;
 
-//::-webkit-scrollbar {
-//    width: $scroll-bar-size;
-//    height: $scroll-bar-size;
-//}
+::-webkit-scrollbar {
+    width: $scroll-bar-size;
+    height: $scroll-bar-size;
+}
 //
 //::-webkit-scrollbar-thumb {
 //    color: $hardGray !important;
 //}
 
-///* width */
+/* width */
 //::-webkit-scrollbar {
 //    width: 10px;
 //}
-//
-///* Track */
-//::-webkit-scrollbar-track {
-//    background: #f1f1f1;
-//}
-//
-///* Handle */
-//::-webkit-scrollbar-thumb {
-//    background: $mediumGray;
-//}
-//
-///* Handle on hover */
-//::-webkit-scrollbar-thumb:hover {
-//    background: #555;
-//}
+
+/* Track */
+$track-color: $softGray;
+
+::-webkit-scrollbar-track {
+    background: $track-color;
+}
+
+::-webkit-scrollbar-corner {
+    background: $track-color;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: $mediumGray;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 
 .logo-container {
     display: flex;
