@@ -5,7 +5,7 @@ import { res_is_oft } from "./sub_agents/file_explorer_ws/basic_msgs/fe_ws_res";
 import OftExplorer from "./building_blocks/oft_explorer/oft_explorer";
 import "./file_explorer_styles.scss";
 import {
-    check_file_path_eq,
+    file_path_eq,
     OrchidFilePath,
 } from "./sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
 import { FileCursorContext } from "./context/cursor_context/cursor_context";
@@ -53,7 +53,7 @@ const FileExplorer: React.FC<Props> = (props) => {
                     const open_nodes = get_open_nodes();
 
                     const cursor_index = open_nodes.findIndex((node) =>
-                        check_file_path_eq(node, file_cursor)
+                        file_path_eq(node, file_cursor)
                     );
 
                     if (
@@ -69,7 +69,7 @@ const FileExplorer: React.FC<Props> = (props) => {
                     const open_nodes = get_open_nodes();
 
                     const cursor_index = open_nodes.findIndex((node) =>
-                        check_file_path_eq(node, file_cursor)
+                        file_path_eq(node, file_cursor)
                     );
 
                     if (cursor_index > 0) {

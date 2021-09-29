@@ -5,11 +5,13 @@ import EditorHeader from "./building_blocks/editor_header/editor_header";
 import { HiMenu } from "react-icons/hi";
 import { palette } from "../global_styles/palette";
 import FileExplorer from "./sub_screens/file_explorer/file_explorer";
+import FileWindowContainer from "./sub_screens/file_window_container/file_window_container";
+import { EditorCompCommProvider } from "./service_providers/editor_comp_comm/editor_comp_comm";
 import {
-    TopLevelFocus,
-    TopLevelFocusOption,
-    withTopLevelFocus,
-} from "./context/top_level_focus/top_level_focus";
+    EditorFocus,
+    useEditorFocus,
+    withEditorFocus,
+} from "./service_providers/editor_focus/editor_focus";
 
 const Editor: React.FC = () => {
     const [width, set_width] = useState<number>(200);
@@ -19,7 +21,7 @@ const Editor: React.FC = () => {
         (e: KeyboardEvent) => void
     >(() => () => {});
 
-    const { current_focus } = useContext(TopLevelFocus);
+    const editor_focus = useEditorFocus();
 
     useEffect(() => {
         function keydown_handler(e: KeyboardEvent) {
@@ -31,12 +33,12 @@ const Editor: React.FC = () => {
                 e.preventDefault();
             }
 
-            switch (current_focus) {
-                case TopLevelFocusOption.file_explorer: {
+            switch (editor_focus) {
+                case EditorFocus.file_explorer: {
                     fe_keydown_handler(e);
                     break;
                 }
-                case TopLevelFocusOption.file_window_container: {
+                case EditorFocus.file_window_container: {
                 }
             }
         }
@@ -50,59 +52,65 @@ const Editor: React.FC = () => {
             document.removeEventListener("keydown", keydown_handler);
             document.removeEventListener("keypress", keypress_handler);
         };
-    }, [current_focus, fe_keydown_handler]);
+    }, [editor_focus, fe_keydown_handler]);
 
     return (
-        <div className="editor-container">
-            <EditorHeader />
+        <EditorCompCommProvider>
+            <div className="editor-container">
+                <EditorHeader />
 
-            {file_explorer_visible ? (
-                <DraggableCore
-                    handle="#drag-handle"
-                    onDrag={(e, { x }) => {
-                        set_width(x);
-                    }}
-                >
-                    <div className="editor-body">
-                        <div className="editor-left" style={{ width }}>
-                            <div className="e-left-left">
-                                <div className="editor-left-top">
-                                    <HiMenu
-                                        className="fe-menu-toggle"
-                                        color={palette.mediumForestGreen}
-                                        onClick={() =>
-                                            show_file_explorer(false)
-                                        }
-                                    />
-                                    <FileExplorer
-                                        set_keydown_handler={
-                                            set_fe_keydown_handler
-                                        }
-                                    />
+                {file_explorer_visible ? (
+                    <DraggableCore
+                        handle="#drag-handle"
+                        onDrag={(e, { x }) => {
+                            set_width(x);
+                        }}
+                    >
+                        <div className="editor-body">
+                            <div className="editor-left" style={{ width }}>
+                                <div className="e-left-left">
+                                    <div className="editor-left-top">
+                                        <HiMenu
+                                            className="fe-menu-toggle"
+                                            color={palette.mediumForestGreen}
+                                            onClick={() =>
+                                                show_file_explorer(false)
+                                            }
+                                        />
+                                        <FileExplorer
+                                            set_keydown_handler={
+                                                set_fe_keydown_handler
+                                            }
+                                        />
+                                    </div>
                                 </div>
+                                <div
+                                    className="e-left-right-bar"
+                                    id="drag-handle"
+                                />
                             </div>
-                            <div
-                                className="e-left-right-bar"
-                                id="drag-handle"
+                            <div className="editor-right">
+                                <FileWindowContainer />
+                            </div>
+                        </div>
+                    </DraggableCore>
+                ) : (
+                    <div className="editor-body">
+                        <div className="e-left-collapsed">
+                            <HiMenu
+                                className="fe-menu-toggle"
+                                color={palette.mediumForestGreen}
+                                onClick={() => show_file_explorer(true)}
                             />
                         </div>
-                        <div className="editor-right" />
+                        <div className="editor-right">
+                            <FileWindowContainer />
+                        </div>
                     </div>
-                </DraggableCore>
-            ) : (
-                <div className="editor-body">
-                    <div className="e-left-collapsed">
-                        <HiMenu
-                            className="fe-menu-toggle"
-                            color={palette.mediumForestGreen}
-                            onClick={() => show_file_explorer(true)}
-                        />
-                    </div>
-                    <div className="editor-right" />
-                </div>
-            )}
-        </div>
+                )}
+            </div>
+        </EditorCompCommProvider>
     );
 };
 
-export default withTopLevelFocus(Editor);
+export default withEditorFocus(Editor);

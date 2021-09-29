@@ -63,7 +63,7 @@ function has_children(ofp: OrchidFilePath): boolean {
     return false;
 }
 
-export function check_file_path_eq(
+export function file_path_eq(
     base_path: OrchidFilePath,
     cmp_path: OrchidFilePath
 ): boolean {
@@ -72,7 +72,7 @@ export function check_file_path_eq(
         const cmp_folder = cmp_path.Folder;
 
         if (base_folder.folder_name === cmp_folder.folder_name) {
-            return check_file_path_eq(base_folder.child, cmp_folder.child);
+            return file_path_eq(base_folder.child, cmp_folder.child);
         }
     } else if (is_module_link(base_path) && is_module_link(cmp_path)) {
         /* Perform identical steps as above for module */
@@ -80,7 +80,7 @@ export function check_file_path_eq(
         const cmp_mod = cmp_path.OrchidModule;
 
         if (base_mod.folder_name === cmp_mod.folder_name) {
-            return check_file_path_eq(base_mod.child, cmp_mod.child);
+            return file_path_eq(base_mod.child, cmp_mod.child);
         }
     } else if (is_file_link(base_path) && is_file_link(cmp_path)) {
         /* For this, we simply need to check whether the file names

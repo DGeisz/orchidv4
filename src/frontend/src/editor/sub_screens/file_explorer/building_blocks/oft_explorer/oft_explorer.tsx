@@ -12,7 +12,6 @@ import {
     append_file_link,
     OrchidFilePath,
 } from "../../sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
-import { FileCursorContext } from "../../context/cursor_context/cursor_context";
 
 interface Props {
     oft: OrchidFileTree;

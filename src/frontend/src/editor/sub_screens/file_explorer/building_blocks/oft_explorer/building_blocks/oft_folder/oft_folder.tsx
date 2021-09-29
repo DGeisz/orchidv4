@@ -9,7 +9,7 @@ import { FaFolder, FaChevronRight, FaChevronDown } from "react-icons/fa";
 import OftExplorer from "../../oft_explorer";
 import OftTitleContainer from "../oft_title_container/oft_title_container";
 import {
-    check_file_path_eq,
+    file_path_eq,
     OrchidFilePath,
 } from "../../../../sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
 import { FileCursorContext } from "../../../../context/cursor_context/cursor_context";
@@ -65,7 +65,7 @@ const OftFolder: React.FC<Props> = (props) => {
         set_file_cursor(props.path);
     };
 
-    const is_cursor = check_file_path_eq(file_cursor, props.path);
+    const is_cursor = file_path_eq(file_cursor, props.path);
 
     useEffect(() => {
         if (is_cursor) {

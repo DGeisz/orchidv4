@@ -1,10 +1,10 @@
-import React, { useContext } from "react";
+import React from "react";
 import "../../oft_explorer_styles.scss";
-import {
-    TopLevelFocus,
-    TopLevelFocusOption,
-} from "../../../../../../context/top_level_focus/top_level_focus";
 import { palette } from "../../../../../../../global_styles/palette";
+import {
+    EditorFocus,
+    useEditorFocus,
+} from "../../../../../../service_providers/editor_focus/editor_focus";
 
 interface Props {
     indents: number;
@@ -14,8 +14,8 @@ interface Props {
 }
 
 const OftTitleContainer: React.FC<Props> = (props) => {
-    const { current_focus } = useContext(TopLevelFocus);
-    const fe_in_focus = current_focus === TopLevelFocusOption.file_explorer;
+    const editor_focus = useEditorFocus();
+    const fe_in_focus = editor_focus === EditorFocus.file_explorer;
 
     return (
         <div
