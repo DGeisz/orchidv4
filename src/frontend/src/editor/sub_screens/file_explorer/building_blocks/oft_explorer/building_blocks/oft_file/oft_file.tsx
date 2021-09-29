@@ -10,6 +10,7 @@ import {
     OrchidFilePath,
 } from "../../../../sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
 import { FileCursorContext } from "../../../../context/cursor_context/cursor_context";
+import { TopLevelFocus } from "../../../../../../context/top_level_focus/top_level_focus";
 
 interface Props {
     file: OrchidFile;
@@ -24,6 +25,8 @@ const OftFile: React.FC<Props> = (props) => {
     const { file_cursor, set_file_cursor, set_keydown_handler } =
         useContext(FileCursorContext);
 
+    const { open_file } = useContext(TopLevelFocus);
+
     useEffect(() => {
         props.set_get_open_nodes(() => () => [props.path]);
     }, []);
@@ -34,12 +37,23 @@ const OftFile: React.FC<Props> = (props) => {
 
     const is_cursor = check_file_path_eq(file_cursor, props.path);
 
+    useEffect(() => {
+        if (is_cursor) {
+            set_keydown_handler(() => (e: KeyboardEvent) => {
+                if (e.key === "Enter") {
+                    open_file(props.path);
+                }
+            });
+        }
+    }, [open_file]);
+
     return (
         <div className="oft-node-container">
             <OftTitleContainer
                 indents={props.indents}
                 title_active={is_cursor}
                 on_activate={on_activate}
+                on_double_click={() => open_file(props.path)}
             >
                 <div className="oft-chev-container" />
                 <div className="oft-icon-title-container">

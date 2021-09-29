@@ -1,10 +1,15 @@
 use crate::abstract_file_master::generator::port::AFMGeneratorControl;
 use crate::abstract_file_master::port::AFMControl;
+use crate::abstract_file_master::portable_reps::visual_rep_skeleton::VisualRepSkeleton;
 use crate::curator::port::CuratorControl;
 use crate::curator::sub_agents::file_system_adapter::port::FSAControl;
+use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_path::{
+    OFPError, OrchidFilePath,
+};
 use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_tree::{
     OFTError, OrchidFileTree,
 };
+use crate::curator::sub_agents::id_generator::port::IdGenControl;
 use std::collections::HashMap;
 
 pub mod port;
@@ -14,6 +19,7 @@ pub mod sub_agents;
 mod tests;
 
 pub struct Curator {
+    id_generator: Box<dyn IdGenControl>,
     /// HashMap of all open Abstract File Masters
     abstract_file_masters: HashMap<String, Box<dyn AFMControl>>,
     /// AFM Generator
@@ -23,6 +29,7 @@ pub struct Curator {
 
 impl Curator {
     pub fn new(
+        id_generator: Box<dyn IdGenControl>,
         afm_generator: Box<dyn AFMGeneratorControl>,
         file_system_adapter: Box<dyn FSAControl>,
     ) -> Box<dyn CuratorControl> {
@@ -30,6 +37,7 @@ impl Curator {
             afm_generator,
             abstract_file_masters: HashMap::new(),
             file_system_adapter,
+            id_generator,
         })
     }
 }
@@ -37,5 +45,31 @@ impl Curator {
 impl CuratorControl for Curator {
     fn get_root_file_tree(&self) -> Result<OrchidFileTree, OFTError> {
         self.file_system_adapter.get_root_file_tree()
+    }
+
+    /*TODO: Fix the implementation of this method.
+       Right now we don't hydrate the return from fsa
+       into an afm, instead we just create a new afm
+    */
+    fn open_file(&mut self, path: OrchidFilePath) -> Result<VisualRepSkeleton, OFPError> {
+        /* First use the FSA to open the file at that path */
+        let file = self.file_system_adapter.open_file(&path)?;
+
+        /* TODO: Change this.  Right now we just initialize a new
+          Abstract file master with this path
+        */
+        let new_afm = self
+            .afm_generator
+            .get_new_afm_at_path(self.id_generator.gen_id(), path)?;
+
+        /* Get the vrs before we lose ownership */
+        let visual_rep_skeleton = new_afm.get_visual_rep_skeleton();
+
+        /* Add the afm to map of afms */
+        self.abstract_file_masters
+            .insert(new_afm.get_id().clone(), new_afm);
+
+        /* Return vrs */
+        Ok(visual_rep_skeleton)
     }
 }

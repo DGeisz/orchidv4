@@ -86,7 +86,13 @@ const OftFolder: React.FC<Props> = (props) => {
                 title_active={is_cursor}
                 on_activate={on_activate}
             >
-                <div className="oft-chev-container" onMouseDown={toggle}>
+                <div
+                    className="oft-chev-container"
+                    onMouseDown={(e) => {
+                        e.stopPropagation();
+                        toggle();
+                    }}
+                >
                     {folder.children.length > 0 &&
                         (folder_open ? (
                             <FaChevronDown className="oft-chev-down" />

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FileExplorerWs } from "./sub_agents/file_explorer_ws/file_explorer_ws";
 import { OrchidFileTree } from "./sub_agents/file_explorer_ws/portable_reps/orchid_file_tree";
 import { res_is_oft } from "./sub_agents/file_explorer_ws/basic_msgs/fe_ws_res";
@@ -9,7 +9,6 @@ import {
     OrchidFilePath,
 } from "./sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
 import { FileCursorContext } from "./context/cursor_context/cursor_context";
-import { TopLevelFocus } from "../../context/top_level_focus/top_level_focus";
 
 interface Props {
     set_keydown_handler: (handler: () => (e: KeyboardEvent) => void) => void;

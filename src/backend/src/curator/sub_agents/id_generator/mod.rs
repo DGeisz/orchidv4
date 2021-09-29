@@ -7,8 +7,8 @@ pub mod port;
 pub struct IdGenerator;
 
 impl IdGenerator {
-    pub fn new() -> Rc<Box<dyn IdGenControl>> {
-        Rc::new(Box::new(IdGenerator))
+    pub fn new() -> Box<dyn IdGenControl> {
+        Box::new(IdGenerator)
     }
 }
 

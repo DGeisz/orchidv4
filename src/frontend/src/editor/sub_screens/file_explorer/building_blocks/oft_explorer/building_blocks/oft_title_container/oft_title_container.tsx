@@ -10,6 +10,7 @@ interface Props {
     indents: number;
     title_active: boolean;
     on_activate: () => void;
+    on_double_click?: () => void;
 }
 
 const OftTitleContainer: React.FC<Props> = (props) => {
@@ -27,6 +28,7 @@ const OftTitleContainer: React.FC<Props> = (props) => {
                     : undefined,
             }}
             onMouseDown={props.on_activate}
+            onDoubleClick={props.on_double_click}
         >
             {[...Array(props.indents)].map((_, index) => (
                 <div className="oft-node-indent" key={index} />

@@ -1,4 +1,7 @@
 use crate::curator::sub_agents::file_system_adapter::port::FSAControl;
+use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_path::{
+    OFPError, OrchidFilePath,
+};
 use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_tree::{
     OFTError, OrchidFileTree,
 };
@@ -6,7 +9,7 @@ use crate::curator::sub_agents::file_system_adapter::utils::clean_file_name::cle
 use std::cmp::Ordering;
 use std::env;
 use std::fs;
-use std::fs::ReadDir;
+use std::fs::{File, ReadDir};
 use std::path::PathBuf;
 use tokio::io::{Error, ErrorKind};
 
@@ -133,5 +136,16 @@ impl FSAControl for FileSystemAdapter {
             folder_name: current_dir,
             children,
         })
+    }
+
+    fn open_file(&self, path: &OrchidFilePath) -> Result<(), OFPError> {
+        match fs::File::open(path.to_path_string()) {
+            Ok(_) => {
+                /*TODO: Actually read the contents of the file,
+                for now we just return unit*/
+                Ok(())
+            }
+            Err(_) => Err(OFPError::Err),
+        }
     }
 }
