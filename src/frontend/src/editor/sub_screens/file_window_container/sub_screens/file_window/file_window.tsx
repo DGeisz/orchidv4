@@ -1,9 +1,12 @@
 import React from "react";
 import "./file_window_styles.scss";
 import FileTab from "./building_blocks/file_tab/file_tab";
+import { FileEditorMaster } from "./sub_screens/file_editor/sub_agents/file_editor_master/file_editor_master";
 
 interface Props {
     window_index: number;
+    file_editor_masters: FileEditorMaster[];
+    has_file_window_focus: boolean;
 }
 
 const FileWindow: React.FC<Props> = (props) => {

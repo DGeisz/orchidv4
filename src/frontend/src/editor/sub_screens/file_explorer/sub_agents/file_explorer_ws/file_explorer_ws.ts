@@ -1,6 +1,7 @@
 import { WsIo } from "../../../../../global_ws_io/ws_io";
 import { GetRootOFT } from "./basic_msgs/fe_ws_cmds";
-import { FeWsRes } from "./basic_msgs/fe_ws_res";
+import { FeWsRes, res_is_oft } from "./basic_msgs/fe_ws_res";
+import { useMemo } from "react";
 
 export class FileExplorerWs {
     ws_io: WsIo;
@@ -13,4 +14,10 @@ export class FileExplorerWs {
     get_root_oft = () => {
         this.ws_io.send_message(GetRootOFT);
     };
+}
+
+export function useFileExplorerWs(
+    res_handler: (res: FeWsRes) => void
+): FileExplorerWs {
+    return useMemo(() => new FileExplorerWs(res_handler), []);
 }

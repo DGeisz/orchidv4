@@ -5,7 +5,10 @@ use serde::{Deserialize, Serialize};
 #[derive(Eq, PartialEq, Serialize, Deserialize, Debug, Clone)]
 pub enum WsResponse {
     OFT(OrchidFileTree),
-    FullVRS(VisualRepSkeleton),
+    FullVRS {
+        vrs: VisualRepSkeleton,
+        caller_id: Option<String>,
+    },
     Err(WsError),
 }
 
