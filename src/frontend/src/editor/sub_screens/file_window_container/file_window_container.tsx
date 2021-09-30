@@ -10,13 +10,19 @@ import {
     useSetFileWindowChildFocus,
     withFileWindowFocus,
 } from "./service_providers/file_window_focus/file_window_focus";
+import {
+    useFileMasterClusters,
+    withFileMasterClusters,
+} from "./service_providers/file_master_clusters/file_master_clusters";
 
 const FileWindowContainer: React.FC = () => {
     const [focused_file_window, set_focused_file_window] = useState<number>(-1);
 
-    const [file_window_editor_masters, set_fw_ems] = useState<
-        FileEditorMaster[][]
-    >([]);
+    // const [file_window_editor_masters, set_fw_ems] = useState<
+    //     FileEditorMaster[][]
+    // >([]);
+
+    const [file_master_clusters, set_fmc] = useFileMasterClusters();
 
     const set_file_window_child_editor_focus = useSetFileWindowChildFocus();
 
@@ -30,23 +36,16 @@ const FileWindowContainer: React.FC = () => {
                     let file_window_index = -1;
                     let file_editor_index = -1;
 
-                    console.log(file_window_editor_masters);
-
                     /* First see we have a file open with the given path */
                     outer: for (
                         let i = 0;
-                        i < file_window_editor_masters.length;
+                        i < file_master_clusters.length;
                         i++
                     ) {
-                        const file_window = file_window_editor_masters[i];
+                        const file_window = file_master_clusters[i];
 
                         for (let k = 0; k < file_window.length; k++) {
                             const file_editor_master = file_window[k];
-                            console.log(
-                                "paths: ",
-                                file_editor_master.get_file_path()
-                            );
-                            console.log(vrs.file_path);
 
                             if (file_editor_master.path_eq(vrs.file_path)) {
                                 file_window_index = i;
@@ -56,12 +55,6 @@ const FileWindowContainer: React.FC = () => {
                             }
                         }
                     }
-
-                    console.log(
-                        "This is file window index, and what not",
-                        file_window_index,
-                        file_editor_index
-                    );
 
                     /* If file window index and file editor index
                      * are greater than zero, that means we already
@@ -77,16 +70,14 @@ const FileWindowContainer: React.FC = () => {
                         /* Otherwise, we need to create
                          * a new file editor in the focused window */
                         const new_file_master = new FileEditorMaster(vrs);
-                        console.log("Created new fm", new_file_master);
 
-                        set_fw_ems((prev) => {
-                            console.log("this is prev: ", prev);
-                            if (prev.length === 0) {
+                        set_fmc(() => {
+                            if (file_master_clusters.length === 0) {
                                 set_focused_file_window(0);
 
                                 return [[new_file_master]];
                             } else {
-                                const new_list = [...prev];
+                                const new_list = [...file_master_clusters];
                                 const old_window =
                                     new_list[focused_file_window];
 
@@ -110,7 +101,7 @@ const FileWindowContainer: React.FC = () => {
                 }
             }
         },
-        [file_window_editor_masters]
+        [file_master_clusters, focused_file_window]
     );
 
     useHandleOpenFile(
@@ -119,31 +110,27 @@ const FileWindowContainer: React.FC = () => {
              * but why bother when we already handled all the logic
              * in the res handler
              */
-            console.log("Got open file", file_path);
-
             fwc_ws.open_file(file_path);
         },
-        [file_window_editor_masters]
+        [file_master_clusters]
     );
 
     const [child_widths, set_child_widths] = useState<number[]>(
-        file_window_editor_masters.map(
-            () =>
-                window.screen.width /
-                Math.max(file_window_editor_masters.length, 1)
+        file_master_clusters.map(
+            () => window.screen.width / Math.max(file_master_clusters.length, 1)
         )
     );
 
     const [start_x, set_start_x] = useState<number[]>(
-        file_window_editor_masters.map(() => 400)
+        file_master_clusters.map(() => 400)
     );
 
     return (
         <div className="fwc-container">
-            {file_window_editor_masters.map((fems, index) => {
+            {file_master_clusters.map((fems, index) => {
                 const drag_id = `fw-handle-${index}`;
 
-                if (index < file_window_editor_masters.length - 1) {
+                if (index < file_master_clusters.length - 1) {
                     return (
                         <DraggableCore
                             key={`fwc${index}`}
@@ -201,4 +188,4 @@ const FileWindowContainer: React.FC = () => {
     );
 };
 
-export default withFileWindowFocus(FileWindowContainer);
+export default withFileMasterClusters(withFileWindowFocus(FileWindowContainer));

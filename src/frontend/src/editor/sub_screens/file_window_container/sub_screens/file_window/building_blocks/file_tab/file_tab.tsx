@@ -19,7 +19,9 @@ const FileTab: React.FC<Props> = (props) => {
         >
             <RiFilePaper2Line className="file-tab-icon" />
             <div className="file-tab-name-container">{props.file_name}</div>
-            <div className="file-tab-cross">×</div>
+            <div className="file-tab-cross" onClick={props.close_tab}>
+                ×
+            </div>
             {props.tab_active && (
                 <>
                     <div className="file-tab-swoosh-left">
