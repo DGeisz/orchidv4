@@ -30,6 +30,10 @@ impl AFMControl for AbstractFileMaster {
         &self.id
     }
 
+    fn get_file_path(&self) -> &OrchidFilePath {
+        &self.file_path
+    }
+
     fn get_visual_rep_skeleton(&self) -> VisualRepSkeleton {
         let tail_file = self.file_path.get_tail_file().unwrap();
 
@@ -37,6 +41,7 @@ impl AFMControl for AbstractFileMaster {
             self.id.clone(),
             tail_file.get_file_name().clone(),
             tail_file.get_formatted_name().clone(),
+            self.file_path.clone(),
         )
     }
 }

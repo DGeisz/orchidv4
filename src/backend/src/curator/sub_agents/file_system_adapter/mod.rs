@@ -139,13 +139,25 @@ impl FSAControl for FileSystemAdapter {
     }
 
     fn open_file(&self, path: &OrchidFilePath) -> Result<(), OFPError> {
-        match fs::File::open(path.to_path_string()) {
-            Ok(_) => {
-                /*TODO: Actually read the contents of the file,
-                for now we just return unit*/
-                Ok(())
+        /* Now the path will contain the current directory,
+        so we have to get rid of that*/
+        if let OrchidFilePath::Folder { child, .. } | OrchidFilePath::OrchidModule { child, .. } =
+            path
+        {
+            if let Some(child_path) = child {
+                let path_buf = child_path.to_path_buf()?;
+
+                return match fs::File::open(path_buf) {
+                    Ok(_) => {
+                        /*TODO: Actually read the contents of the file,
+                        for now we just return unit*/
+                        Ok(())
+                    }
+                    Err(err) => Err(OFPError::Err),
+                };
             }
-            Err(_) => Err(OFPError::Err),
         }
+
+        Err(OFPError::BadPath)
     }
 }

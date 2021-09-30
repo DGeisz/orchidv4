@@ -48,7 +48,7 @@ impl WsServer {
             let mut consumption_port = generate_consumption_port();
 
             while let Some(msg) = in_rx.blocking_recv() {
-                info!("Received in orchid loop message: {}", msg);
+                // info!("Received in orchid loop message: {}", msg);
 
                 /*
                 Consume the message, and if the message produces an output
@@ -235,10 +235,10 @@ impl WsServer {
                             Let's be sure the message is text
                             */
                             if let Message::Text(msg_content) = msg {
-                                info!(
-                                    "Received message {} from ws connection on {}",
-                                    msg_content, peer
-                                );
+                                // info!(
+                                //     "Received message {} from ws connection on {}",
+                                //     msg_content, peer
+                                // );
 
                                 /*
                                 Finally, send the message in to be consumed. Retry 3 times

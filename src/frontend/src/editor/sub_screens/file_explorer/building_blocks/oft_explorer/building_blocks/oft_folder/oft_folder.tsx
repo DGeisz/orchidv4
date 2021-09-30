@@ -85,6 +85,7 @@ const OftFolder: React.FC<Props> = (props) => {
                 indents={props.indents}
                 title_active={is_cursor}
                 on_activate={on_activate}
+                on_double_click={toggle}
             >
                 <div
                     className="oft-chev-container"
@@ -100,10 +101,7 @@ const OftFolder: React.FC<Props> = (props) => {
                             <FaChevronRight className="oft-chev-right" />
                         ))}
                 </div>
-                <div
-                    className="oft-icon-title-container"
-                    onDoubleClick={toggle}
-                >
+                <div className="oft-icon-title-container">
                     <FaFolder className="oft-folder-icon" />
                     <div className="oft-text">{folder.folder_name}</div>
                 </div>

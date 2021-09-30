@@ -15,6 +15,7 @@ const FileTab: React.FC<Props> = (props) => {
             className={
                 props.tab_active ? "file-tab-active" : "file-tab-inactive"
             }
+            onMouseDown={props.on_select}
         >
             <RiFilePaper2Line className="file-tab-icon" />
             <div className="file-tab-name-container">{props.file_name}</div>

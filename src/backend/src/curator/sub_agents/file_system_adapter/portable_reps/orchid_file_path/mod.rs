@@ -1,4 +1,6 @@
 use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
+use tokio::io::Error;
 
 #[cfg(test)]
 mod tests;
@@ -24,6 +26,13 @@ pub struct OrchidFileLink {
 }
 
 impl OrchidFileLink {
+    pub fn new(file_name: String, formatted_name: String) -> OrchidFileLink {
+        OrchidFileLink {
+            file_name,
+            formatted_name,
+        }
+    }
+
     pub fn get_file_name(&self) -> &String {
         &self.file_name
     }
@@ -34,6 +43,30 @@ impl OrchidFileLink {
 }
 
 impl OrchidFilePath {
+    pub fn to_path_buf(&self) -> Result<PathBuf, OFPError> {
+        let mut base_path = std::env::current_dir()?;
+
+        self.to_path_buf_helper(&mut base_path);
+
+        Ok(base_path)
+    }
+
+    fn to_path_buf_helper(&self, path: &mut PathBuf) {
+        match self {
+            OrchidFilePath::File(file_link) => path.push(&file_link.file_name),
+            OrchidFilePath::Folder { folder_name, child }
+            | OrchidFilePath::OrchidModule {
+                folder_name, child, ..
+            } => {
+                path.push(folder_name);
+
+                if let Some(path_child) = child {
+                    path_child.to_path_buf_helper(path);
+                }
+            }
+        }
+    }
+
     pub fn to_path_string(&self) -> String {
         let mut path_str = String::from("./");
         path_str.push_str(&self.to_path_string_helper());
@@ -79,4 +112,11 @@ impl OrchidFilePath {
 pub enum OFPError {
     Err,
     LastLinkNotFile,
+    BadPath,
+}
+
+impl From<std::io::Error> for OFPError {
+    fn from(_: Error) -> Self {
+        OFPError::Err
+    }
 }

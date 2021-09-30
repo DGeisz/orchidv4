@@ -3,6 +3,7 @@ use crate::backend_io::ws_io::sub_agents::ws_command_adapter::port::WsCommandAda
 use crate::backend_io::ws_io::sub_agents::ws_command_parser::basic_msgs::message_consumption_response::MessageConsumptionResponse;
 use crate::backend_io::ws_io::sub_agents::ws_command_parser::port::WsCommandParserPort;
 use log::trace;
+use crate::backend_io::ws_io::basic_msgs::ws_response::{WsResponse, WsError};
 
 pub mod basic_msgs;
 pub mod port;
@@ -40,13 +41,13 @@ impl WsCommandParserPort for WsCommandParser {
                 Check if the response is an error with a no-op,
                 and if so return None early.
 
-                TODO: Add error handling
+                For now, if we get a no op error, just return None
                 */
-                // if let WsResponse::Error(err) = &response {
-                //     if let WsError::NoOp = err {
-                //         return MessageConsumptionResponse::None;
-                //     }
-                // }
+                if let WsResponse::Err(err) = &response {
+                    if let WsError::NoOp = err {
+                        return MessageConsumptionResponse::None;
+                    }
+                }
 
                 let ser_res = serde_json::to_string(&response).unwrap();
 

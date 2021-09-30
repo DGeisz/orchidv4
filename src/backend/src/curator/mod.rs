@@ -52,6 +52,15 @@ impl CuratorControl for Curator {
        into an afm, instead we just create a new afm
     */
     fn open_file(&mut self, path: OrchidFilePath) -> Result<VisualRepSkeleton, OFPError> {
+        /* First see if this path is already open in the kernel */
+        for (_, afm) in &self.abstract_file_masters {
+            if &path == afm.get_file_path() {
+                /* If they are equal, just shoot off an
+                visual rep for the file*/
+                return Ok(afm.get_visual_rep_skeleton());
+            }
+        }
+
         /* First use the FSA to open the file at that path */
         let file = self.file_system_adapter.open_file(&path)?;
 

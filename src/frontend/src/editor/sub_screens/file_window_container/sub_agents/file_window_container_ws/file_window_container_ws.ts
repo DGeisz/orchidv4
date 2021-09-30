@@ -9,10 +9,12 @@ export class FileWindowContainerWs {
     private ws_io: WsIo;
     private readonly id: string;
 
-    constructor(res_handler: (res: FwcWsRes) => void) {
+    constructor(res_handler: (res: FwcWsRes, fwc_id: string) => void) {
         this.ws_io = new WsIo();
-        this.ws_io.set_handler((raw_res) => res_handler(JSON.parse(raw_res)));
         this.id = v4();
+        this.ws_io.set_handler((raw_res) =>
+            res_handler(JSON.parse(raw_res), this.id)
+        );
     }
 
     open_file = (path: OrchidFilePath) => {
@@ -32,9 +34,8 @@ export class FileWindowContainerWs {
 }
 
 export function useFileWindowContainerWs(
-    res_handler: (res: FwcWsRes) => void
-): [FileWindowContainerWs, string] {
-    const fwc = useMemo(() => new FileWindowContainerWs(res_handler), []);
-
-    return [fwc, fwc.get_id()];
+    res_handler: (res: FwcWsRes, fwc_id: string) => void,
+    dep_array: any[]
+): FileWindowContainerWs {
+    return useMemo(() => new FileWindowContainerWs(res_handler), dep_array);
 }

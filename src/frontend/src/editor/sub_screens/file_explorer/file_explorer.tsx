@@ -9,6 +9,8 @@ import {
     OrchidFilePath,
 } from "./sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
 import { FileCursorContext } from "./context/cursor_context/cursor_context";
+import { GridLoader, PropagateLoader } from "react-spinners";
+import { palette } from "../../../global_styles/palette";
 
 interface Props {
     set_keydown_handler: (handler: () => (e: KeyboardEvent) => void) => void;
@@ -22,8 +24,6 @@ const FileExplorer: React.FC<Props> = (props) => {
     >(() => {});
 
     const file_explorer_ws = useFileExplorerWs((res) => {
-        console.log("This is res: ", res);
-
         if (res_is_oft(res)) {
             set_oft(res.OFT);
         }
@@ -102,7 +102,13 @@ const FileExplorer: React.FC<Props> = (props) => {
         );
     } else {
         /*TODO: Add small spinner*/
-        return <div />;
+        return (
+            <div className="fe-container">
+                <div className="spinner-container">
+                    <GridLoader size={12} color={palette.mediumForestGreen} />
+                </div>
+            </div>
+        );
     }
 };
 

@@ -20,77 +20,98 @@ const FileWindowContainer: React.FC = () => {
 
     const set_file_window_child_editor_focus = useSetFileWindowChildFocus();
 
-    const [fwc_ws, fwc_id] = useFileWindowContainerWs((res) => {
-        if (res_is_full_vrs(res)) {
-            if (res.FullVRS.caller_id === fwc_id) {
-                const { vrs } = res.FullVRS;
-                let file_window_index = -1;
-                let file_editor_index = -1;
+    const fwc_ws = useFileWindowContainerWs(
+        (res, fwc_id) => {
+            if (res_is_full_vrs(res)) {
+                if (res.FullVRS.caller_id === fwc_id) {
+                    const { vrs } = res.FullVRS;
+                    console.log("Got new file: ", vrs.formatted_name);
 
-                /* First see we have a file open with the given path */
-                outer: for (
-                    let i = 0;
-                    i < file_window_editor_masters.length;
-                    i++
-                ) {
-                    const file_window = file_window_editor_masters[i];
-                    for (
-                        let k = 0;
-                        k < file_window_editor_masters.length;
-                        k++
+                    let file_window_index = -1;
+                    let file_editor_index = -1;
+
+                    console.log(file_window_editor_masters);
+
+                    /* First see we have a file open with the given path */
+                    outer: for (
+                        let i = 0;
+                        i < file_window_editor_masters.length;
+                        i++
                     ) {
-                        const file_editor_master = file_window[k];
+                        const file_window = file_window_editor_masters[i];
 
-                        if (file_editor_master.path_eq(vrs.file_path)) {
-                            file_window_index = i;
-                            file_editor_index = k;
+                        for (let k = 0; k < file_window.length; k++) {
+                            const file_editor_master = file_window[k];
+                            console.log(
+                                "paths: ",
+                                file_editor_master.get_file_path()
+                            );
+                            console.log(vrs.file_path);
 
-                            break outer;
+                            if (file_editor_master.path_eq(vrs.file_path)) {
+                                file_window_index = i;
+                                file_editor_index = k;
+
+                                break outer;
+                            }
                         }
                     }
-                }
 
-                /* If file window index and file editor index
-                 * are greater than zero, that means we already
-                 * have reference to this file, so we simply
-                 * put the corresponding window and file in focus */
-                if (file_window_index > -1 && file_editor_index > -1) {
-                    set_focused_file_window(file_window_index);
-                    set_file_window_child_editor_focus(
+                    console.log(
+                        "This is file window index, and what not",
                         file_window_index,
                         file_editor_index
                     );
-                } else {
-                    /* Otherwise, we need to create
-                     * a new file editor in the focused window */
-                    const new_file_master = new FileEditorMaster(vrs);
 
-                    set_fw_ems((prev) => {
-                        if (prev.length === 0) {
-                            set_focused_file_window(0);
+                    /* If file window index and file editor index
+                     * are greater than zero, that means we already
+                     * have reference to this file, so we simply
+                     * put the corresponding window and file in focus */
+                    if (file_window_index > -1 && file_editor_index > -1) {
+                        set_focused_file_window(file_window_index);
+                        set_file_window_child_editor_focus(
+                            file_window_index,
+                            file_editor_index
+                        );
+                    } else {
+                        /* Otherwise, we need to create
+                         * a new file editor in the focused window */
+                        const new_file_master = new FileEditorMaster(vrs);
+                        console.log("Created new fm", new_file_master);
 
-                            return [[new_file_master]];
-                        } else {
-                            const new_list = [...prev];
-                            const old_window = new_list[focused_file_window];
+                        set_fw_ems((prev) => {
+                            console.log("this is prev: ", prev);
+                            if (prev.length === 0) {
+                                set_focused_file_window(0);
 
-                            let new_window;
-
-                            if (!!old_window && old_window.length > 0) {
-                                new_window = [new_file_master, ...old_window];
+                                return [[new_file_master]];
                             } else {
-                                new_window = [new_file_master];
+                                const new_list = [...prev];
+                                const old_window =
+                                    new_list[focused_file_window];
+
+                                let new_window;
+
+                                if (!!old_window && old_window.length > 0) {
+                                    new_window = [
+                                        new_file_master,
+                                        ...old_window,
+                                    ];
+                                } else {
+                                    new_window = [new_file_master];
+                                }
+
+                                new_list[focused_file_window] = new_window;
+
+                                return new_list;
                             }
-
-                            new_list[focused_file_window] = new_window;
-
-                            return new_list;
-                        }
-                    });
+                        });
+                    }
                 }
             }
-        }
-    });
+        },
+        [file_window_editor_masters]
+    );
 
     useHandleOpenFile(
         (file_path) => {
@@ -98,6 +119,8 @@ const FileWindowContainer: React.FC = () => {
              * but why bother when we already handled all the logic
              * in the res handler
              */
+            console.log("Got open file", file_path);
+
             fwc_ws.open_file(file_path);
         },
         [file_window_editor_masters]

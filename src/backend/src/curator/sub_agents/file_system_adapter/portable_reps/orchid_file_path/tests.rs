@@ -1,4 +1,6 @@
-use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_path::OrchidFilePath;
+use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_path::{
+    OrchidFileLink, OrchidFilePath,
+};
 
 #[test]
 fn test_to_path_string() {
@@ -21,10 +23,10 @@ fn test_to_path_string() {
         formatted_name: "Zor".to_string(),
         child: Some(Box::new(OrchidFilePath::Folder {
             folder_name: "tang".to_string(),
-            child: Some(Box::new(OrchidFilePath::File {
-                file_name: "beck.orch".to_string(),
-                formatted_name: "Beck.orch".to_string(),
-            })),
+            child: Some(Box::new(OrchidFilePath::File(OrchidFileLink::new(
+                "beck.orch".to_string(),
+                "Beck".to_string(),
+            )))),
         })),
     };
 
