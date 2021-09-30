@@ -18,10 +18,6 @@ import {
 const FileWindowContainer: React.FC = () => {
     const [focused_file_window, set_focused_file_window] = useState<number>(-1);
 
-    // const [file_window_editor_masters, set_fw_ems] = useState<
-    //     FileEditorMaster[][]
-    // >([]);
-
     const [file_master_clusters, set_fmc] = useFileMasterClusters();
 
     const set_file_window_child_editor_focus = useSetFileWindowChildFocus();
@@ -31,7 +27,6 @@ const FileWindowContainer: React.FC = () => {
             if (res_is_full_vrs(res)) {
                 if (res.FullVRS.caller_id === fwc_id) {
                     const { vrs } = res.FullVRS;
-                    console.log("Got new file: ", vrs.formatted_name);
 
                     let file_window_index = -1;
                     let file_editor_index = -1;
@@ -125,67 +120,73 @@ const FileWindowContainer: React.FC = () => {
         file_master_clusters.map(() => 400)
     );
 
-    return (
-        <div className="fwc-container">
-            {file_master_clusters.map((fems, index) => {
-                const drag_id = `fw-handle-${index}`;
+    if (file_master_clusters.length > 0) {
+        return (
+            <div className="fwc-container">
+                {file_master_clusters.map((fems, index) => {
+                    const drag_id = `fw-handle-${index}`;
 
-                if (index < file_master_clusters.length - 1) {
-                    return (
-                        <DraggableCore
-                            key={`fwc${index}`}
-                            handle={`#${drag_id}`}
-                            onStart={(_, { x }) => {
-                                let new_x = [...start_x];
-                                new_x[index] = x - child_widths[index];
-                                console.log("Starting: ", x);
+                    if (index < file_master_clusters.length - 1) {
+                        return (
+                            <DraggableCore
+                                key={`fwc${index}`}
+                                handle={`#${drag_id}`}
+                                onStart={(_, { x }) => {
+                                    let new_x = [...start_x];
+                                    new_x[index] = x - child_widths[index];
+                                    console.log("Starting: ", x);
 
-                                set_start_x(new_x);
-                            }}
-                            onDrag={(_, { x }) => {
-                                let new_widths = [...child_widths];
-                                new_widths[index] = x - start_x[index];
-                                console.log("Dragging: ", x);
+                                    set_start_x(new_x);
+                                }}
+                                onDrag={(_, { x }) => {
+                                    let new_widths = [...child_widths];
+                                    new_widths[index] = x - start_x[index];
+                                    console.log("Dragging: ", x);
 
-                                set_child_widths(new_widths);
-                            }}
-                        >
-                            <div
-                                className="fwc-child-container"
-                                style={{
-                                    // width: child_widths[index],
-                                    minWidth: child_widths[index],
+                                    set_child_widths(new_widths);
                                 }}
                             >
-                                <FileWindow
-                                    window_index={index}
-                                    file_editor_masters={fems}
-                                    has_file_window_focus={
-                                        focused_file_window === index
-                                    }
-                                />
                                 <div
-                                    className="fwc-child-drag-bar"
-                                    id={drag_id}
-                                />
-                            </div>
-                        </DraggableCore>
-                    );
-                } else {
-                    return (
-                        <FileWindow
-                            key={`fwc${index}`}
-                            window_index={index}
-                            file_editor_masters={fems}
-                            has_file_window_focus={
-                                focused_file_window === index
-                            }
-                        />
-                    );
-                }
-            })}
-        </div>
-    );
+                                    className="fwc-child-container"
+                                    style={{
+                                        // width: child_widths[index],
+                                        minWidth: child_widths[index],
+                                    }}
+                                >
+                                    <FileWindow
+                                        window_index={index}
+                                        file_editor_masters={fems}
+                                        has_file_window_focus={
+                                            focused_file_window === index
+                                        }
+                                    />
+                                    <div
+                                        className="fwc-child-drag-bar"
+                                        id={drag_id}
+                                    />
+                                </div>
+                            </DraggableCore>
+                        );
+                    } else {
+                        return (
+                            <FileWindow
+                                key={`fwc${index}`}
+                                window_index={index}
+                                file_editor_masters={fems}
+                                has_file_window_focus={
+                                    focused_file_window === index
+                                }
+                            />
+                        );
+                    }
+                })}
+            </div>
+        );
+    } else {
+        return (
+            <div className="fwc-empty-container">Create or open a file 🤗</div>
+        );
+    }
 };
 
 export default withFileMasterClusters(withFileWindowFocus(FileWindowContainer));

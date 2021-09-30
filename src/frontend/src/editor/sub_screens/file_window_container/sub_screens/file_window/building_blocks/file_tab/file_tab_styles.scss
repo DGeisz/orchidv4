@@ -13,6 +13,7 @@ $fileTabHeight : 30px;
     background-color: $soapstone;
     border-top-left-radius: $borderRadius;
     border-top-right-radius: $borderRadius;
+    cursor: pointer;
 }
 
 
@@ -24,6 +25,7 @@ $fileTabHeight : 30px;
     background-color: $softGray;
     border-top-left-radius: $borderRadius;
     border-top-right-radius: $borderRadius;
+    cursor: pointer;
 }
 
 .file-tab-icon {
@@ -73,7 +75,6 @@ $fileTabHeight : 30px;
     @extend %no-highlight;
     font-weight: 500;
     color: $hardGray;
-    cursor: pointer;
     white-space: nowrap;
 }
 
@@ -90,6 +91,6 @@ $fileTabHeight : 30px;
 
 }
 
-.file-tab-cross:active {
+.file-tab-cross:hover {
     background-color: $semiSoftGray;
 }

@@ -8,11 +8,12 @@ export class WsIo {
     private response_handler?: (res: string) => void;
     private send_queue: string[] = [];
 
-    constructor(addr: string = "ws://127.0.0.1:7200") {
+    constructor(addr_port: string = "7200") {
+        // constructor(addr_port: string = "ws://127.0.0.1:7200") {
         this.link_id = v4();
-        this.addr = addr;
+        this.addr = `ws://${window.location.hostname}:${addr_port}`;
 
-        console.log("Creating websocket!");
+        console.log("Creating websocket!", window.location.hostname);
 
         this.ws = new WebSocket(this.addr);
         this.configure_ws();

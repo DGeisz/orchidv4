@@ -52,9 +52,23 @@ export function useRemoveFileMasterFromCluster(
                 const new_clusters = [...file_master_clusters];
                 const new_cluster = [...cluster];
 
+                console.log("Old clusters", new_clusters, new_clusters.length);
+
                 new_cluster.splice(fm_index, 1);
 
-                new_clusters[cluster_index] = new_cluster;
+                console.log("New cluster1", new_clusters, new_clusters.length);
+
+                if (new_cluster.length > 0) {
+                    new_clusters[cluster_index] = new_cluster;
+                } else {
+                    new_clusters.splice(cluster_index, 1);
+                }
+
+                console.log(
+                    "New clusters: ",
+                    new_clusters,
+                    new_clusters.length
+                );
 
                 set_fmc(() => new_clusters);
             }

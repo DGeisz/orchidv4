@@ -7,6 +7,15 @@
     flex: 1;
 }
 
+.fwc-empty-container {
+    @extend %flexGrid5;
+    @extend %no-highlight;
+    background-color: $softGray;
+    color: $lightGray;
+    font-weight: 500;
+    font-size: 17pt;
+}
+
 .fwc-child-container {
     @extend %flexRow;
 }
