@@ -16,7 +16,7 @@ const EFContext = React.createContext<EFContextType>({
 });
 
 export function withEditorFocus(Component: React.FC): React.FC {
-    return (props) => {
+    return () => {
         const [editor_focus, set_focus] = useState<EditorFocus>(
             EditorFocus.file_explorer
         );
@@ -28,7 +28,7 @@ export function withEditorFocus(Component: React.FC): React.FC {
                     take_focus: set_focus,
                 }}
             >
-                {props.children}
+                <Component />
             </EFContext.Provider>
         );
     };

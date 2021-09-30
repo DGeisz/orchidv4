@@ -1,0 +1,95 @@
+@import "src/global_styles/basic_layouts";
+@import "src/global_styles/basic_visual";
+@import "src/global_styles/palette";
+
+$borderRadius : 8px;
+$fileTabHeight : 30px;
+
+.file-tab-active {
+    @extend %flexRow;
+    align-items: center;
+    padding: 0 10px 0;
+    position: relative;
+    background-color: $soapstone;
+    border-top-left-radius: $borderRadius;
+    border-top-right-radius: $borderRadius;
+}
+
+
+.file-tab-inactive {
+    @extend %flexRow;
+    align-items: center;
+    padding: 0 10px 0;
+    position: relative;
+    background-color: $softGray;
+    border-top-left-radius: $borderRadius;
+    border-top-right-radius: $borderRadius;
+}
+
+.file-tab-icon {
+    color: $mediumPink;
+    font-size: 12pt !important;
+    min-width: 12pt;
+    margin-right: 5px;
+}
+
+.file-tab-swoosh-left {
+    position: absolute;
+    left: -$borderRadius;
+    bottom: 0;
+    height: $borderRadius;
+    width: $borderRadius;
+    background-color: $soapstone;
+    z-index: 10;
+}
+
+.ftl-inner {
+    height: 100%;
+    width: 100%;
+    border-bottom-right-radius: $borderRadius;
+    background-color: $softGray;
+    z-index: 10;
+}
+
+.file-tab-swoosh-right {
+    position: absolute;
+    right: -$borderRadius;
+    bottom: 0;
+    height: $borderRadius;
+    width: $borderRadius;
+    background-color: $soapstone;
+    z-index: 10;
+}
+
+.ftr-inner {
+    height: 100%;
+    width: 100%;
+    border-bottom-left-radius: $borderRadius;
+    background-color: $softGray;
+    z-index: 10;
+}
+
+.file-tab-name-container {
+    @extend %no-highlight;
+    font-weight: 500;
+    color: $hardGray;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.file-tab-cross {
+    @extend  %smooth-transition;
+    @extend %no-highlight;
+    font-weight: bold;
+    color: $hardGray;
+    margin-left: 10px;
+    cursor: pointer;
+    padding: 2px 3px 4px 2px;
+    border-radius: 2px;
+    line-height: 10px;
+
+}
+
+.file-tab-cross:active {
+    background-color: $semiSoftGray;
+}

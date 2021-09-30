@@ -1,0 +1,57 @@
+@import "src/global_styles/basic_layouts";
+@import "src/global_styles/palette";
+
+$borderRadius: 8px;
+
+.fw-container {
+    @extend %flexGrid1;
+}
+
+.fw-header {
+
+}
+
+.fw-file-bar {
+    @extend %flexRow;
+    height: 30px;
+    background-color: $softGray;
+    padding: 0 10px 0;
+    overflow: hidden;
+}
+
+.fw-body {
+    @extend %flexGrid1;
+    position: relative;
+}
+
+.left-swoosh {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: $borderRadius;
+    width: $borderRadius;
+    background-color: $softGray;
+}
+
+.left-swoosh-inner {
+    height: 100%;
+    width: 100%;
+    border-top-left-radius: $borderRadius;
+    background-color: $soapstone;
+}
+
+.right-swoosh {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: $borderRadius;
+    width: $borderRadius;
+    background-color: $softGray;
+}
+
+.right-swoosh-inner {
+    height: 100%;
+    width: 100%;
+    border-top-right-radius: $borderRadius;
+    background-color: $soapstone;
+}
