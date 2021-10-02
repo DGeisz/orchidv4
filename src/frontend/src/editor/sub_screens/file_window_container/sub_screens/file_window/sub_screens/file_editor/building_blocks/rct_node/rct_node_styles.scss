@@ -1,0 +1,65 @@
+@import "src/global_styles/basic_layouts";
+@import "src/global_styles/basic_visual";
+@import "src/global_styles/palette";
+
+$tex-padding: 12px 0;
+
+.rct-container-container {
+}
+
+.rct-container-indented {
+    margin-left: 30px;
+}
+
+.rct-container-left-border {
+    padding: 10px;
+    border-radius: 10px;
+    border-left: solid 1px $semiSoftGray;
+}
+
+.rct-line-container {
+}
+
+.rct-line-underlined {
+    border-bottom: solid 1px $semiSoftGray;
+}
+
+.rct-line-overlined {
+    border-top: solid 1px $semiSoftGray;
+}
+
+.rct-title-container {
+    margin-bottom: 10px;
+}
+
+.rct-comment-container {
+    font-size: 10pt;
+    margin-bottom: 20px;
+}
+
+.rct-line-line {
+    @extend %flexRow;
+}
+
+.rct-ll-left {
+    @extend %flexRow;
+    flex: 1;
+    align-items: center;
+}
+
+.rct-lll-left {
+    @extend %flexGrid4;
+    padding: $tex-padding;
+}
+
+.rct-lll-right {
+    @extend %flexGrid4;
+    padding: $tex-padding;
+    padding-left: 20px;
+    border-left: solid 1px $semiSoftGray;
+}
+
+.rct-ll-right {
+    @extend %grid5;
+    padding: $tex-padding;
+}

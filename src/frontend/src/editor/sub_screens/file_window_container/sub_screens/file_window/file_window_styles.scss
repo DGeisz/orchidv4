@@ -22,6 +22,7 @@ $borderRadius: 8px;
 .fw-body {
     @extend %flexGrid1;
     position: relative;
+    padding: 10px;
 }
 
 .left-swoosh {
@@ -55,3 +56,4 @@ $borderRadius: 8px;
     border-top-right-radius: $borderRadius;
     background-color: $soapstone;
 }
+

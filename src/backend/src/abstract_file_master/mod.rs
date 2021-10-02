@@ -5,6 +5,7 @@ use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_
     OFPError, OrchidFilePath,
 };
 
+pub mod dyn_subjects;
 pub mod generator;
 pub mod port;
 pub mod portable_reps;

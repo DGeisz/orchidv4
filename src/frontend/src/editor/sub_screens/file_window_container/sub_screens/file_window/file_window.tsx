@@ -4,6 +4,7 @@ import FileTab from "./building_blocks/file_tab/file_tab";
 import { FileEditorMaster } from "./sub_screens/file_editor/sub_agents/file_editor_master/file_editor_master";
 import { useSetFileWindowFocusHandler } from "../../service_providers/file_window_focus/file_window_focus";
 import { useRemoveFileMasterFromCluster } from "../../service_providers/file_master_clusters/file_master_clusters";
+import FileEditor from "./sub_screens/file_editor/file_editor";
 
 interface Props {
     window_index: number;
@@ -52,6 +53,9 @@ const FileWindow: React.FC<Props> = (props) => {
                 <div className="right-swoosh">
                     <div className="right-swoosh-inner" />
                 </div>
+                <>
+                    <FileEditor />
+                </>
             </div>
         </div>
     );

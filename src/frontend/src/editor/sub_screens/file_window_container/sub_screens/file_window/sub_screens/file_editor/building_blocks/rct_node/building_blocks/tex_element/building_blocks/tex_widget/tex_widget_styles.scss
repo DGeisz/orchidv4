@@ -1,0 +1,80 @@
+@import "./node_modules/bootstrap/scss/bootstrap";
+@import "src/global_styles/basic_layouts";
+@import "src/global_styles/basic_visual";
+@import "src/global_styles/palette";
+
+.term-hint-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.term-hint {
+    z-index: 100;
+    font-size: 9pt;
+    border-radius: 2px;
+    background-color: palegreen;
+    padding: 3px;
+    height: 17px;
+    font-family: $font-family-sans-serif;
+    font-weight: bold;
+    //color: $yiq-text-dark;
+    box-shadow: grey 0 3px 6px;
+    opacity: 90%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $black;
+}
+
+.term-left {
+    opacity: 40%;
+}
+
+.outer-rep-container {
+    //flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.rep-buffer {
+    height: 100%;
+    width: 100%;
+}
+
+.rep-lower {
+    position: relative;
+}
+
+.rep-container {
+    top: 0;
+    left: -15px;
+    @extend %shadow-md;
+    padding: 8px 15px;
+    border-radius: 5px;
+    position: absolute;
+    background-color: $white;
+    z-index: 100;
+}
+
+.rep-tex-input {
+    border: 0;
+    border-bottom: solid 1px $semiSoftGray;
+    margin-bottom: 10px;
+}
+
+.rep-tex-input:focus {
+    outline: none;
+}
+
+.rendered-tex {
+    color: black;
+    font-size: 12pt;
+}
