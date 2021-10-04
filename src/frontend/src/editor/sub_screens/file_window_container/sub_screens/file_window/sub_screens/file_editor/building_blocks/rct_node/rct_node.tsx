@@ -80,10 +80,10 @@ const RctNode: React.FC<Props> = (props) => {
                             </div>
                         )}
                     </div>
-                    {!!node.line_number && (
+                    {!!node.label_tex && (
                         <div className="rct-ll-right">
                             <TexElement
-                                tex={node.line_number}
+                                tex={node.label_tex}
                                 tex_widget_properties={[]}
                             />
                         </div>

@@ -41,6 +41,11 @@ export const CURSOR_NAME = "cursor";
 export const CURSOR_LATEX: string =
     "\\cssId{cursor}{\\color{black}{\\boldsymbol{|}}}";
 
+export const INVALID_TEX = add_color_box(
+    add_latex_color("INVALID TEX", palette.danger),
+    palette.dangerLight
+);
+
 export const ALLOWED_NON_ALPHA_NUMERIC_CHARS = [
     "/",
     "[",

@@ -9,7 +9,7 @@ export interface AVRLine {
     comment?: string;
     main_tex: string;
     right_tex?: string;
-    line_number?: string;
+    label_tex?: string;
     underlined?: boolean;
     overlined?: boolean;
 }
@@ -35,7 +35,7 @@ export const exampleNode: AVRNode = {
             right_tex: "\\frac{1}{2} = \\frac{2}{4}",
             title: "\\text{\\color{blue}{Theorem}}",
             comment: "\\text{This is precisely what it looks like.}",
-            line_number: "\\text{(1.1)}",
+            label_tex: "\\text{(1.1)}",
             underlined: true,
         },
         {
@@ -47,19 +47,19 @@ export const exampleNode: AVRNode = {
                     tag: AVRType.Line,
                     main_tex: "\\Omega_{\\frac{1}{2}} = \\frac{2}{4}",
                     right_tex: "\\frac{1}{2} = \\frac{2}{4}",
-                    line_number: "\\text{(1.1)}",
+                    label_tex: "\\text{(1.1)}",
                 },
                 {
                     tag: AVRType.Line,
                     main_tex: "\\frac{1}{2}",
                     right_tex: "\\frac{1}{2} = \\frac{2}{4}",
-                    line_number: "\\text{(1.2)}",
+                    label_tex: "\\text{(1.2)}",
                 },
                 {
                     tag: AVRType.Line,
                     main_tex: "\\frac{1}{2}",
                     right_tex: "\\frac{1}{2} = \\frac{2}{4}",
-                    line_number: "\\text{(1.3)}",
+                    label_tex: "\\text{(1.3)}",
                 },
             ],
         },
@@ -68,13 +68,13 @@ export const exampleNode: AVRNode = {
             main_tex: "\\frac{1}{2}",
             right_tex: "\\frac{1}{2} = \\frac{2}{4}",
             overlined: true,
-            line_number: "\\text{(1.2)}",
+            label_tex: "\\text{(1.2)}",
         },
         {
             tag: AVRType.Line,
             main_tex: "\\frac{1}{2}",
             right_tex: "\\frac{1}{2} = \\frac{2}{4}",
-            line_number: "\\text{(1.3)}",
+            label_tex: "\\text{(1.3)}",
         },
     ],
 };
