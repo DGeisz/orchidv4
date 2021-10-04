@@ -1,5 +1,4 @@
 import { renderToString } from "katex";
-
 import { palette } from "../../../../../../../../global_styles/palette";
 
 export function add_latex_color(tex: string, color: string) {
@@ -42,7 +41,7 @@ export const CURSOR_LATEX: string =
     "\\cssId{cursor}{\\color{black}{\\boldsymbol{|}}}";
 
 export const INVALID_TEX = add_color_box(
-    add_latex_color("INVALID TEX", palette.danger),
+    add_latex_color(create_tex_text("Invalid TeX"), palette.danger),
     palette.dangerLight
 );
 

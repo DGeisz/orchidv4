@@ -1,9 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import "./file_editor_styles.scss";
 import RctNode from "./building_blocks/rct_node/rct_node";
 import { EditorContext } from "./context/EditorContext";
-import { exampleNode } from "./editor_types/assembled_visual_rep/assembled_visual_rep";
+import {
+    AVRNode,
+    exampleNode,
+} from "./editor_types/assembled_visual_rep/assembled_visual_rep";
+import { GridLoader } from "react-spinners";
+import { palette } from "../../../../../../../global_styles/palette";
+import { FileEditorMaster } from "./sub_agents/file_editor_master/file_editor_master";
 
-const FileEditor: React.FC = () => {
+interface Props {
+    file_editor_master: FileEditorMaster;
+}
+
+const FileEditor: React.FC<Props> = (props) => {
     const [select_socket, set_select_socket] = useState<
         (socket_id: string) => void
     >(() => {});
@@ -13,20 +24,34 @@ const FileEditor: React.FC = () => {
     const [edit_rep_mode, set_edit_rep_mode] = useState<boolean>(false);
     const [edit_rep_id, set_edit_rep_id] = useState<string>("");
 
-    return (
-        <EditorContext.Provider
-            value={{
-                select_socket,
-                select_mode,
-                select_seq,
-                edit_rep_mode,
-                edit_rep_id,
-                page_id: "",
-            }}
-        >
-            <RctNode avr_node={exampleNode} />
-        </EditorContext.Provider>
-    );
+    const [assembled_visual_rep, set_avr] = useState<AVRNode>();
+
+    useEffect(() => {
+        props.file_editor_master.set_set_avr(set_avr);
+    }, []);
+
+    if (!!assembled_visual_rep) {
+        return (
+            <EditorContext.Provider
+                value={{
+                    select_socket,
+                    select_mode,
+                    select_seq,
+                    edit_rep_mode,
+                    edit_rep_id,
+                    page_id: "",
+                }}
+            >
+                <RctNode avr_node={assembled_visual_rep} />
+            </EditorContext.Provider>
+        );
+    } else {
+        return (
+            <div className="fe-loading-container">
+                <GridLoader size={20} color={palette.mediumForestGreen} />
+            </div>
+        );
+    }
 };
 
 export default FileEditor;

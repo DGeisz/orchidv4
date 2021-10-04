@@ -1,0 +1,5 @@
+@import "src/global_styles/basic_layouts";
+
+.fe-loading-container {
+    @extend %flexGrid5;
+}

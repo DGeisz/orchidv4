@@ -9,7 +9,7 @@ import {
     OrchidFilePath,
 } from "./sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
 import { FileCursorContext } from "./context/cursor_context/cursor_context";
-import { GridLoader, PropagateLoader } from "react-spinners";
+import { GridLoader } from "react-spinners";
 import { palette } from "../../../global_styles/palette";
 
 interface Props {

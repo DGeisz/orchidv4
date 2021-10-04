@@ -54,7 +54,11 @@ const FileWindow: React.FC<Props> = (props) => {
                     <div className="right-swoosh-inner" />
                 </div>
                 <>
-                    <FileEditor />
+                    <FileEditor
+                        file_editor_master={
+                            props.file_editor_masters[child_focus]
+                        }
+                    />
                 </>
             </div>
         </div>

@@ -5,20 +5,20 @@ export enum AVRType {
 
 export interface AVRLine {
     tag: AVRType.Line;
-    title?: string;
-    comment?: string;
+    title: string | null;
+    comment: string | null;
     main_tex: string;
-    right_tex?: string;
-    label_tex?: string;
-    underlined?: boolean;
-    overlined?: boolean;
+    right_tex: string | null;
+    label_tex: string | null;
+    border_bottom: boolean | null;
+    border_top: boolean | null;
 }
 
 export interface AVRContainer {
     tag: AVRType.Container;
     id: string; // This is the just for render keys in react
-    left_border?: boolean;
-    indented?: boolean;
+    left_border: boolean;
+    indented: boolean;
     children: Array<AVRNode>;
 }
 
@@ -28,6 +28,7 @@ export const exampleNode: AVRNode = {
     tag: AVRType.Container,
     id: "asdf",
     left_border: true,
+    indented: false,
     children: [
         {
             tag: AVRType.Line,
@@ -36,11 +37,13 @@ export const exampleNode: AVRNode = {
             title: "\\text{\\color{blue}{Theorem}}",
             comment: "\\text{This is precisely what it looks like.}",
             label_tex: "\\text{(1.1)}",
-            underlined: true,
+            border_bottom: true,
+            border_top: false,
         },
         {
             tag: AVRType.Container,
             id: "green",
+            left_border: false,
             indented: true,
             children: [
                 {
@@ -48,18 +51,30 @@ export const exampleNode: AVRNode = {
                     main_tex: "\\Omega_{\\frac{1}{2}} = \\frac{2}{4}",
                     right_tex: "\\frac{1}{2} = \\frac{2}{4}",
                     label_tex: "\\text{(1.1)}",
+                    title: null,
+                    comment: null,
+                    border_bottom: false,
+                    border_top: false,
                 },
                 {
                     tag: AVRType.Line,
                     main_tex: "\\frac{1}{2}",
                     right_tex: "\\frac{1}{2} = \\frac{2}{4}",
                     label_tex: "\\text{(1.2)}",
+                    title: null,
+                    comment: null,
+                    border_bottom: false,
+                    border_top: false,
                 },
                 {
                     tag: AVRType.Line,
                     main_tex: "\\frac{1}{2}",
                     right_tex: "\\frac{1}{2} = \\frac{2}{4}",
                     label_tex: "\\text{(1.3)}",
+                    title: null,
+                    comment: null,
+                    border_bottom: false,
+                    border_top: false,
                 },
             ],
         },
@@ -67,14 +82,21 @@ export const exampleNode: AVRNode = {
             tag: AVRType.Line,
             main_tex: "\\frac{1}{2}",
             right_tex: "\\frac{1}{2} = \\frac{2}{4}",
-            overlined: true,
+            border_top: true,
             label_tex: "\\text{(1.2)}",
+            title: null,
+            comment: null,
+            border_bottom: false,
         },
         {
             tag: AVRType.Line,
             main_tex: "\\frac{1}{2}",
             right_tex: "\\frac{1}{2} = \\frac{2}{4}",
             label_tex: "\\text{(1.3)}",
+            title: null,
+            comment: null,
+            border_bottom: false,
+            border_top: false,
         },
     ],
 };

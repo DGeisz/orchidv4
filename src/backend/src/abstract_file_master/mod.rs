@@ -1,6 +1,8 @@
 use crate::abstract_file_master::generator::port::AFMGeneratorControl;
 use crate::abstract_file_master::port::AFMControl;
-use crate::abstract_file_master::portable_reps::visual_rep_skeleton::VisualRepSkeleton;
+use crate::abstract_file_master::portable_reps::visual_rep_skeleton::{
+    VRSNodeSocket, VisualRepSkeleton,
+};
 use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_path::{
     OFPError, OrchidFilePath,
 };
@@ -43,6 +45,7 @@ impl AFMControl for AbstractFileMaster {
             tail_file.get_file_name().clone(),
             tail_file.get_formatted_name().clone(),
             self.file_path.clone(),
+            VRSNodeSocket::new("".to_string(), None),
         )
     }
 }

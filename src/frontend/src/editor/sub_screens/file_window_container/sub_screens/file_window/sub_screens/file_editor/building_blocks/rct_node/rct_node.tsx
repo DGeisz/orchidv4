@@ -43,9 +43,9 @@ const RctNode: React.FC<Props> = (props) => {
         return (
             <div
                 className={`rct-line-container ${
-                    node.underlined ? "rct-line-underlined" : ""
+                    node.border_bottom ? "rct-line-border-bottom" : ""
                 }
-                ${node.overlined ? "rct-line-overlined" : ""}`}
+                ${node.border_top ? "rct-line-border-top" : ""}`}
             >
                 {!!node.title && (
                     <div className="rct-title-container">
