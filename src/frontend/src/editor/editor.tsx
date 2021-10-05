@@ -20,7 +20,8 @@ const Editor: React.FC = () => {
     const [file_explorer_visible, show_file_explorer] = useState<boolean>(true);
 
     const fe_keydown_handler = useExplorerKeydown();
-    const [fwc_keydown_handler, fwc_keypress_handler] =
+
+    const [fwc_keydown_handler, fwc_keypress_handler, fwc_handlers_id] =
         useFwcKeyboardHandlers();
 
     const editor_focus = useEditorFocus();
@@ -63,7 +64,7 @@ const Editor: React.FC = () => {
             document.removeEventListener("keydown", keydown_handler);
             document.removeEventListener("keypress", keypress_handler);
         };
-    }, [editor_focus, fe_keydown_handler]);
+    }, [editor_focus, fe_keydown_handler, fwc_handlers_id]);
 
     return (
         <EditorCompCommProvider>

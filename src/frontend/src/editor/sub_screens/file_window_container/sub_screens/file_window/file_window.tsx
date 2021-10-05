@@ -5,6 +5,16 @@ import { FileEditorMaster } from "./sub_screens/file_editor/sub_agents/file_edit
 import { useSetFileWindowFocusHandler } from "../../service_providers/file_window_focus/file_window_focus";
 import { useRemoveFileMasterFromCluster } from "../../service_providers/file_master_clusters/file_master_clusters";
 import FileEditor from "./sub_screens/file_editor/file_editor";
+import {
+    useOnFwKeydown,
+    useOnFwKeypress,
+} from "../../service_providers/file_window_keyboard_handlers/file_window_keyboard_handlers";
+import {
+    KeyboardHandler,
+    noOpHandler,
+} from "../../../../../global_types/keyboard_events";
+import { useOnFwcKeypress } from "../../../../service_providers/fwc_keyboard_handlers/fwc_keyboard_handlers";
+import { OrchidFilePath } from "../../../file_explorer/sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
 
 interface Props {
     window_index: number;
@@ -32,6 +42,26 @@ const FileWindow: React.FC<Props> = (props) => {
         },
         []
     );
+
+    /* Set file window keyboard event handlers */
+    let keydown: KeyboardHandler;
+    let keypress: KeyboardHandler;
+
+    let master_path: OrchidFilePath | null = null;
+
+    if (!!props.file_editor_masters[child_focus]) {
+        const master = props.file_editor_masters[child_focus];
+
+        keydown = master.handle_keydown;
+        keypress = master.handle_keypress;
+        master_path = master.get_file_path();
+    } else {
+        keydown = noOpHandler;
+        keypress = noOpHandler;
+    }
+
+    useOnFwKeydown(props.window_index, keydown, [child_focus, master_path]);
+    useOnFwKeypress(props.window_index, keypress, [child_focus, master_path]);
 
     return (
         <div className="fw-container">

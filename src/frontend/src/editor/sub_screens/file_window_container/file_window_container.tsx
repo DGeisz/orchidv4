@@ -9,6 +9,15 @@ import { res_is_full_vrs } from "./sub_agents/file_window_container_ws/basic_msg
 import { useSetFileWindowChildFocus } from "./service_providers/file_window_focus/file_window_focus";
 import { useFileMasterClusters } from "./service_providers/file_master_clusters/file_master_clusters";
 import { withFWCHocServiceProviders } from "./service_providers/with_file_window_hoc_service_providers";
+import {
+    useOnFwcKeydown,
+    useOnFwcKeypress,
+} from "../../service_providers/fwc_keyboard_handlers/fwc_keyboard_handlers";
+import { useFwKeyboardHandlers } from "./service_providers/file_window_keyboard_handlers/file_window_keyboard_handlers";
+import {
+    EditorFocus,
+    useTakeEditorFocus,
+} from "../../service_providers/editor_focus/editor_focus";
 
 const FileWindowContainer: React.FC = () => {
     const [focused_file_window, set_focused_file_window] = useState<number>(-1);
@@ -16,6 +25,11 @@ const FileWindowContainer: React.FC = () => {
     const [file_master_clusters, set_fmc] = useFileMasterClusters();
 
     const set_file_window_child_editor_focus = useSetFileWindowChildFocus();
+
+    const take_editor_focus = useTakeEditorFocus();
+
+    const take_focus = () =>
+        take_editor_focus(EditorFocus.file_window_container);
 
     const fwc_ws = useFileWindowContainerWs(
         (res, fwc_id) => {
@@ -88,6 +102,8 @@ const FileWindowContainer: React.FC = () => {
                             }
                         });
                     }
+
+                    take_focus();
                 }
             }
         },
@@ -105,6 +121,18 @@ const FileWindowContainer: React.FC = () => {
         [file_master_clusters]
     );
 
+    /* Keyboard handlers */
+
+    /* First grab handler from the focused file window */
+    const [fw_keydown_handler, fw_keypress_handler, handlers_id] =
+        useFwKeyboardHandlers(focused_file_window);
+
+    /* Then set keydown and keypress handlers for editor */
+    useOnFwcKeydown(fw_keydown_handler, [handlers_id]);
+
+    /* Then set keydown and keypress handlers for editor */
+    useOnFwcKeypress(fw_keypress_handler, [handlers_id]);
+
     /* Next two pieces of state are specifically
      * for handling the width of different windows */
     const [child_widths, set_child_widths] = useState<number[]>(
@@ -119,7 +147,7 @@ const FileWindowContainer: React.FC = () => {
 
     if (file_master_clusters.length > 0) {
         return (
-            <div className="fwc-container">
+            <div className="fwc-container" onMouseDown={take_focus}>
                 {file_master_clusters.map((fems, index) => {
                     const drag_id = `fw-handle-${index}`;
 
@@ -181,7 +209,9 @@ const FileWindowContainer: React.FC = () => {
         );
     } else {
         return (
-            <div className="fwc-empty-container">Create or open a file 🤗</div>
+            <div className="fwc-empty-container" onMouseDown={take_focus}>
+                Create or open a file 🤗
+            </div>
         );
     }
 };

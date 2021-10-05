@@ -13,6 +13,10 @@ import { GridLoader } from "react-spinners";
 import { palette } from "../../../global_styles/palette";
 import { useOnExplorerKeydown } from "../../service_providers/file_explorer_keydown_handler/file_explorer_keydown_handler";
 import { KeyboardHandler } from "../../../global_types/keyboard_events";
+import {
+    EditorFocus,
+    useTakeEditorFocus,
+} from "../../service_providers/editor_focus/editor_focus";
 
 interface Props {
     set_keydown_handler: (handler: () => KeyboardHandler) => void;
@@ -20,6 +24,8 @@ interface Props {
 
 const FileExplorer: React.FC = () => {
     const [oft, set_oft] = useState<OrchidFileTree>();
+
+    const take_editor_focus = useTakeEditorFocus();
 
     const [cursor_keydown, set_cursor_keydown] = useState<KeyboardHandler>(
         () => () => {}
@@ -83,44 +89,6 @@ const FileExplorer: React.FC = () => {
         [get_open_nodes, file_cursor, cursor_keydown]
     );
 
-    // useEffect(() => {
-    //     props.set_keydown_handler(() => (e: KeyboardEvent) => {
-    //         switch (e.key) {
-    //             case "ArrowDown": {
-    //                 const open_nodes = get_open_nodes();
-    //
-    //                 const cursor_index = open_nodes.findIndex((node) =>
-    //                     file_path_eq(node, file_cursor)
-    //                 );
-    //
-    //                 if (
-    //                     cursor_index > -1 &&
-    //                     cursor_index < open_nodes.length - 1
-    //                 ) {
-    //                     set_file_cursor(open_nodes[cursor_index + 1]);
-    //                 }
-    //
-    //                 break;
-    //             }
-    //             case "ArrowUp": {
-    //                 const open_nodes = get_open_nodes();
-    //
-    //                 const cursor_index = open_nodes.findIndex((node) =>
-    //                     file_path_eq(node, file_cursor)
-    //                 );
-    //
-    //                 if (cursor_index > 0) {
-    //                     set_file_cursor(open_nodes[cursor_index - 1]);
-    //                 }
-    //
-    //                 break;
-    //             }
-    //         }
-    //
-    //         !!cursor_keydown && cursor_keydown(e);
-    //     });
-    // }, [get_open_nodes, file_cursor, cursor_keydown]);
-
     if (!!oft) {
         return (
             <FileCursorContext.Provider
@@ -130,7 +98,12 @@ const FileExplorer: React.FC = () => {
                     set_keydown_handler: set_cursor_keydown,
                 }}
             >
-                <div className="fe-container">
+                <div
+                    className="fe-container"
+                    onMouseDown={() =>
+                        take_editor_focus(EditorFocus.file_explorer)
+                    }
+                >
                     <OftExplorer
                         oft={oft}
                         indents={0}
@@ -142,9 +115,11 @@ const FileExplorer: React.FC = () => {
             </FileCursorContext.Provider>
         );
     } else {
-        /*TODO: Add small spinner*/
         return (
-            <div className="fe-container">
+            <div
+                className="fe-container"
+                onMouseDown={() => take_editor_focus(EditorFocus.file_explorer)}
+            >
                 <div className="spinner-container">
                     <GridLoader size={12} color={palette.mediumForestGreen} />
                 </div>

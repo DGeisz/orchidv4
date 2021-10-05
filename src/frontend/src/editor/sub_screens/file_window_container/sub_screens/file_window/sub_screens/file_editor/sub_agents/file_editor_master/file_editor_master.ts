@@ -8,6 +8,7 @@ import {
 } from "../../portable_reps/visual_rep_skeleton/visual_rep_skeleton";
 import { VRTNodeSocket } from "./dyn_subjects/visual_rep_tree/vrt_node_socket/vrt_node_socket";
 import { AVRNode } from "../../editor_types/assembled_visual_rep/assembled_visual_rep";
+import { KeyboardHandler } from "../../../../../../../../../global_types/keyboard_events";
 
 export class FileEditorMaster {
     private readonly file_id: string;
@@ -35,6 +36,14 @@ export class FileEditorMaster {
 
         this.set_avr = () => {};
     }
+
+    handle_keypress: KeyboardHandler = (e) => {
+        console.log("Got keypress from master", e.key, this.formatted_name);
+    };
+
+    handle_keydown: KeyboardHandler = (e) => {
+        console.log("Got keydown from master", e.key, this.formatted_name);
+    };
 
     set_set_avr = (set_avr: (avr: AVRNode) => void) => {
         this.set_avr = set_avr;

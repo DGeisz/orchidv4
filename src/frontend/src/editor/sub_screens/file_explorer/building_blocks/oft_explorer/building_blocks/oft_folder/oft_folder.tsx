@@ -1,11 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-    convert_to_path_link,
-    get_oft_name,
-    OrchidFolder,
-} from "../../../../sub_agents/file_explorer_ws/portable_reps/orchid_file_tree";
+import { OrchidFolder } from "../../../../sub_agents/file_explorer_ws/portable_reps/orchid_file_tree";
 import "../../oft_explorer_styles.scss";
-import { FaFolder, FaChevronRight, FaChevronDown } from "react-icons/fa";
+import { FaChevronDown, FaChevronRight, FaFolder } from "react-icons/fa";
 import OftExplorer from "../../oft_explorer";
 import OftTitleContainer from "../oft_title_container/oft_title_container";
 import {
@@ -13,6 +9,10 @@ import {
     OrchidFilePath,
 } from "../../../../sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
 import { FileCursorContext } from "../../../../context/cursor_context/cursor_context";
+import {
+    EditorFocus,
+    useTakeEditorFocus,
+} from "../../../../../../service_providers/editor_focus/editor_focus";
 
 interface Props {
     folder: OrchidFolder;
@@ -61,8 +61,11 @@ const OftFolder: React.FC<Props> = (props) => {
     };
     const children_default_open = folder.children.length === 1;
 
+    const take_editor_focus = useTakeEditorFocus();
+
     const on_activate = () => {
         set_file_cursor(props.path);
+        take_editor_focus(EditorFocus.file_explorer);
     };
 
     const is_cursor = file_path_eq(file_cursor, props.path);

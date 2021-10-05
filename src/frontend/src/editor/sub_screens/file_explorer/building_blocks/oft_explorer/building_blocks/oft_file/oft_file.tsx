@@ -1,8 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import {
-    get_oft_name,
-    OrchidFile,
-} from "../../../../sub_agents/file_explorer_ws/portable_reps/orchid_file_tree";
+import { OrchidFile } from "../../../../sub_agents/file_explorer_ws/portable_reps/orchid_file_tree";
 import { RiFilePaper2Line } from "react-icons/ri";
 import OftTitleContainer from "../oft_title_container/oft_title_container";
 import {
@@ -11,6 +8,10 @@ import {
 } from "../../../../sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
 import { FileCursorContext } from "../../../../context/cursor_context/cursor_context";
 import { useOpenFile } from "../../../../../../service_providers/editor_comp_comm/editor_comp_comm";
+import {
+    EditorFocus,
+    useTakeEditorFocus,
+} from "../../../../../../service_providers/editor_focus/editor_focus";
 
 interface Props {
     file: OrchidFile;
@@ -31,8 +32,11 @@ const OftFile: React.FC<Props> = (props) => {
         props.set_get_open_nodes(() => () => [props.path]);
     }, []);
 
+    const take_editor_focus = useTakeEditorFocus();
+
     const on_activate = () => {
         set_file_cursor(props.path);
+        take_editor_focus(EditorFocus.file_explorer);
     };
 
     const is_cursor = file_path_eq(file_cursor, props.path);
