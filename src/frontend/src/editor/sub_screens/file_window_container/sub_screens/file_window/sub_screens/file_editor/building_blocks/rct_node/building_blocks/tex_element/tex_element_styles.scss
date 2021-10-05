@@ -1,4 +1,5 @@
 @import "./node_modules/bootstrap/scss/bootstrap";
+@import "src/global_styles/basic_visual";
 @import "src/global_styles/basic_layouts";
 @import "src/global_styles/palette";
 
@@ -42,5 +43,6 @@
 
 .tex-container-tex {
     @extend %flexRow;
+    @extend %no-highlight;
     margin: 0 !important;
 }

@@ -8,7 +8,6 @@ interface Props {
 const MiniTex: React.FC<Props> = (props) => {
     return (
         <div
-            style={{ color: "black" }}
             className="tex-container-tex"
             dangerouslySetInnerHTML={{
                 __html: renderToString(props.tex, {
