@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./editor_styles.scss";
 import { DraggableCore } from "react-draggable";
 import EditorHeader from "./building_blocks/editor_header/editor_header";
@@ -10,16 +10,18 @@ import { EditorCompCommProvider } from "./service_providers/editor_comp_comm/edi
 import {
     EditorFocus,
     useEditorFocus,
-    withEditorFocus,
 } from "./service_providers/editor_focus/editor_focus";
+import { useExplorerKeydown } from "./service_providers/file_explorer_keydown_handler/file_explorer_keydown_handler";
+import { withHocEditorServiceProviders } from "./service_providers/with_hoc_editor_service_providers";
+import { useFwcKeyboardHandlers } from "./service_providers/fwc_keyboard_handlers/fwc_keyboard_handlers";
 
 const Editor: React.FC = () => {
     const [width, set_width] = useState<number>(200);
     const [file_explorer_visible, show_file_explorer] = useState<boolean>(true);
 
-    const [fe_keydown_handler, set_fe_keydown_handler] = useState<
-        (e: KeyboardEvent) => void
-    >(() => () => {});
+    const fe_keydown_handler = useExplorerKeydown();
+    const [fwc_keydown_handler, fwc_keypress_handler] =
+        useFwcKeyboardHandlers();
 
     const editor_focus = useEditorFocus();
 
@@ -39,11 +41,20 @@ const Editor: React.FC = () => {
                     break;
                 }
                 case EditorFocus.file_window_container: {
+                    fwc_keydown_handler(e);
+                    break;
                 }
             }
         }
 
-        function keypress_handler(e: KeyboardEvent) {}
+        function keypress_handler(e: KeyboardEvent) {
+            switch (editor_focus) {
+                case EditorFocus.file_window_container: {
+                    fwc_keypress_handler(e);
+                    break;
+                }
+            }
+        }
 
         document.addEventListener("keydown", keydown_handler);
         document.addEventListener("keypress", keypress_handler);
@@ -77,11 +88,7 @@ const Editor: React.FC = () => {
                                                 show_file_explorer(false)
                                             }
                                         />
-                                        <FileExplorer
-                                            set_keydown_handler={
-                                                set_fe_keydown_handler
-                                            }
-                                        />
+                                        <FileExplorer />
                                     </div>
                                 </div>
                                 <div
@@ -113,4 +120,4 @@ const Editor: React.FC = () => {
     );
 };
 
-export default withEditorFocus(Editor);
+export default withHocEditorServiceProviders(Editor);

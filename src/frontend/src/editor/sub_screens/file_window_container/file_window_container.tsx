@@ -6,14 +6,9 @@ import { DraggableCore } from "react-draggable";
 import { FileEditorMaster } from "./sub_screens/file_window/sub_screens/file_editor/sub_agents/file_editor_master/file_editor_master";
 import { useFileWindowContainerWs } from "./sub_agents/file_window_container_ws/file_window_container_ws";
 import { res_is_full_vrs } from "./sub_agents/file_window_container_ws/basic_msgs/fwc_ws_res";
-import {
-    useSetFileWindowChildFocus,
-    withFileWindowFocus,
-} from "./service_providers/file_window_focus/file_window_focus";
-import {
-    useFileMasterClusters,
-    withFileMasterClusters,
-} from "./service_providers/file_master_clusters/file_master_clusters";
+import { useSetFileWindowChildFocus } from "./service_providers/file_window_focus/file_window_focus";
+import { useFileMasterClusters } from "./service_providers/file_master_clusters/file_master_clusters";
+import { withFWCHocServiceProviders } from "./service_providers/with_file_window_hoc_service_providers";
 
 const FileWindowContainer: React.FC = () => {
     const [focused_file_window, set_focused_file_window] = useState<number>(-1);
@@ -110,6 +105,8 @@ const FileWindowContainer: React.FC = () => {
         [file_master_clusters]
     );
 
+    /* Next two pieces of state are specifically
+     * for handling the width of different windows */
     const [child_widths, set_child_widths] = useState<number[]>(
         file_master_clusters.map(
             () => window.screen.width / Math.max(file_master_clusters.length, 1)
@@ -189,4 +186,4 @@ const FileWindowContainer: React.FC = () => {
     }
 };
 
-export default withFileMasterClusters(withFileWindowFocus(FileWindowContainer));
+export default withFWCHocServiceProviders(FileWindowContainer);

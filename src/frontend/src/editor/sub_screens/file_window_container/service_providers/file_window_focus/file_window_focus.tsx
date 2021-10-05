@@ -1,5 +1,4 @@
-import React, { ReactNode, useContext, useEffect, useState } from "react";
-import { useEditorFocus } from "../../../../service_providers/editor_focus/editor_focus";
+import React, { useContext, useEffect, useState } from "react";
 
 interface FWFContextType {
     set_file_window_focus: ((focus: number) => void)[];
