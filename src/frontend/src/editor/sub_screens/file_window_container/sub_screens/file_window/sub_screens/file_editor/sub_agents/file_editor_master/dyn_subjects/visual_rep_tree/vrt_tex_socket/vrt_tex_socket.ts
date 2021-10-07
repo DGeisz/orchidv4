@@ -3,6 +3,7 @@ import { VRSTexSocket } from "../../../../../portable_reps/visual_rep_skeleton/v
 import {
     active_socket_tex,
     LATEX_EMPTY_SOCKET,
+    LATEX_SPACE,
     text_with_cursor,
 } from "../../../../../utils/latex_utils";
 import { VRTEntity } from "../vrt_entity";
@@ -38,11 +39,11 @@ export class VRTTexSocket implements VRTEntity, VRTTex, VRTCursorSocket {
                             `${text_with_cursor(
                                 this.left_cursor_entry,
                                 cursor_position.position
-                            )} ${element_tex}`
+                            )} ${LATEX_SPACE} ${element_tex}`
                         );
                     case CursorSide.Right:
                         return active_socket_tex(
-                            `${element_tex} ${text_with_cursor(
+                            `${element_tex} ${LATEX_SPACE} ${text_with_cursor(
                                 this.right_cursor_entry,
                                 cursor_position.position
                             )}`
@@ -99,4 +100,6 @@ export class VRTTexSocket implements VRTEntity, VRTTex, VRTCursorSocket {
     set_right_entry = (entry: string) => {
         this.right_cursor_entry = entry;
     };
+
+    can_set_entry = () => true;
 }

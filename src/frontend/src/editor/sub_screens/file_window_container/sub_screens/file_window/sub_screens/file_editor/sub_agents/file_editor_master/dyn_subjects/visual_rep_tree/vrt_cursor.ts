@@ -28,4 +28,9 @@ export interface VRTCursorSocket {
 
     set_left_entry: (entry: string) => void;
     set_right_entry: (entry: string) => void;
+
+    /* Indicates whether we can even add characters
+     * to the socket at this time (we can't for line or
+     * container holding sockets, for instance) */
+    can_set_entry: () => boolean;
 }

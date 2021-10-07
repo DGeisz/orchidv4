@@ -14,7 +14,10 @@ import {
     VRTCursorPosition,
     VRTCursorPositionRef,
 } from "./dyn_subjects/visual_rep_tree/vrt_cursor";
-import { CURSOR_NAME } from "../../utils/latex_utils";
+import {
+    ALLOWED_NON_ALPHA_NUMERIC_CHARS,
+    CURSOR_NAME,
+} from "../../utils/latex_utils";
 
 const EMPTY_CURSOR: VRTCursorPosition = {
     id: "",
@@ -114,7 +117,19 @@ export class FileEditorMaster {
         this.restart_cursor();
     };
 
-    handle_keypress: KeyboardHandler = (e) => {};
+    handle_keypress: KeyboardHandler = (e) => {
+        const char = e.key.trim();
+
+        if (
+            char.length === 1 &&
+            (/^[a-z0-9]+$/i.test(char) ||
+                ALLOWED_NON_ALPHA_NUMERIC_CHARS.includes(char))
+        ) {
+            this.handle_intake_character(char);
+        }
+
+        this.process_change();
+    };
 
     handle_keydown: KeyboardHandler = (e) => {
         switch (e.key) {
@@ -134,9 +149,86 @@ export class FileEditorMaster {
                 this.handle_move_vertical(false);
                 break;
             }
+            case "Backspace": {
+                this.handle_delete();
+                break;
+            }
         }
 
         this.process_change();
+    };
+
+    handle_intake_character = (char: string) => {
+        /* First make sure we even have a ref */
+        if (!!this.cursor_position) {
+            /* Next we see if the cursor even allows
+             * input characters at the moment */
+            const cursor_socket = this.cursor_position.ref;
+            const { position } = this.cursor_position;
+
+            if (cursor_socket.can_set_entry()) {
+                switch (this.cursor_position.side) {
+                    case CursorSide.Left: {
+                        const old_entry = cursor_socket.get_left_entry();
+                        cursor_socket.set_left_entry(
+                            old_entry.slice(0, position) +
+                                char +
+                                old_entry.slice(position)
+                        );
+
+                        break;
+                    }
+                    case CursorSide.Right: {
+                        const old_entry = cursor_socket.get_right_entry();
+                        cursor_socket.set_right_entry(
+                            old_entry.slice(0, position) +
+                                char +
+                                old_entry.slice(position)
+                        );
+
+                        break;
+                    }
+                }
+
+                this.cursor_position.position++;
+            }
+        }
+    };
+
+    handle_delete = () => {
+        if (!!this.cursor_position) {
+            const cursor_socket = this.cursor_position.ref;
+            const { position } = this.cursor_position;
+
+            if (cursor_socket.can_set_entry()) {
+                if (position > 0) {
+                    switch (this.cursor_position.side) {
+                        case CursorSide.Left: {
+                            const old_entry = cursor_socket.get_left_entry();
+                            cursor_socket.set_left_entry(
+                                old_entry.slice(0, position - 1) +
+                                    old_entry.slice(position)
+                            );
+
+                            break;
+                        }
+                        case CursorSide.Right: {
+                            const old_entry = cursor_socket.get_right_entry();
+                            cursor_socket.set_right_entry(
+                                old_entry.slice(0, position - 1) +
+                                    old_entry.slice(position)
+                            );
+
+                            break;
+                        }
+                    }
+
+                    this.cursor_position.position--;
+                } else {
+                    /*TODO: Handle custom delete behaviors*/
+                }
+            }
+        }
     };
 
     handle_move_right = () => {

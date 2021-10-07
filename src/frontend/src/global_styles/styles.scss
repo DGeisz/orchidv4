@@ -19,6 +19,13 @@ a {
     text-decoration: none !important;
 }
 
+#cursor span {
+    display: inline-block;
+    width: 0 !important;
+    //position: absolute;
+    transform: translateX(-2px) translateY(-1px) scaleY(1.1);
+}
+
 input[type="file"] {
     display: none;
 }

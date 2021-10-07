@@ -1,6 +1,5 @@
 import { VRTNode } from "../vrt_node/vrt_node";
 import {
-    AVRContainer,
     AVRLine,
     AVRNode,
     AVRType,
@@ -30,7 +29,6 @@ export class VRTNodeSocket implements VRTStruct, VRTCursorSocket {
     node: VRTNode | null = null;
 
     left_cursor_entry: string = "";
-    right_cursor_entry: string = "";
 
     constructor(node_socket: VRSNodeSocket) {
         this.id = node_socket.id;
@@ -104,6 +102,8 @@ export class VRTNodeSocket implements VRTStruct, VRTCursorSocket {
         }
     };
 
+    can_set_entry = () => !this.node;
+
     get_line_cursor_locations: () => VRTCursorLocationRef[] = () => {
         if (!!this.node) {
             if (this.node.is_line()) {
@@ -138,13 +138,13 @@ export class VRTNodeSocket implements VRTStruct, VRTCursorSocket {
     };
 
     get_left_entry = () => this.left_cursor_entry;
-    get_right_entry = () => this.right_cursor_entry;
+    get_right_entry = () => "";
 
     set_left_entry = (entry: string) => {
-        this.left_cursor_entry = entry;
+        if (!this.node) {
+            this.left_cursor_entry = entry;
+        }
     };
 
-    set_right_entry = (entry: string) => {
-        this.right_cursor_entry = entry;
-    };
+    set_right_entry = (_entry: string) => {};
 }
