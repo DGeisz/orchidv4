@@ -97,11 +97,14 @@ export class FileEditorMaster {
     };
 
     process_change = () => {
-        this.set_avr(
-            this.root_node_socket.get_avr(
-                !!this.cursor_position ? this.cursor_position : EMPTY_CURSOR
-            )
+        const avr = this.root_node_socket.get_avr(
+            !!this.cursor_position ? this.cursor_position : EMPTY_CURSOR
         );
+
+        this.set_avr(avr);
+
+        console.log("Position & Avr", this.cursor_position, avr);
+
         this.restart_cursor();
     };
 
@@ -223,13 +226,13 @@ export class FileEditorMaster {
                                 case CursorSide.Left: {
                                     position =
                                         new_location.ref.get_left_entry()
-                                            .length - 1;
+                                            .length;
                                     break;
                                 }
                                 case CursorSide.Right: {
                                     position =
                                         new_location.ref.get_right_entry()
-                                            .length - 1;
+                                            .length;
                                     break;
                                 }
                             }

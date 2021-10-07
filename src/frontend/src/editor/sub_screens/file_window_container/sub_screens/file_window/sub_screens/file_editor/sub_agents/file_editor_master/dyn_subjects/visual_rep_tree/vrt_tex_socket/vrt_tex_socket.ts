@@ -1,6 +1,7 @@
 import { VRTTexElement } from "../vrt_tex_element/vrt_tex_element";
 import { VRSTexSocket } from "../../../../../portable_reps/visual_rep_skeleton/visual_rep_skeleton";
 import {
+    active_socket_tex,
     LATEX_EMPTY_SOCKET,
     text_with_cursor,
 } from "../../../../../utils/latex_utils";
@@ -33,15 +34,19 @@ export class VRTTexSocket implements VRTEntity, VRTTex, VRTCursorSocket {
             if (cursor_position.id === this.id) {
                 switch (cursor_position.side) {
                     case CursorSide.Left:
-                        return `${text_with_cursor(
-                            this.left_cursor_entry,
-                            cursor_position.position
-                        )} ${element_tex}`;
+                        return active_socket_tex(
+                            `${text_with_cursor(
+                                this.left_cursor_entry,
+                                cursor_position.position
+                            )} ${element_tex}`
+                        );
                     case CursorSide.Right:
-                        return `${element_tex} ${text_with_cursor(
-                            this.right_cursor_entry,
-                            cursor_position.position
-                        )}`;
+                        return active_socket_tex(
+                            `${element_tex} ${text_with_cursor(
+                                this.right_cursor_entry,
+                                cursor_position.position
+                            )}`
+                        );
                 }
             } else {
                 return element_tex;

@@ -13,6 +13,7 @@ import {
 import { VRTLine } from "../vrt_node/vrt_line/vrt_line";
 import { VRTContainer } from "../vrt_node/vrt_container/vrt_container";
 import {
+    active_socket_tex,
     LATEX_EMPTY_SOCKET,
     text_with_cursor,
 } from "../../../../../utils/latex_utils";
@@ -65,8 +66,6 @@ export class VRTNodeSocket implements VRTStruct, VRTCursorSocket {
             const avr = this.node.get_avr(cursor_position);
 
             if (cursor_position.id === this.id) {
-                console.log("Here's our cursor!", this);
-
                 switch (cursor_position.side) {
                     case CursorSide.Left:
                         avr.left_cursor = true;
@@ -82,9 +81,11 @@ export class VRTNodeSocket implements VRTStruct, VRTCursorSocket {
             let main_tex = LATEX_EMPTY_SOCKET;
 
             if (cursor_position.id === this.id) {
-                main_tex = text_with_cursor(
-                    this.left_cursor_entry,
-                    cursor_position.position
+                main_tex = active_socket_tex(
+                    text_with_cursor(
+                        this.left_cursor_entry,
+                        cursor_position.position
+                    )
                 );
             }
 
