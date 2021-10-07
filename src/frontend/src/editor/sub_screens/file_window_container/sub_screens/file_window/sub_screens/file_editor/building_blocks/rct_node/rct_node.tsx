@@ -5,6 +5,7 @@ import {
 } from "../../editor_types/assembled_visual_rep/assembled_visual_rep";
 import "./rct_node_styles.scss";
 import TexElement from "./building_blocks/tex_element/tex_element";
+import { CURSOR_NAME } from "../../utils/latex_utils";
 
 /* Yes, RCT does stand for "react component tree",
  * which is basically a given, but I use that language
@@ -41,54 +42,62 @@ const RctNode: React.FC<Props> = (props) => {
      * a line*/
     if (node.tag === AVRType.Line) {
         return (
-            <div
-                className={`rct-line-container ${
-                    node.border_bottom ? "rct-line-border-bottom" : ""
-                }
+            <div className="rct-line-outer-container">
+                {node.left_cursor && (
+                    <div className="rct-line-cursor" id={CURSOR_NAME} />
+                )}
+                <div
+                    className={`rct-line-container ${
+                        node.border_bottom ? "rct-line-border-bottom" : ""
+                    }
                 ${node.border_top ? "rct-line-border-top" : ""}`}
-            >
-                {!!node.title && (
-                    <div className="rct-title-container">
-                        <TexElement
-                            tex={node.title}
-                            tex_widget_properties={[]}
-                        />
-                    </div>
-                )}
-                {!!node.comment && (
-                    <div className="rct-comment-container">
-                        <TexElement
-                            tex={node.comment}
-                            tex_widget_properties={[]}
-                        />
-                    </div>
-                )}
-                <div className="rct-line-line">
-                    <div className="rct-ll-left">
-                        <div className="rct-lll-left">
+                >
+                    {!!node.title && (
+                        <div className="rct-title-container">
                             <TexElement
-                                tex={node.main_tex}
+                                tex={node.title}
                                 tex_widget_properties={[]}
                             />
                         </div>
-                        {!!node.right_tex && (
-                            <div className="rct-lll-right">
+                    )}
+                    {!!node.comment && (
+                        <div className="rct-comment-container">
+                            <TexElement
+                                tex={node.comment}
+                                tex_widget_properties={[]}
+                            />
+                        </div>
+                    )}
+                    <div className="rct-line-line">
+                        <div className="rct-ll-left">
+                            <div className="rct-lll-left">
                                 <TexElement
-                                    tex={node.right_tex}
+                                    tex={node.main_tex}
+                                    tex_widget_properties={[]}
+                                />
+                            </div>
+                            {!!node.right_tex && (
+                                <div className="rct-lll-right">
+                                    <TexElement
+                                        tex={node.right_tex}
+                                        tex_widget_properties={[]}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                        {!!node.label_tex && (
+                            <div className="rct-ll-right">
+                                <TexElement
+                                    tex={node.label_tex}
                                     tex_widget_properties={[]}
                                 />
                             </div>
                         )}
                     </div>
-                    {!!node.label_tex && (
-                        <div className="rct-ll-right">
-                            <TexElement
-                                tex={node.label_tex}
-                                tex_widget_properties={[]}
-                            />
-                        </div>
-                    )}
                 </div>
+                {node.right_cursor && (
+                    <div className="rct-line-cursor" id={CURSOR_NAME} />
+                )}
             </div>
         );
     }

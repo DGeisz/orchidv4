@@ -17,7 +17,18 @@ $tex-padding: 12px 0;
     border-left: solid 1px $semiSoftGray;
 }
 
+.rct-line-outer-container {
+    @extend %flexRow;
+}
+
 .rct-line-container {
+    @extend %flexGrid1;
+}
+
+.rct-line-cursor {
+    width: 1px;
+    border-left: solid 1px $black;
+    margin: 0 4px;
 }
 
 .rct-line-border-bottom {

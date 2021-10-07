@@ -1,6 +1,7 @@
 import { VRTNode } from "../vrt_node/vrt_node";
 import {
     AVRContainer,
+    AVRLine,
     AVRNode,
     AVRType,
 } from "../../../../../editor_types/assembled_visual_rep/assembled_visual_rep";
@@ -11,13 +12,24 @@ import {
 } from "../../../../../portable_reps/visual_rep_skeleton/visual_rep_skeleton";
 import { VRTLine } from "../vrt_node/vrt_line/vrt_line";
 import { VRTContainer } from "../vrt_node/vrt_container/vrt_container";
-import { LATEX_EMPTY_SOCKET } from "../../../../../utils/latex_utils";
-import { VRTEditorLine } from "../vrt_editor_line";
+import {
+    LATEX_EMPTY_SOCKET,
+    text_with_cursor,
+} from "../../../../../utils/latex_utils";
 import { VRTStruct } from "../vrt_struct";
+import {
+    CursorSide,
+    VRTCursorLocationRef,
+    VRTCursorPosition,
+    VRTCursorSocket,
+} from "../vrt_cursor";
 
-export class VRTNodeSocket implements VRTNode, VRTEditorLine, VRTStruct {
+export class VRTNodeSocket implements VRTStruct, VRTCursorSocket {
     id: string;
     node: VRTNode | null = null;
+
+    left_cursor_entry: string = "";
+    right_cursor_entry: string = "";
 
     constructor(node_socket: VRSNodeSocket) {
         this.id = node_socket.id;
@@ -36,27 +48,49 @@ export class VRTNodeSocket implements VRTNode, VRTEditorLine, VRTStruct {
         }
     }
 
-    is_line = () => false;
+    get_id = () => this.id;
 
-    get_id = () => {
-        return this.id;
-    };
-
-    get_editor_lines = () => {
+    get_line_sockets: () => VRTNodeSocket[] = () => {
         if (!!this.node && !this.node.is_line()) {
-            return this.node.get_editor_lines();
+            return this.node.get_line_sockets();
         } else {
             return [this];
         }
     };
 
-    get_avr: () => AVRNode = () => {
+    get_avr: (cursor_position: VRTCursorPosition) => AVRNode = (
+        cursor_position: VRTCursorPosition
+    ) => {
         if (!!this.node) {
-            return this.node.get_avr();
+            const avr = this.node.get_avr(cursor_position);
+
+            if (cursor_position.id === this.id) {
+                console.log("Here's our cursor!", this);
+
+                switch (cursor_position.side) {
+                    case CursorSide.Left:
+                        avr.left_cursor = true;
+                        break;
+                    case CursorSide.Right:
+                        avr.right_cursor = true;
+                        break;
+                }
+            }
+
+            return avr;
         } else {
-            return {
+            let main_tex = LATEX_EMPTY_SOCKET;
+
+            if (cursor_position.id === this.id) {
+                main_tex = text_with_cursor(
+                    this.left_cursor_entry,
+                    cursor_position.position
+                );
+            }
+
+            const line: AVRLine = {
                 tag: AVRType.Line,
-                main_tex: LATEX_EMPTY_SOCKET,
+                main_tex: main_tex,
                 right_tex: null,
                 title: null,
                 comment: null,
@@ -64,6 +98,52 @@ export class VRTNodeSocket implements VRTNode, VRTEditorLine, VRTStruct {
                 border_bottom: false,
                 border_top: false,
             };
+
+            return line;
         }
+    };
+
+    get_line_cursor_locations: () => VRTCursorLocationRef[] = () => {
+        if (!!this.node) {
+            if (this.node.is_line()) {
+                return [
+                    {
+                        id: this.id,
+                        side: CursorSide.Left,
+                        ref: this,
+                    },
+                    ...this.node.get_line_cursor_locations(),
+                    {
+                        id: this.id,
+                        side: CursorSide.Right,
+                        ref: this,
+                    },
+                ];
+            } else {
+                /* If this holds a container,
+                 * then this socket isn't functioning
+                 * as a line, so we return nothing */
+                return [];
+            }
+        } else {
+            return [
+                {
+                    id: this.id,
+                    side: CursorSide.Left,
+                    ref: this,
+                },
+            ];
+        }
+    };
+
+    get_left_entry = () => this.left_cursor_entry;
+    get_right_entry = () => this.right_cursor_entry;
+
+    set_left_entry = (entry: string) => {
+        this.left_cursor_entry = entry;
+    };
+
+    set_right_entry = (entry: string) => {
+        this.right_cursor_entry = entry;
     };
 }

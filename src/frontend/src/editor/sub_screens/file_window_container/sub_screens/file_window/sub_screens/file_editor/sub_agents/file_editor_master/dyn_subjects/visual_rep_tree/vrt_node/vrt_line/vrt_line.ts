@@ -5,9 +5,9 @@ import {
     AVRType,
 } from "../../../../../../editor_types/assembled_visual_rep/assembled_visual_rep";
 import { VRSLine } from "../../../../../../portable_reps/visual_rep_skeleton/visual_rep_skeleton";
-import { VRTEditorLine } from "../../vrt_editor_line";
+import { VRTCursorPosition } from "../../vrt_cursor";
 
-export class VRTLine implements VRTNode, VRTEditorLine {
+export class VRTLine implements VRTNode {
     id: string;
     title: string | null;
     comment: string | null;
@@ -30,24 +30,44 @@ export class VRTLine implements VRTNode, VRTEditorLine {
 
     is_line = () => true;
 
-    get_id = () => {
-        return this.id;
-    };
-
-    get_avr: () => AVRLine = () => {
+    get_avr: (cursor_position: VRTCursorPosition) => AVRLine = (
+        cursor_position: VRTCursorPosition
+    ) => {
         return {
             tag: AVRType.Line,
             title: this.title,
             comment: this.comment,
-            main_tex: this.main_tex.get_tex(),
-            right_tex: !!this.right_tex ? this.right_tex.get_tex() : null,
-            label_tex: !!this.label_tex ? this.label_tex.get_tex() : null,
+            main_tex: this.main_tex.get_tex(cursor_position),
+            right_tex: !!this.right_tex
+                ? this.right_tex.get_tex(cursor_position)
+                : null,
+            label_tex: !!this.label_tex
+                ? this.label_tex.get_tex(cursor_position)
+                : null,
             border_bottom: this.border_bottom,
             border_top: this.border_top,
         };
     };
 
-    get_editor_lines = () => {
-        return [];
+    get_line_sockets = () => [];
+
+    get_line_cursor_locations = () => {
+        let cursor_locations = this.main_tex.get_line_cursor_locations();
+
+        if (!!this.right_tex) {
+            cursor_locations = [
+                ...cursor_locations,
+                ...this.right_tex.get_line_cursor_locations(),
+            ];
+        }
+
+        if (!!this.label_tex) {
+            cursor_locations = [
+                ...cursor_locations,
+                ...this.label_tex.get_line_cursor_locations(),
+            ];
+        }
+
+        return cursor_locations;
     };
 }

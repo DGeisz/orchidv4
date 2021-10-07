@@ -5,7 +5,7 @@ import {
 } from "../../../../../../editor_types/assembled_visual_rep/assembled_visual_rep";
 import { VRTNodeSocket } from "../../vrt_node_socket/vrt_node_socket";
 import { VRSContainer } from "../../../../../../portable_reps/visual_rep_skeleton/visual_rep_skeleton";
-import { VRTEditorLine } from "../../vrt_editor_line";
+import { VRTCursorPosition } from "../../vrt_cursor";
 
 export class VRTContainer implements VRTNode {
     id: string;
@@ -24,23 +24,31 @@ export class VRTContainer implements VRTNode {
 
     is_line = () => false;
 
-    get_avr: () => AVRContainer = () => {
+    get_avr: (cursor_position: VRTCursorPosition) => AVRContainer = (
+        cursor_position: VRTCursorPosition
+    ) => {
         return {
             tag: AVRType.Container,
             id: this.id,
             left_border: this.left_border,
             indented: this.indented,
-            children: this.children.map((child) => child.get_avr()),
+            children: this.children.map((child) =>
+                child.get_avr(cursor_position)
+            ),
         };
     };
 
-    get_editor_lines = () => {
-        return this.children.reduce<VRTEditorLine[]>(
+    get_line_sockets = () => {
+        return this.children.reduce<VRTNodeSocket[]>(
             (previousValue, currentValue) => [
                 ...previousValue,
-                ...currentValue.get_editor_lines(),
+                ...currentValue.get_line_sockets(),
             ],
             []
         );
     };
+
+    /* We just return nothing here because a container doesn't
+     * ever act as a line */
+    get_line_cursor_locations = () => [];
 }

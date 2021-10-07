@@ -12,6 +12,8 @@ export interface AVRLine {
     label_tex: string | null;
     border_bottom: boolean | null;
     border_top: boolean | null;
+    left_cursor?: boolean;
+    right_cursor?: boolean;
 }
 
 export interface AVRContainer {
@@ -20,6 +22,8 @@ export interface AVRContainer {
     left_border: boolean;
     indented: boolean;
     children: Array<AVRNode>;
+    left_cursor?: boolean;
+    right_cursor?: boolean;
 }
 
 export type AVRNode = AVRLine | AVRContainer;
