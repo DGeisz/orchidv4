@@ -36,6 +36,8 @@ export class FileEditorMaster {
 
     private set_avr: (avr: AVRNode) => void;
 
+    private has_focus: boolean = true;
+
     constructor(vrs: VisualRepSkeleton) {
         const {
             file_id,
@@ -97,9 +99,13 @@ export class FileEditorMaster {
     };
 
     process_change = () => {
-        const avr = this.root_node_socket.get_avr(
-            !!this.cursor_position ? this.cursor_position : EMPTY_CURSOR
-        );
+        const position = this.has_focus
+            ? !!this.cursor_position
+                ? this.cursor_position
+                : EMPTY_CURSOR
+            : EMPTY_CURSOR;
+
+        const avr = this.root_node_socket.get_avr(position);
 
         this.set_avr(avr);
 
@@ -361,6 +367,12 @@ export class FileEditorMaster {
 
     get_file_path = () => {
         return this.file_path;
+    };
+
+    set_has_focus = (focus: boolean) => {
+        this.has_focus = focus;
+
+        this.process_change();
     };
 
     /* Returns whether another path maps

@@ -13,7 +13,6 @@ import {
     KeyboardHandler,
     noOpHandler,
 } from "../../../../../global_types/keyboard_events";
-import { useOnFwcKeypress } from "../../../../service_providers/fwc_keyboard_handlers/fwc_keyboard_handlers";
 import { OrchidFilePath } from "../../../file_explorer/sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
 
 interface Props {
@@ -88,6 +87,7 @@ const FileWindow: React.FC<Props> = (props) => {
                         file_editor_master={
                             props.file_editor_masters[child_focus]
                         }
+                        has_file_window_focus={props.has_file_window_focus}
                     />
                 </>
             </div>

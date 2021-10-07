@@ -9,9 +9,11 @@ import {
 import { GridLoader } from "react-spinners";
 import { palette } from "../../../../../../../global_styles/palette";
 import { FileEditorMaster } from "./sub_agents/file_editor_master/file_editor_master";
+import { useWindowFocus } from "../../../../../../service_providers/editor_focus/editor_focus";
 
 interface Props {
     file_editor_master: FileEditorMaster;
+    has_file_window_focus: boolean;
 }
 
 const FileEditor: React.FC<Props> = (props) => {
@@ -25,6 +27,16 @@ const FileEditor: React.FC<Props> = (props) => {
     const [edit_rep_id, set_edit_rep_id] = useState<string>("");
 
     const [assembled_visual_rep, set_avr] = useState<AVRNode>();
+
+    const window_in_focus = useWindowFocus();
+
+    useEffect(() => {
+        if (window_in_focus && props.has_file_window_focus) {
+            props.file_editor_master.set_has_focus(true);
+        } else {
+            props.file_editor_master.set_has_focus(false);
+        }
+    }, [window_in_focus, props.has_file_window_focus]);
 
     useEffect(() => {
         props.file_editor_master.set_set_avr(set_avr);

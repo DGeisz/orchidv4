@@ -10,6 +10,8 @@ import { EditorCompCommProvider } from "./service_providers/editor_comp_comm/edi
 import {
     EditorFocus,
     useEditorFocus,
+    useSetWindowFocus,
+    useWindowFocus,
 } from "./service_providers/editor_focus/editor_focus";
 import { useExplorerKeydown } from "./service_providers/file_explorer_keydown_handler/file_explorer_keydown_handler";
 import { withHocEditorServiceProviders } from "./service_providers/with_hoc_editor_service_providers";
@@ -25,6 +27,8 @@ const Editor: React.FC = () => {
         useFwcKeyboardHandlers();
 
     const editor_focus = useEditorFocus();
+
+    const set_window_focus = useSetWindowFocus();
 
     useEffect(() => {
         function keydown_handler(e: KeyboardEvent) {
@@ -57,12 +61,26 @@ const Editor: React.FC = () => {
             }
         }
 
+        function window_focus_handler() {
+            set_window_focus(true);
+        }
+
+        function window_blur_handler() {
+            set_window_focus(false);
+        }
+
         document.addEventListener("keydown", keydown_handler);
         document.addEventListener("keypress", keypress_handler);
+
+        window.addEventListener("focus", window_focus_handler);
+        window.addEventListener("blur", window_blur_handler);
 
         return () => {
             document.removeEventListener("keydown", keydown_handler);
             document.removeEventListener("keypress", keypress_handler);
+
+            window.removeEventListener("focus", window_focus_handler);
+            window.removeEventListener("blur", window_blur_handler);
         };
     }, [editor_focus, fe_keydown_handler, fwc_handlers_id]);
 
