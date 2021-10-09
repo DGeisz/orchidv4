@@ -40,6 +40,8 @@ const FileEditor: React.FC<Props> = (props) => {
         props.file_editor_master.set_set_avr(set_avr);
         props.file_editor_master.set_set_external_select_mode(set_select_mode);
         props.file_editor_master.set_set_external_select_seq(set_select_seq);
+        props.file_editor_master.set_set_external_rep_id(set_edit_rep_id);
+        props.file_editor_master.set_set_external_rep_mode(set_edit_rep_mode);
 
         set_select_socket(() => props.file_editor_master.select_socket);
     }, []);

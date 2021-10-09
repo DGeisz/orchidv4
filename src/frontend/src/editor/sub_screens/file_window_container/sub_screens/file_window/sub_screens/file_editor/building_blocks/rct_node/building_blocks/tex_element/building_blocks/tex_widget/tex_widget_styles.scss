@@ -17,21 +17,20 @@
 
 .term-hint {
     z-index: 100;
-    font-size: 9pt;
+    font-size: 10pt;
     border-radius: 2px;
-    background-color: palegreen;
+    background-color: $mediumForestGreen;
     padding: 3px;
-    height: 17px;
+    height: 19px;
     font-family: $font-family-sans-serif;
     font-weight: bold;
-    //color: $yiq-text-dark;
     box-shadow: grey 0 3px 6px;
-    opacity: 90%;
+    opacity: 95%;
 
     display: flex;
     justify-content: center;
     align-items: center;
-    color: $black;
+    color: $black ;
 }
 
 .term-left {

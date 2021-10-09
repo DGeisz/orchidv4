@@ -33,8 +33,8 @@ export class FileEditorMaster {
     private readonly formatted_name: string;
     private root_node_socket: VRTNodeSocket;
 
-    private cursor_line?: string;
     private cursor_position: VRTCursorPositionRef | null = null;
+    private cursor_line?: string;
     private cursor_interval?: NodeJS.Timer;
 
     /* All this 'select' stuff is for vimium select mode */
@@ -43,6 +43,12 @@ export class FileEditorMaster {
 
     private select_seq: string = "";
     private set_external_select_seq: (seq: string) => void = () => {};
+
+    private edit_rep_mode: boolean = false;
+    private set_external_edit_rep_mode: (edit_rep_mode: boolean) => void =
+        () => {};
+
+    private set_external_rep_id: (rep_id: string) => void = () => {};
 
     private set_avr: (avr: AVRNode) => void;
 
@@ -112,11 +118,19 @@ export class FileEditorMaster {
         /* First label the sockets */
         this.label_sockets();
 
-        const position = this.has_focus
-            ? !!this.cursor_position
-                ? this.cursor_position
-                : EMPTY_CURSOR
-            : EMPTY_CURSOR;
+        let position = EMPTY_CURSOR;
+
+        if (this.has_focus && !this.select_mode && !!this.cursor_position) {
+            position = this.cursor_position;
+        }
+
+        // const position = this.has_focus
+        //     ? this.select_mode
+        //         ? !!this.cursor_position
+        //             ? this.cursor_position
+        //             : EMPTY_CURSOR
+        //         : EMPTY_CURSOR
+        //     : EMPTY_CURSOR;
 
         const avr = this.root_node_socket.get_avr(position);
 
@@ -141,33 +155,105 @@ export class FileEditorMaster {
             (/^[a-z0-9]+$/i.test(char) ||
                 ALLOWED_NON_ALPHA_NUMERIC_CHARS.includes(char))
         ) {
-            this.handle_intake_character(char);
+            if (this.select_mode) {
+                this.set_select_seq(this.select_seq + char);
+            } else {
+                this.handle_intake_character(char);
+            }
         }
 
         this.process_change();
     };
 
     handle_keydown: KeyboardHandler = (e) => {
-        switch (e.key) {
-            case "ArrowLeft": {
-                this.handle_move_left();
-                break;
+        if (this.select_mode) {
+            const switch_out = () => {
+                this.set_select_seq("");
+                this.set_select_mode(false);
+            };
+
+            if (e.ctrlKey && !e.shiftKey) {
+                switch (e.key) {
+                    case "Control":
+                        e.preventDefault();
+                        return;
+                    case "f":
+                        e.preventDefault();
+                        switch_out();
+                        break;
+                }
+            } else {
+                switch (e.key) {
+                    case "Escape": {
+                        switch_out();
+                        break;
+                    }
+                    case "Backspace": {
+                        if (this.select_seq.length > 0) {
+                            this.set_select_seq(
+                                this.select_seq.substring(
+                                    0,
+                                    this.select_seq.length - 1
+                                )
+                            );
+                        } else {
+                            switch_out();
+                            break;
+                        }
+                    }
+                }
             }
-            case "ArrowRight": {
-                this.handle_move_right();
-                break;
-            }
-            case "ArrowUp": {
-                this.handle_move_vertical(true);
-                break;
-            }
-            case "ArrowDown": {
-                this.handle_move_vertical(false);
-                break;
-            }
-            case "Backspace": {
-                this.handle_delete();
-                break;
+        } else {
+            if (e.ctrlKey && !e.shiftKey) {
+                switch (e.key) {
+                    case "Control":
+                        e.preventDefault();
+                        return;
+                    case "f":
+                        e.preventDefault();
+                        this.set_select_mode(true);
+                        this.set_select_seq("");
+                        break;
+                    case "h":
+                        e.preventDefault();
+                        this.handle_move_left();
+                        break;
+                    case "l":
+                        e.preventDefault();
+                        this.handle_move_right();
+                        break;
+                    case "j":
+                        e.preventDefault();
+                        this.handle_move_vertical(false);
+                        break;
+                    case "k":
+                        e.preventDefault();
+                        this.handle_move_vertical(true);
+                        break;
+                }
+            } else {
+                switch (e.key) {
+                    case "ArrowLeft": {
+                        this.handle_move_left();
+                        break;
+                    }
+                    case "ArrowRight": {
+                        this.handle_move_right();
+                        break;
+                    }
+                    case "ArrowUp": {
+                        this.handle_move_vertical(true);
+                        break;
+                    }
+                    case "ArrowDown": {
+                        this.handle_move_vertical(false);
+                        break;
+                    }
+                    case "Backspace": {
+                        this.handle_delete();
+                        break;
+                    }
+                }
             }
         }
 
@@ -537,5 +623,17 @@ export class FileEditorMaster {
     set_select_seq = (select_seq: string) => {
         this.select_seq = select_seq;
         this.set_external_select_seq(select_seq);
+    };
+
+    set_set_external_rep_id = (
+        set_external_rep_id: (rep_id: string) => void
+    ) => {
+        this.set_external_rep_id = set_external_rep_id;
+    };
+
+    set_set_external_rep_mode = (
+        set_external_rep_mode: (rep_mode: boolean) => void
+    ) => {
+        this.set_external_edit_rep_mode = set_external_rep_mode;
     };
 }

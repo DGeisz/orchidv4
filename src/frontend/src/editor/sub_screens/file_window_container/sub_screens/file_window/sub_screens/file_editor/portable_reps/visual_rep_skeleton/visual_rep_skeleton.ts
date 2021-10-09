@@ -85,7 +85,7 @@ export const exampleVRS: VRSNodeSocket = {
                                             id: v4(),
                                             title: add_latex_color(
                                                 create_tex_text("Theorem"),
-                                                palette.deepBlue
+                                                palette.mediumForestGreen
                                             ),
                                             comment: null,
                                             main_tex: {

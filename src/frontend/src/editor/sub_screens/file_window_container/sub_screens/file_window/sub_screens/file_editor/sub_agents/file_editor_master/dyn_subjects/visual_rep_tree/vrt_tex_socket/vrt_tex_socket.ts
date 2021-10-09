@@ -122,14 +122,14 @@ export class VRTTexSocket implements VRTEntity, VRTTex, VRTCursorSocket {
         }
     };
 
-    get_num_selectable_sockets = () => {
+    get_num_selectable_sockets: () => number = () => {
         if (!!this.element) {
             if (this.element.is_leaf()) {
                 /* If the element is a leaf, then we can select it */
                 return 1;
             } else {
-                /* Otherwise, we can't select it */
-                return 0;
+                /* Otherwise, we can't select it, but we can select children */
+                return this.element.get_num_selectable_sockets();
             }
         } else {
             /* An empty socket is a selectable socket */
@@ -137,7 +137,9 @@ export class VRTTexSocket implements VRTEntity, VRTTex, VRTCursorSocket {
         }
     };
 
-    label_selectable_sockets = (labels: string[]) => {
+    label_selectable_sockets: (labels: string[]) => string[] = (
+        labels: string[]
+    ) => {
         /* Basically mirror get_num_selectable */
         if (!this.element || (!!this.element && this.element.is_leaf())) {
             const label = labels.pop();
@@ -146,6 +148,10 @@ export class VRTTexSocket implements VRTEntity, VRTTex, VRTCursorSocket {
             } else {
                 throw new Error("Ran out of labels!");
             }
+
+            return labels;
+        } else if (!!this.element) {
+            return this.element.label_selectable_sockets(labels);
         }
 
         return labels;
