@@ -28,6 +28,10 @@ const TexElement: React.FC<Props> = (props) => {
     >([]);
 
     useEffect(() => {
+        console.log("These are widgets: ", props.tex_widget_properties);
+    }, []);
+
+    useEffect(() => {
         props.tex_widget_properties.forEach((widget) => {
             let tex_node = document.getElementById(widget.id);
 
@@ -84,6 +88,7 @@ const TexElement: React.FC<Props> = (props) => {
             }
 
             if (select_seq === tex_widget.label) {
+                console.log("baddd juju", tex_widget);
                 !!select_widget && select_widget(tex_widget.id);
             }
         });

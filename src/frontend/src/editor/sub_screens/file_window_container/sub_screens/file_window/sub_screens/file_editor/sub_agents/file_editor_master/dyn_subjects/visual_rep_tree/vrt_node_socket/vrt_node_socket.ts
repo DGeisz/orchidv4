@@ -15,6 +15,7 @@ import {
     active_socket_tex,
     LATEX_EMPTY_SOCKET,
     text_with_cursor,
+    wrap_html_id,
 } from "../../../../../utils/latex_utils";
 import { VRTStruct } from "../vrt_struct";
 import {
@@ -27,6 +28,9 @@ import {
 export class VRTNodeSocket implements VRTStruct, VRTCursorSocket {
     id: string;
     node: VRTNode | null = null;
+
+    /* This is the label used for vimium selection */
+    label: string = "";
 
     left_cursor_entry: string = "";
 
@@ -76,24 +80,30 @@ export class VRTNodeSocket implements VRTStruct, VRTCursorSocket {
 
             return avr;
         } else {
-            let main_tex = LATEX_EMPTY_SOCKET;
+            let main_tex = wrap_html_id(LATEX_EMPTY_SOCKET, this.id);
 
             if (cursor_position.id === this.id) {
-                main_tex = active_socket_tex(
-                    text_with_cursor(
-                        this.left_cursor_entry,
-                        cursor_position.position
-                    )
+                main_tex = wrap_html_id(
+                    active_socket_tex(
+                        text_with_cursor(
+                            this.left_cursor_entry,
+                            cursor_position.position
+                        )
+                    ),
+                    this.id
                 );
             }
 
             const line: AVRLine = {
                 tag: AVRType.Line,
                 main_tex: main_tex,
+                main_widgets: [{ id: this.id, label: this.label }],
                 right_tex: null,
+                right_widgets: [],
                 title: null,
                 comment: null,
                 label_tex: null,
+                label_widgets: [],
                 border_bottom: false,
                 border_top: false,
             };
@@ -137,6 +147,32 @@ export class VRTNodeSocket implements VRTStruct, VRTCursorSocket {
         }
     };
 
+    get_num_selectable_sockets = () => {
+        if (!!this.node) {
+            return this.node.get_num_selectable_sockets();
+        } else {
+            /* If this isn't filled, then it's selectable */
+            return 1;
+        }
+    };
+
+    label_selectable_sockets = (labels: string[]) => {
+        if (!!this.node) {
+            return this.node.label_selectable_sockets(labels);
+        } else {
+            /* Grab a label from the top, and return the remaining labels */
+            const label = labels.pop();
+
+            if (!!label) {
+                this.label = label;
+            } else {
+                throw new Error("Ran out of labels");
+            }
+
+            return labels;
+        }
+    };
+
     get_left_entry = () => this.left_cursor_entry;
     get_right_entry = () => "";
 
@@ -147,4 +183,14 @@ export class VRTNodeSocket implements VRTStruct, VRTCursorSocket {
     };
 
     set_right_entry = (_entry: string) => {};
+
+    get_cursor_socket = (socket_id: string) => {
+        if (this.id === socket_id) {
+            return this;
+        } else if (!!this.node) {
+            return this.node.get_cursor_socket(socket_id);
+        } else {
+            return null;
+        }
+    };
 }

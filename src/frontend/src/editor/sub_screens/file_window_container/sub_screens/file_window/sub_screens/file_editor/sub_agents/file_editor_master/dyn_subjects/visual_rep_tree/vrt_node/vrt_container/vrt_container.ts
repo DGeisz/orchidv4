@@ -51,4 +51,30 @@ export class VRTContainer implements VRTNode {
     /* We just return nothing here because a container doesn't
      * ever act as a line */
     get_line_cursor_locations = () => [];
+
+    get_num_selectable_sockets = () => {
+        return this.children.reduce(
+            (acc, curr) => acc + curr.get_num_selectable_sockets(),
+            0
+        );
+    };
+
+    label_selectable_sockets = (labels: string[]) => {
+        return this.children.reduce(
+            (acc, curr) => curr.label_selectable_sockets(acc),
+            labels
+        );
+    };
+
+    get_cursor_socket = (socket_id: string) => {
+        for (let child of this.children) {
+            const cursor = child.get_cursor_socket(socket_id);
+
+            if (!!cursor) {
+                return cursor;
+            }
+        }
+
+        return null;
+    };
 }

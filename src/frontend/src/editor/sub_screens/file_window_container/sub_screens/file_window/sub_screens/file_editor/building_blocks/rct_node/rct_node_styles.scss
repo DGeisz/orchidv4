@@ -19,6 +19,7 @@ $tex-padding: 12px 0;
 
 .rct-line-outer-container {
     @extend %flexRow;
+    overflow: hidden;
 }
 
 .rct-line-container {

@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./file_editor_styles.scss";
 import RctNode from "./building_blocks/rct_node/rct_node";
 import { EditorContext } from "./context/EditorContext";
-import {
-    AVRNode,
-    exampleNode,
-} from "./editor_types/assembled_visual_rep/assembled_visual_rep";
+import { AVRNode } from "./editor_types/assembled_visual_rep/assembled_visual_rep";
 import { GridLoader } from "react-spinners";
 import { palette } from "../../../../../../../global_styles/palette";
 import { FileEditorMaster } from "./sub_agents/file_editor_master/file_editor_master";
@@ -20,6 +17,7 @@ const FileEditor: React.FC<Props> = (props) => {
     const [select_socket, set_select_socket] = useState<
         (socket_id: string) => void
     >(() => {});
+
     const [select_mode, set_select_mode] = useState<boolean>(false);
     const [select_seq, set_select_seq] = useState<string>("");
 
@@ -40,6 +38,10 @@ const FileEditor: React.FC<Props> = (props) => {
 
     useEffect(() => {
         props.file_editor_master.set_set_avr(set_avr);
+        props.file_editor_master.set_set_external_select_mode(set_select_mode);
+        props.file_editor_master.set_set_external_select_seq(set_select_seq);
+
+        set_select_socket(() => props.file_editor_master.select_socket);
     }, []);
 
     if (!!assembled_visual_rep) {

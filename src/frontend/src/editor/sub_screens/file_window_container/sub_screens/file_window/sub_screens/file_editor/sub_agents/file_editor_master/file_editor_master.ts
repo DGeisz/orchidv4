@@ -18,6 +18,7 @@ import {
     ALLOWED_NON_ALPHA_NUMERIC_CHARS,
     CURSOR_NAME,
 } from "../../utils/latex_utils";
+import { hint_strings } from "../../utils/vimium_hints";
 
 const EMPTY_CURSOR: VRTCursorPosition = {
     id: "",
@@ -34,8 +35,14 @@ export class FileEditorMaster {
 
     private cursor_line?: string;
     private cursor_position: VRTCursorPositionRef | null = null;
-
     private cursor_interval?: NodeJS.Timer;
+
+    /* All this 'select' stuff is for vimium select mode */
+    private select_mode: boolean = false;
+    private set_external_select_mode: (select_mode: boolean) => void = () => {};
+
+    private select_seq: string = "";
+    private set_external_select_seq: (seq: string) => void = () => {};
 
     private set_avr: (avr: AVRNode) => void;
 
@@ -102,6 +109,9 @@ export class FileEditorMaster {
     };
 
     process_change = () => {
+        /* First label the sockets */
+        this.label_sockets();
+
         const position = this.has_focus
             ? !!this.cursor_position
                 ? this.cursor_position
@@ -112,9 +122,15 @@ export class FileEditorMaster {
 
         this.set_avr(avr);
 
-        console.log("Position & Avr", this.cursor_position, avr);
-
         this.restart_cursor();
+    };
+
+    label_sockets = () => {
+        const num_selectable =
+            this.root_node_socket.get_num_selectable_sockets();
+        const labels = hint_strings(num_selectable).reverse();
+
+        this.root_node_socket.label_selectable_sockets(labels);
     };
 
     handle_keypress: KeyboardHandler = (e) => {
@@ -438,6 +454,30 @@ export class FileEditorMaster {
         this.configure_initial_cursor();
     };
 
+    select_socket = (socket_id: string) => {
+        /* We have to do a linear search through all sockets
+         * because we also have to set the line */
+        const lines = this.root_node_socket.get_line_sockets();
+
+        for (let line of lines) {
+            const cursor_locations = line.get_line_cursor_locations();
+
+            for (let loc of cursor_locations) {
+                if (loc.id === socket_id) {
+                    /* We found it, so set the cursor,
+                     * get out of select mode, and bool, baby */
+                    this.cursor_position = { ...loc, position: 0 };
+                    this.cursor_line = line.get_id();
+
+                    this.set_select_mode(false);
+                    this.set_select_seq("");
+
+                    return this.process_change();
+                }
+            }
+        }
+    };
+
     set_set_avr = (set_avr: (avr: AVRNode) => void) => {
         this.set_avr = set_avr;
 
@@ -476,4 +516,26 @@ export class FileEditorMaster {
     /* Updates File editor master with the latest
      * rep skeleton */
     update = (vrs: VisualRepSkeleton) => {};
+
+    set_set_external_select_mode = (
+        set_external_select_mode: (select_mode: boolean) => void
+    ) => {
+        this.set_external_select_mode = set_external_select_mode;
+    };
+
+    set_select_mode = (select_mode: boolean) => {
+        this.select_mode = select_mode;
+        this.set_external_select_mode(select_mode);
+    };
+
+    set_set_external_select_seq = (
+        set_external_select_seq: (seq: string) => void
+    ) => {
+        this.set_external_select_seq = set_external_select_seq;
+    };
+
+    set_select_seq = (select_seq: string) => {
+        this.select_seq = select_seq;
+        this.set_external_select_seq(select_seq);
+    };
 }

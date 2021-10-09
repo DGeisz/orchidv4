@@ -73,14 +73,16 @@ const RctNode: React.FC<Props> = (props) => {
                             <div className="rct-lll-left">
                                 <TexElement
                                     tex={node.main_tex}
-                                    tex_widget_properties={[]}
+                                    tex_widget_properties={node.main_widgets}
                                 />
                             </div>
                             {!!node.right_tex && (
                                 <div className="rct-lll-right">
                                     <TexElement
                                         tex={node.right_tex}
-                                        tex_widget_properties={[]}
+                                        tex_widget_properties={
+                                            node.right_widgets
+                                        }
                                     />
                                 </div>
                             )}
@@ -89,7 +91,7 @@ const RctNode: React.FC<Props> = (props) => {
                             <div className="rct-ll-right">
                                 <TexElement
                                     tex={node.label_tex}
-                                    tex_widget_properties={[]}
+                                    tex_widget_properties={node.label_widgets}
                                 />
                             </div>
                         )}

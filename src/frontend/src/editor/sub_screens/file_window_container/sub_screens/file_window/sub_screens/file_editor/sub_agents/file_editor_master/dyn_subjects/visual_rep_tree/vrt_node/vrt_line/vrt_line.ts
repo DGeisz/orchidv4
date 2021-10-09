@@ -33,17 +33,36 @@ export class VRTLine implements VRTNode {
     get_avr: (cursor_position: VRTCursorPosition) => AVRLine = (
         cursor_position: VRTCursorPosition
     ) => {
+        const [main_tex, main_widgets] = this.main_tex.get_tex(cursor_position);
+
+        let right_tex, right_widgets;
+
+        if (!!this.right_tex) {
+            [right_tex, right_widgets] =
+                this.right_tex.get_tex(cursor_position);
+        } else {
+            [right_tex, right_widgets] = [null, []];
+        }
+
+        let label_tex, label_widgets;
+
+        if (!!this.label_tex) {
+            [label_tex, label_widgets] =
+                this.label_tex.get_tex(cursor_position);
+        } else {
+            [label_tex, label_widgets] = [null, []];
+        }
+
         return {
             tag: AVRType.Line,
             title: this.title,
             comment: this.comment,
-            main_tex: this.main_tex.get_tex(cursor_position),
-            right_tex: !!this.right_tex
-                ? this.right_tex.get_tex(cursor_position)
-                : null,
-            label_tex: !!this.label_tex
-                ? this.label_tex.get_tex(cursor_position)
-                : null,
+            main_tex,
+            main_widgets,
+            right_tex,
+            right_widgets,
+            label_tex,
+            label_widgets,
             border_bottom: this.border_bottom,
             border_top: this.border_top,
         };
@@ -69,5 +88,46 @@ export class VRTLine implements VRTNode {
         }
 
         return cursor_locations;
+    };
+
+    get_num_selectable_sockets = () => {
+        let selectable_sockets = this.main_tex.get_num_selectable_sockets();
+
+        if (!!this.right_tex) {
+            selectable_sockets += this.right_tex.get_num_selectable_sockets();
+        }
+
+        if (!!this.label_tex) {
+            selectable_sockets += this.label_tex.get_num_selectable_sockets();
+        }
+
+        return selectable_sockets;
+    };
+
+    label_selectable_sockets = (labels: string[]) => {
+        labels = this.main_tex.label_selectable_sockets(labels);
+
+        if (!!this.right_tex) {
+            labels = this.right_tex.label_selectable_sockets(labels);
+        }
+
+        if (!!this.label_tex) {
+            labels = this.label_tex.label_selectable_sockets(labels);
+        }
+
+        return labels;
+    };
+
+    get_cursor_socket = (socket_id: string) => {
+        for (let socket of [this.main_tex, this.right_tex, this.label_tex]) {
+            if (!!socket) {
+                const cursor = socket.get_cursor_socket(socket_id);
+                if (!!cursor) {
+                    return cursor;
+                }
+            }
+        }
+
+        return null;
     };
 }
