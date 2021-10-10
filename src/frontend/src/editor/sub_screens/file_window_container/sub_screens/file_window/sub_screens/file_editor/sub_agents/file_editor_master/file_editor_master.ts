@@ -148,19 +148,22 @@ export class FileEditorMaster {
     };
 
     handle_keypress: KeyboardHandler = (e) => {
-        const char = e.key.trim();
+        const char = e.key === " " ? e.key : e.key.trim();
 
+        console.log(char, `a${char}a`);
+        /*
         if (
             char.length === 1 &&
             (/^[a-z0-9]+$/i.test(char) ||
                 ALLOWED_NON_ALPHA_NUMERIC_CHARS.includes(char))
         ) {
-            if (this.select_mode) {
-                this.set_select_seq(this.select_seq + char);
-            } else {
-                this.handle_intake_character(char);
-            }
+*/
+        if (this.select_mode) {
+            this.set_select_seq(this.select_seq + char);
+        } else {
+            this.handle_intake_character(char);
         }
+        // }
 
         this.process_change();
     };

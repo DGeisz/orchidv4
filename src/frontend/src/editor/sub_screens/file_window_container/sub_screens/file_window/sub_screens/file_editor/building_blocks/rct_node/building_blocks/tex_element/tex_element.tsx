@@ -28,10 +28,6 @@ const TexElement: React.FC<Props> = (props) => {
     >([]);
 
     useEffect(() => {
-        console.log("These are widgets: ", props.tex_widget_properties);
-    }, []);
-
-    useEffect(() => {
         props.tex_widget_properties.forEach((widget) => {
             let tex_node = document.getElementById(widget.id);
 
