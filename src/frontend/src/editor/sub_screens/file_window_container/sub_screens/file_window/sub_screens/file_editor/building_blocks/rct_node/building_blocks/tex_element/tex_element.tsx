@@ -84,7 +84,6 @@ const TexElement: React.FC<Props> = (props) => {
             }
 
             if (select_seq === tex_widget.label) {
-                console.log("baddd juju", tex_widget);
                 !!select_widget && select_widget(tex_widget.id);
             }
         });

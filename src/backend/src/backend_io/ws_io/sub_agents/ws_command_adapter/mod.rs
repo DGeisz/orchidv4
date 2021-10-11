@@ -32,14 +32,8 @@ impl WsCommandAdapterPort for WsCommandAdapter {
                 Ok(oft) => (WsResponse::OFT(oft), false),
                 Err(_) => NO_OP_RES,
             },
-            WsCommand::OpenFile { path, caller_id } => match self.curator.open_file(path) {
-                Ok(vrs) => (
-                    WsResponse::FullVRS {
-                        vrs,
-                        caller_id: Some(caller_id),
-                    },
-                    false,
-                ),
+            WsCommand::OpenFile { path } => match self.curator.open_file(path) {
+                Ok(vrs) => (WsResponse::FullVRS { vrs }, false),
                 Err(_) => NO_OP_RES,
             },
         }

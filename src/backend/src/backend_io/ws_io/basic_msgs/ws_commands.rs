@@ -6,8 +6,5 @@ pub enum WsCommand {
     /* Command to fetch the Orchid file from the
     root where the backend is being run*/
     GetRootOFT,
-    OpenFile {
-        path: OrchidFilePath,
-        caller_id: String,
-    },
+    OpenFile { path: OrchidFilePath },
 }

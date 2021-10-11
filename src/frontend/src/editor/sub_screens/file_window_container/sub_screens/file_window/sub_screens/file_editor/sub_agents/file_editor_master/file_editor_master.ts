@@ -19,6 +19,12 @@ import {
     CURSOR_NAME,
 } from "../../utils/latex_utils";
 import { hint_strings } from "../../utils/vimium_hints";
+import { FileEditorMasterWs } from "./sub_agents/file_editor_master_ws/file_editor_master_ws";
+import {
+    FemWsRes,
+    res_is_full_vrs,
+} from "./sub_agents/file_editor_master_ws/basic_msgs/fem_res";
+import { v4 } from "uuid";
 
 const EMPTY_CURSOR: VRTCursorPosition = {
     id: "",
@@ -27,11 +33,17 @@ const EMPTY_CURSOR: VRTCursorPosition = {
 };
 
 export class FileEditorMaster {
-    private readonly file_id: string;
-    private readonly file_name: string;
-    private readonly file_path: OrchidFilePath;
-    private readonly formatted_name: string;
-    private root_node_socket: VRTNodeSocket;
+    private readonly ws: FileEditorMasterWs;
+
+    /* Set file_id to a temp value */
+    private file_id: string = v4();
+    private file_name?: string;
+    private file_path: OrchidFilePath;
+    private formatted_name?: string;
+    private root_node_socket: VRTNodeSocket = new VRTNodeSocket({
+        id: "",
+        node: null,
+    });
 
     private cursor_position: VRTCursorPositionRef | null = null;
     private cursor_line?: string;
@@ -50,32 +62,56 @@ export class FileEditorMaster {
 
     private set_external_rep_id: (rep_id: string) => void = () => {};
 
-    private set_avr: (avr: AVRNode) => void;
+    private set_avr: (avr: AVRNode) => void = () => {};
+
+    private on_hydrated_callbacks: (() => void)[] = [];
+    private hydrated: boolean = false;
 
     private has_focus: boolean = true;
 
-    constructor(vrs: VisualRepSkeleton) {
-        const {
-            file_id,
-            file_path,
-            file_name,
-            formatted_name,
-            root_node_socket,
-        } = vrs;
+    private restart_cursor: () => void = () => {};
 
-        this.file_id = file_id;
-        this.file_name = file_name;
-        this.formatted_name = formatted_name;
+    constructor(file_path: OrchidFilePath) {
         this.file_path = file_path;
-        this.root_node_socket = new VRTNodeSocket(exampleVRS);
 
-        this.configure_initial_cursor();
+        /* Configure the ws connection */
+        this.ws = new FileEditorMasterWs(this.handle_ws_res);
 
-        this.set_avr = () => {};
+        /* ...and then send a request to open the file*/
+        this.ws.open_file(this.file_path);
     }
 
+    handle_ws_res = (res: FemWsRes) => {
+        console.log("Got meesage: ", res);
+        if (res_is_full_vrs(res)) {
+            const { vrs } = res.FullVRS;
+
+            if (this.path_eq(vrs.file_path)) {
+                const { file_name, formatted_name, root_node_socket, file_id } =
+                    vrs;
+
+                this.file_id = file_id;
+                this.file_name = file_name;
+                this.formatted_name = formatted_name;
+                this.root_node_socket = new VRTNodeSocket(exampleVRS);
+
+                this.configure_initial_cursor();
+
+                /* Handle hydration callbacks */
+                if (!this.hydrated) {
+                    this.hydrated = true;
+                    this.on_hydrated_callbacks.forEach((callback) =>
+                        callback()
+                    );
+                }
+            }
+        }
+
+        this.process_change();
+    };
+
     configure_initial_cursor = () => {
-        if (!this.cursor_position) {
+        if (!this.cursor_position && !!this.root_node_socket) {
             const lines = this.root_node_socket.get_line_sockets();
 
             if (lines.length > 0) {
@@ -94,26 +130,26 @@ export class FileEditorMaster {
         }
     };
 
-    restart_cursor = () => {
-        !!this.cursor_interval && clearInterval(this.cursor_interval);
-        const cursor_obj = document.getElementById(CURSOR_NAME);
-
-        if (!!cursor_obj) {
-            cursor_obj.style.visibility = "visible";
-        }
-
-        this.cursor_interval = setInterval(() => {
-            const cursor_obj = document.getElementById(CURSOR_NAME);
-
-            if (!!cursor_obj) {
-                cursor_obj.style.visibility =
-                    cursor_obj.style.visibility === "hidden"
-                        ? "visible"
-                        : "hidden";
-            }
-        }, 530);
-    };
-
+    // restart_cursor = () => {
+    //     !!this.cursor_interval && clearInterval(this.cursor_interval);
+    //     const cursor_obj = document.getElementById(CURSOR_NAME);
+    //
+    //     if (!!cursor_obj) {
+    //         cursor_obj.style.visibility = "visible";
+    //     }
+    //
+    //     this.cursor_interval = setInterval(() => {
+    //         const cursor_obj = document.getElementById(CURSOR_NAME);
+    //
+    //         if (!!cursor_obj) {
+    //             cursor_obj.style.visibility =
+    //                 cursor_obj.style.visibility === "hidden"
+    //                     ? "visible"
+    //                     : "hidden";
+    //         }
+    //     }, 530);
+    // };
+    //
     process_change = () => {
         /* First label the sockets */
         this.label_sockets();
@@ -148,6 +184,7 @@ export class FileEditorMaster {
     };
 
     handle_keypress: KeyboardHandler = (e) => {
+        console.log("Got keypress on ", this.formatted_name);
         const char = e.key === " " ? e.key : e.key.trim();
 
         console.log(char, `a${char}a`);
@@ -583,7 +620,7 @@ export class FileEditorMaster {
     };
 
     get_formatted_name = () => {
-        return this.formatted_name;
+        return !!this.formatted_name ? this.formatted_name : "";
     };
 
     get_file_path = () => {
@@ -638,5 +675,17 @@ export class FileEditorMaster {
         set_external_rep_mode: (rep_mode: boolean) => void
     ) => {
         this.set_external_edit_rep_mode = set_external_rep_mode;
+    };
+
+    add_on_hydrated = (callback: () => void) => {
+        this.on_hydrated_callbacks.push(callback);
+    };
+
+    is_hydrated = () => {
+        return this.hydrated;
+    };
+
+    set_restart_cursor = (restart_cursor: () => void) => {
+        this.restart_cursor = restart_cursor;
     };
 }

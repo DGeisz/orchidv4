@@ -68,7 +68,7 @@ const FileWindow: React.FC<Props> = (props) => {
                 {props.file_editor_masters.map((master, i) => (
                     <FileTab
                         key={master.get_file_id()}
-                        file_name={master.get_formatted_name()}
+                        file_editor_master={master}
                         tab_active={i === child_focus}
                         on_select={() => set_child_focus(i)}
                         close_tab={() => remove_file_master(i)}

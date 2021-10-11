@@ -7,6 +7,7 @@ import { GridLoader } from "react-spinners";
 import { palette } from "../../../../../../../global_styles/palette";
 import { FileEditorMaster } from "./sub_agents/file_editor_master/file_editor_master";
 import { useWindowFocus } from "../../../../../../service_providers/editor_focus/editor_focus";
+import { useRestartCursor } from "../../../../service_providers/cursor_blink/cursor_blink";
 
 interface Props {
     file_editor_master: FileEditorMaster;
@@ -28,6 +29,8 @@ const FileEditor: React.FC<Props> = (props) => {
 
     const window_in_focus = useWindowFocus();
 
+    const restart_cursor = useRestartCursor();
+
     useEffect(() => {
         if (window_in_focus && props.has_file_window_focus) {
             props.file_editor_master.set_has_focus(true);
@@ -42,9 +45,24 @@ const FileEditor: React.FC<Props> = (props) => {
         props.file_editor_master.set_set_external_select_seq(set_select_seq);
         props.file_editor_master.set_set_external_rep_id(set_edit_rep_id);
         props.file_editor_master.set_set_external_rep_mode(set_edit_rep_mode);
+        props.file_editor_master.set_restart_cursor(restart_cursor);
 
         set_select_socket(() => props.file_editor_master.select_socket);
-    }, []);
+        props.file_editor_master.process_change();
+
+        return () => {
+            /* Clear out all the connections between the old
+             * file editor master and the editor view */
+            props.file_editor_master.set_set_avr(() => {});
+            props.file_editor_master.set_set_external_select_mode(() => {});
+            props.file_editor_master.set_set_external_select_seq(() => {});
+            props.file_editor_master.set_set_external_rep_id(() => {});
+            props.file_editor_master.set_set_external_rep_mode(() => {});
+            props.file_editor_master.set_restart_cursor(() => {});
+
+            set_select_socket(() => () => {});
+        };
+    }, [props.file_editor_master.get_file_id()]);
 
     if (!!assembled_visual_rep) {
         return (

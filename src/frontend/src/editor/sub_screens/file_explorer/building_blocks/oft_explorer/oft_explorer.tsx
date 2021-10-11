@@ -46,7 +46,7 @@ const OftExplorer: React.FC<Props> = (props) => {
     } else if (is_orchid_folder(oft)) {
         const new_link: OrchidFilePath = {
             Folder: {
-                ...oft.Folder,
+                folder_name: oft.Folder.folder_name,
                 child: null,
             },
         };
@@ -67,7 +67,8 @@ const OftExplorer: React.FC<Props> = (props) => {
     } else if (is_orchid_module(oft)) {
         const new_link: OrchidFilePath = {
             OrchidModule: {
-                ...oft.OrchidModule,
+                formatted_name: oft.OrchidModule.formatted_name,
+                folder_name: oft.OrchidModule.folder_name,
                 child: null,
             },
         };

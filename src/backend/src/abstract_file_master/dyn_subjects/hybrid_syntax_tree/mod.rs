@@ -72,10 +72,7 @@ impl HSTLine {
 
         match &self.line_type {
             HSTLineType::Axiom => {
-                title = Some(add_tex_color(
-                    tex_text("Axiom").as_str(),
-                    DEEP_BLUE
-                ));
+                title = Some(add_tex_color(tex_text("Axiom").as_str(), DEEP_BLUE));
                 border_top = false;
                 border_bottom = true;
             }
@@ -88,10 +85,7 @@ impl HSTLine {
                 border_bottom = true;
             }
             HSTLineType::Lemma => {
-                title = Some(add_tex_color(
-                    tex_text("Lemma").as_str(),
-                    MEDIUM_PINK,
-                ));
+                title = Some(add_tex_color(tex_text("Lemma").as_str(), MEDIUM_PINK));
                 border_top = false;
                 border_bottom = true;
             }
@@ -163,18 +157,18 @@ impl HSTLexSocket {
 
 pub enum HSTLexType {
     Let,
-    TypeMap,
-    UseMod,
-    Mod,
-    Theory,
-    Given,
-    Assume,
-    Fn,
-    Pi,
-    ForAll,
-    Syntax,
-    TreeNode,
-    CustomLabel(String),
+    // TypeMap,
+    // UseMod,
+    // Mod,
+    // Theory,
+    // Given,
+    // Assume,
+    // Fn,
+    // Pi,
+    // ForAll,
+    // Syntax,
+    // TreeNode,
+    // CustomLabel(String),
 }
 
 pub struct HSTLexElement {
@@ -189,23 +183,24 @@ impl HSTLexElement {
 
         match &self.lex_type {
             HSTLexType::Let => {
-                tex_template = vec![
-                    format!("{} {} {{", add_tex_color(tex_text("Let").as_str())
-                ];
-            }
-            HSTLexType::TypeMap => {}
-            HSTLexType::UseMod => {}
-            HSTLexType::Mod => {}
-            HSTLexType::Theory => {}
-            HSTLexType::Given => {}
-            HSTLexType::Assume => {}
-            HSTLexType::Fn => {}
-            HSTLexType::Pi => {}
-            HSTLexType::ForAll => {}:w
-            
-            HSTLexType::Syntax => {}
-            HSTLexType::TreeNode => {}
-            HSTLexType::CustomLabel(_) => {}
+                tex_template = vec![format!(
+                    "{} {} {{",
+                    add_tex_color(tex_text("Let").as_str(), ""),
+                    1
+                )];
+            } // HSTLexType::TypeMap => {}
+              // HSTLexType::UseMod => {}
+              // HSTLexType::Mod => {}
+              // HSTLexType::Theory => {}
+              // HSTLexType::Given => {}
+              // HSTLexType::Assume => {}
+              // HSTLexType::Fn => {}
+              // HSTLexType::Pi => {}
+              // HSTLexType::ForAll => {}
+              //
+              // HSTLexType::Syntax => {}
+              // HSTLexType::TreeNode => {}
+              // HSTLexType::CustomLabel(_) => {}
         }
 
         unimplemented!()
