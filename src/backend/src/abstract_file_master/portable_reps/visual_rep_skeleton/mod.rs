@@ -54,6 +54,22 @@ pub struct VRSContainer {
     children: Vec<VRSNodeSocket>,
 }
 
+impl VRSContainer {
+    pub fn new(
+        id: String,
+        left_border: bool,
+        indented: bool,
+        children: Vec<VRSNodeSocket>,
+    ) -> VRSContainer {
+        VRSContainer {
+            id,
+            left_border,
+            indented,
+            children,
+        }
+    }
+}
+
 #[derive(Eq, PartialEq, Serialize, Deserialize, Debug, Clone)]
 pub struct VRSLine {
     id: String,
@@ -66,10 +82,40 @@ pub struct VRSLine {
     border_top: bool,
 }
 
+impl VRSLine {
+    pub fn new(
+        id: String,
+        title: Option<String>,
+        comment: Option<String>,
+        main_tex: VRSTexSocket,
+        right_tex: Option<VRSTexSocket>,
+        label_tex: Option<VRSTexSocket>,
+        border_bottom: bool,
+        border_top: bool,
+    ) -> VRSLine {
+        VRSLine {
+            id,
+            title,
+            comment,
+            main_tex,
+            right_tex,
+            label_tex,
+            border_bottom,
+            border_top,
+        }
+    }
+}
+
 #[derive(Eq, PartialEq, Serialize, Deserialize, Debug, Clone)]
 pub struct VRSTexSocket {
     id: String,
     element: Option<Box<VRSTexElement>>,
+}
+
+impl VRSTexSocket {
+    pub fn new(id: String, element: Option<Box<VRSTexElement>>) -> VRSTexSocket {
+        VRSTexSocket { id, element }
+    }
 }
 
 #[derive(Eq, PartialEq, Serialize, Deserialize, Debug, Clone)]

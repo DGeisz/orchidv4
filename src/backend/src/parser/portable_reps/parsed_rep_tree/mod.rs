@@ -17,22 +17,22 @@ pub enum Expression {
 pub struct SortExpr {}
 
 pub struct AppExpr {
-    function: Option<Expression>,
-    argument: Option<Expression>,
+    function: Option<Box<Expression>>,
+    argument: Option<Box<Expression>>,
 }
 
 pub struct LambdaExpr {
     term_def: Option<TermDef>,
-    value: Option<Expression>,
+    value: Option<Box<Expression>>,
 }
 
 pub struct PiExpr {
     source_def: Option<TermDef>,
-    target: OptioN<Expression>,
+    target: Option<Box<Expression>>,
 }
 
 pub enum Declaration {
-    Let(Let),
+    Let(LetDec),
     Mod(ModDec),
     Use(UseModDec),
     Syntax(SyntaxDec),
@@ -40,12 +40,12 @@ pub enum Declaration {
 
 pub struct TermDef {
     term: Option<String>,
-    term_type: Option<Expression>,
+    term_type: Option<Box<Expression>>,
 }
 
 pub struct LetDec {
     term_def: TermDef,
-    value: Option<Expression>,
+    value: Option<Box<Expression>>,
 }
 
 pub struct ModDec {
