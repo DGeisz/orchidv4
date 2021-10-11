@@ -4,9 +4,5 @@ use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_
 };
 
 pub trait AFMGeneratorControl {
-    fn get_new_afm_at_path(
-        &self,
-        id: String,
-        path: OrchidFilePath,
-    ) -> Result<Box<dyn AFMControl>, OFPError>;
+    fn get_new_afm_at_path(&self, path: OrchidFilePath) -> Result<Box<dyn AFMControl>, OFPError>;
 }

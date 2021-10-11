@@ -9,7 +9,8 @@ use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_
 use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_tree::{
     OFTError, OrchidFileTree,
 };
-use crate::curator::sub_agents::id_generator::port::IdGenControl;
+use crate::kernel::port::KernelControl;
+use crate::parser::port::ParserControl;
 use std::collections::HashMap;
 
 pub mod port;
@@ -19,26 +20,56 @@ pub mod sub_agents;
 mod tests;
 
 pub struct Curator {
-    id_generator: Box<dyn IdGenControl>,
     /// HashMap of all open Abstract File Masters
     abstract_file_masters: HashMap<String, Box<dyn AFMControl>>,
     /// AFM Generator
     afm_generator: Box<dyn AFMGeneratorControl>,
     file_system_adapter: Box<dyn FSAControl>,
+    parser: Box<dyn ParserControl>,
+    kernel: Box<dyn KernelControl>,
 }
 
 impl Curator {
     pub fn new(
-        id_generator: Box<dyn IdGenControl>,
         afm_generator: Box<dyn AFMGeneratorControl>,
         file_system_adapter: Box<dyn FSAControl>,
+        parser: Box<dyn ParserControl>,
+        kernel: Box<dyn KernelControl>,
     ) -> Box<dyn CuratorControl> {
         Box::new(Curator {
             afm_generator,
             abstract_file_masters: HashMap::new(),
             file_system_adapter,
-            id_generator,
+            parser,
+            kernel,
         })
+    }
+
+    /// This is the all-powerful method that
+    /// provides a top level description of how
+    /// all the subsequent systems interact
+    ///
+    /// We start out by assuming the the curator selected an
+    /// afm and that the afm just made a change to its hst.
+    /// Now we use the parser and the kernel to parse and
+    /// check any changes that occurred within the hst
+    pub fn process_file_change(&mut self, afm: &mut Box<dyn AFMControl>) {
+        /* First get the hst */
+        let hst = afm.get_hybrid_syntax_tree();
+
+        /* Now we're going to parse the hst, which also
+        attempts to parse any string socket inputs into
+        hst structures */
+        let prt = self.parser.parse_hybrid_syntax_tree(hst);
+
+        /* Now that we have the parsed rep tree,
+        we simply have to type check it, so we invoke the
+        kernel, and grab the diagnostics from the kernel*/
+        let diagnostics = self.kernel.check_parsed_rep_tree(prt);
+
+        /* Finally we let the afm process the diagnostics from the kernel
+        to make any check edits to the hst*/
+        afm.process_kernel_diagnostics(diagnostics);
     }
 }
 
@@ -67,9 +98,7 @@ impl CuratorControl for Curator {
         /* TODO: Change this.  Right now we just initialize a new
           Abstract file master with this path
         */
-        let new_afm = self
-            .afm_generator
-            .get_new_afm_at_path(self.id_generator.gen_id(), path)?;
+        let new_afm = self.afm_generator.get_new_afm_at_path(path)?;
 
         /* Get the vrs before we lose ownership */
         let visual_rep_skeleton = new_afm.get_visual_rep_skeleton();
