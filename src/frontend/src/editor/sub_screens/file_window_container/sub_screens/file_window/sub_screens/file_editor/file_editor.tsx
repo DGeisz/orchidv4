@@ -19,6 +19,8 @@ const FileEditor: React.FC<Props> = (props) => {
         (socket_id: string) => void
     >(() => {});
 
+    const [file_hydrated, set_hydrated] = useState<boolean>(false);
+
     const [select_mode, set_select_mode] = useState<boolean>(false);
     const [select_seq, set_select_seq] = useState<string>("");
 
@@ -50,6 +52,13 @@ const FileEditor: React.FC<Props> = (props) => {
         set_select_socket(() => props.file_editor_master.select_socket);
         props.file_editor_master.process_change();
 
+        if (props.file_editor_master.is_hydrated()) {
+            set_hydrated(true);
+        } else {
+            set_hydrated(false);
+            props.file_editor_master.add_on_hydrated(() => set_hydrated(true));
+        }
+
         return () => {
             /* Clear out all the connections between the old
              * file editor master and the editor view */
@@ -64,7 +73,7 @@ const FileEditor: React.FC<Props> = (props) => {
         };
     }, [props.file_editor_master.get_file_id()]);
 
-    if (!!assembled_visual_rep) {
+    if (!!assembled_visual_rep && file_hydrated) {
         return (
             <EditorContext.Provider
                 value={{

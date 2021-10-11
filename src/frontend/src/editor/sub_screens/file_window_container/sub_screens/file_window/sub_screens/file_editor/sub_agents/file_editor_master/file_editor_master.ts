@@ -82,7 +82,6 @@ export class FileEditorMaster {
     }
 
     handle_ws_res = (res: FemWsRes) => {
-        console.log("Got meesage: ", res);
         if (res_is_full_vrs(res)) {
             const { vrs } = res.FullVRS;
 
@@ -184,10 +183,8 @@ export class FileEditorMaster {
     };
 
     handle_keypress: KeyboardHandler = (e) => {
-        console.log("Got keypress on ", this.formatted_name);
         const char = e.key === " " ? e.key : e.key.trim();
 
-        console.log(char, `a${char}a`);
         /*
         if (
             char.length === 1 &&
