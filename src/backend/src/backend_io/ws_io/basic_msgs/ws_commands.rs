@@ -6,5 +6,19 @@ pub enum WsCommand {
     /* Command to fetch the Orchid file from the
     root where the backend is being run*/
     GetRootOFT,
-    OpenFile { path: OrchidFilePath },
+    OpenFile {
+        path: OrchidFilePath,
+    },
+    CommitInput {
+        file_id: String,
+        socket_id: String,
+        input: String,
+        side: SocketSide,
+    },
+}
+
+#[derive(Deserialize, Serialize, Eq, PartialEq, Debug, Clone)]
+pub enum SocketSide {
+    Left,
+    Right,
 }

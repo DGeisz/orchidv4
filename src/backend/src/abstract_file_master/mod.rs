@@ -62,7 +62,7 @@ impl AFMControl for AbstractFileMaster {
             tail_file.get_file_name().clone(),
             tail_file.get_formatted_name().clone(),
             self.file_path.clone(),
-            VRSNodeSocket::new("".to_string(), None),
+            self.hst_root.to_vrs_node_socket(),
         )
     }
 

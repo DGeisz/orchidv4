@@ -5,3 +5,14 @@ export interface OpenFileCmd {
         path: OrchidFilePath;
     };
 }
+
+export interface CommitInputCmd {
+    CommitInput: {
+        file_id: String;
+        socket_id: String;
+        input: String;
+        side: SocketSide;
+    };
+}
+
+export type SocketSide = "Left" | "Right";

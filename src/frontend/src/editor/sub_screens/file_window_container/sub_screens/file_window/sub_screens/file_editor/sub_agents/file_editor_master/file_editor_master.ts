@@ -14,10 +14,6 @@ import {
     VRTCursorPosition,
     VRTCursorPositionRef,
 } from "./dyn_subjects/visual_rep_tree/vrt_cursor";
-import {
-    ALLOWED_NON_ALPHA_NUMERIC_CHARS,
-    CURSOR_NAME,
-} from "../../utils/latex_utils";
 import { hint_strings } from "../../utils/vimium_hints";
 import { FileEditorMasterWs } from "./sub_agents/file_editor_master_ws/file_editor_master_ws";
 import {
@@ -25,6 +21,7 @@ import {
     res_is_full_vrs,
 } from "./sub_agents/file_editor_master_ws/basic_msgs/fem_res";
 import { v4 } from "uuid";
+import { SocketSide } from "./sub_agents/file_editor_master_ws/basic_msgs/fem_cmd";
 
 const EMPTY_CURSOR: VRTCursorPosition = {
     id: "",
@@ -47,7 +44,6 @@ export class FileEditorMaster {
 
     private cursor_position: VRTCursorPositionRef | null = null;
     private cursor_line?: string;
-    private cursor_interval?: NodeJS.Timer;
 
     /* All this 'select' stuff is for vimium select mode */
     private select_mode: boolean = false;
@@ -92,7 +88,7 @@ export class FileEditorMaster {
                 this.file_id = file_id;
                 this.file_name = file_name;
                 this.formatted_name = formatted_name;
-                this.root_node_socket = new VRTNodeSocket(exampleVRS);
+                this.root_node_socket = new VRTNodeSocket(root_node_socket);
 
                 this.configure_initial_cursor();
 
@@ -129,26 +125,6 @@ export class FileEditorMaster {
         }
     };
 
-    // restart_cursor = () => {
-    //     !!this.cursor_interval && clearInterval(this.cursor_interval);
-    //     const cursor_obj = document.getElementById(CURSOR_NAME);
-    //
-    //     if (!!cursor_obj) {
-    //         cursor_obj.style.visibility = "visible";
-    //     }
-    //
-    //     this.cursor_interval = setInterval(() => {
-    //         const cursor_obj = document.getElementById(CURSOR_NAME);
-    //
-    //         if (!!cursor_obj) {
-    //             cursor_obj.style.visibility =
-    //                 cursor_obj.style.visibility === "hidden"
-    //                     ? "visible"
-    //                     : "hidden";
-    //         }
-    //     }, 530);
-    // };
-    //
     process_change = () => {
         /* First label the sockets */
         this.label_sockets();
@@ -158,14 +134,6 @@ export class FileEditorMaster {
         if (this.has_focus && !this.select_mode && !!this.cursor_position) {
             position = this.cursor_position;
         }
-
-        // const position = this.has_focus
-        //     ? this.select_mode
-        //         ? !!this.cursor_position
-        //             ? this.cursor_position
-        //             : EMPTY_CURSOR
-        //         : EMPTY_CURSOR
-        //     : EMPTY_CURSOR;
 
         const avr = this.root_node_socket.get_avr(position);
 
@@ -185,19 +153,11 @@ export class FileEditorMaster {
     handle_keypress: KeyboardHandler = (e) => {
         const char = e.key === " " ? e.key : e.key.trim();
 
-        /*
-        if (
-            char.length === 1 &&
-            (/^[a-z0-9]+$/i.test(char) ||
-                ALLOWED_NON_ALPHA_NUMERIC_CHARS.includes(char))
-        ) {
-*/
         if (this.select_mode) {
             this.set_select_seq(this.select_seq + char);
         } else {
             this.handle_intake_character(char);
         }
-        // }
 
         this.process_change();
     };
@@ -290,6 +250,10 @@ export class FileEditorMaster {
                         this.handle_delete();
                         break;
                     }
+                    case "Enter": {
+                        this.handle_enter();
+                        break;
+                    }
                 }
             }
         }
@@ -366,6 +330,42 @@ export class FileEditorMaster {
                 } else {
                     /*TODO: Handle custom delete behaviors*/
                 }
+            }
+        }
+    };
+
+    handle_enter = () => {
+        /* First check if we have cursor */
+        if (!!this.cursor_position) {
+            const cursor_socket = this.cursor_position.ref;
+
+            /* Now let's get the entry and socket side */
+            let entry: string;
+            let socket_side: SocketSide;
+
+            switch (this.cursor_position.side) {
+                case CursorSide.Left:
+                    entry = cursor_socket.get_left_entry();
+                    socket_side = "Left";
+
+                    break;
+                case CursorSide.Right:
+                    entry = cursor_socket.get_right_entry();
+                    socket_side = "Right";
+
+                    break;
+            }
+
+            /* Split this up into whether the entry is empty or not */
+            if (!!entry) {
+                /* If entry is not empty,
+                 * we send a commit input request to the
+                 * backend */
+                this.ws.commit_input(
+                    entry,
+                    this.cursor_position.id,
+                    socket_side
+                );
             }
         }
     };
