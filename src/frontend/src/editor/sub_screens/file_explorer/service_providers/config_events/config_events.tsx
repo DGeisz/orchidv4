@@ -19,7 +19,7 @@ export function withConfigEvents<T>(Component: React.FC<T>): React.FC<T> {
             if (save_folders_i > 0) {
                 save_handler();
             }
-        }, [save_handler, save_folders_i]);
+        }, [save_folders_i]);
 
         return (
             <CEContext.Provider

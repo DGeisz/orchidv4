@@ -30,5 +30,5 @@ yarn-error.log*
 /src/backend/target
 
 # Orchid
-# /.orch
-# .orch
+/.orch
+.orch

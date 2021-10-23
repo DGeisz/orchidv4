@@ -10,5 +10,8 @@ pub trait FSAControl {
 
     fn open_file(&self, path: &OrchidFilePath) -> Result<(), OFPError>;
 
-    fn save_open_folders(&self, open_folders: OrchidOpenFolders) -> Result<(), OFTError>;
+    fn save_open_folders(
+        &self,
+        open_folders: OrchidOpenFolders,
+    ) -> Result<OrchidFileTree, OFTError>;
 }

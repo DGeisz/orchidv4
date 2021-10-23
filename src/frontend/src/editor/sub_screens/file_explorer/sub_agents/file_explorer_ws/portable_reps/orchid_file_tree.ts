@@ -51,6 +51,11 @@ export function get_oft_name(oft: OrchidFileTree): string {
     return "";
 }
 
+/* Ignore all files that start with ".", this checks if folder/file is ignored */
+export function is_oft_ignored(oft: OrchidFileTree): boolean {
+    return get_oft_name(oft).startsWith(".");
+}
+
 /* Convert to Orchid File Path link (just for the head of the tree) */
 export function convert_to_path_link(oft: OrchidFileTree): OrchidFilePath {
     if (is_orchid_file(oft)) {

@@ -111,7 +111,10 @@ impl CuratorControl for Curator {
         Ok(visual_rep_skeleton)
     }
 
-    fn save_open_folders(&mut self, open_folders: OrchidOpenFolders) -> Result<(), OFTError> {
+    fn save_open_folders(
+        &mut self,
+        open_folders: OrchidOpenFolders,
+    ) -> Result<OrchidFileTree, OFTError> {
         self.file_system_adapter.save_open_folders(open_folders)
     }
 }

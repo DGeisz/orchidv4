@@ -12,7 +12,10 @@ use mockall::*;
 pub trait CuratorControl {
     fn get_root_file_tree(&self) -> Result<OrchidFileTree, OFTError>;
     fn open_file(&mut self, path: OrchidFilePath) -> Result<VisualRepSkeleton, OFPError>;
-    fn save_open_folders(&mut self, open_folders: OrchidOpenFolders) -> Result<(), OFTError>;
+    fn save_open_folders(
+        &mut self,
+        open_folders: OrchidOpenFolders,
+    ) -> Result<OrchidFileTree, OFTError>;
 }
 
 pub fn mock_curator_control() -> MockCuratorControl {

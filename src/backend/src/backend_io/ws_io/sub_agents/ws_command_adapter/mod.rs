@@ -37,8 +37,10 @@ impl WsCommandAdapterPort for WsCommandAdapter {
                 Err(_) => NO_OP_RES,
             },
             WsCommand::SaveOpenFolders { open_folders } => {
-                self.curator.save_open_folders(open_folders);
-                NO_OP_RES
+                match self.curator.save_open_folders(open_folders) {
+                    Ok(oft) => (WsResponse::OFT(oft), false),
+                    Err(_) => NO_OP_RES,
+                }
             }
         }
     }

@@ -1,5 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { OrchidFolder } from "../../../../sub_agents/file_explorer_ws/portable_reps/orchid_file_tree";
+import {
+    is_oft_ignored,
+    OrchidFolder,
+} from "../../../../sub_agents/file_explorer_ws/portable_reps/orchid_file_tree";
 import "../../oft_explorer_styles.scss";
 import { FaChevronDown, FaChevronRight, FaFolder } from "react-icons/fa";
 import OftExplorer from "../../oft_explorer";
@@ -14,6 +17,7 @@ import {
     useTakeEditorFocus,
 } from "../../../../../../service_providers/editor_focus/editor_focus";
 import { OrchidOpenFolders } from "../../../../sub_agents/file_explorer_ws/portable_reps/orchid_open_folders";
+import { useSaveFolders } from "../../../../service_providers/config_events/config_events";
 
 interface Props {
     folder: OrchidFolder;
@@ -58,10 +62,14 @@ const OftFolder: React.FC<Props> = (props) => {
         (() => OrchidOpenFolders)[]
     >([]);
 
+    const save_folders = useSaveFolders();
+
     useEffect(() => {
         props.set_get_open_folders(() => () => {
             if (folder_open) {
-                const children = get_open_folders.map((get) => get());
+                const children = get_open_folders
+                    .filter((get) => !!get)
+                    .map((get) => get());
 
                 return {
                     name: folder.folder_name,
@@ -78,6 +86,25 @@ const OftFolder: React.FC<Props> = (props) => {
         });
     }, [folder_open, get_open_folders]);
 
+    /* The following is to properly handle when the user
+     * toggles a folder. We don't want the folder to
+     * emit a save_file trigger on the first render,
+     * because that would mean all folders would be doing
+     * that.  We only want to emit trigger after the first
+     * render*/
+
+    const [first_render, set_first_render] = useState<boolean>(true);
+
+    useEffect(() => {
+        if (first_render) {
+            set_first_render(false);
+        } else {
+            /* Otherwise trigger save folders
+             * when folder_open switches */
+            setTimeout(save_folders, 100);
+        }
+    }, [folder_open]);
+
     const toggle = () => {
         if (folder_open) {
             set_get_open_nodes_list([]);
@@ -85,6 +112,7 @@ const OftFolder: React.FC<Props> = (props) => {
 
         set_open(!folder_open);
     };
+
     const children_default_open = folder.children.length === 1;
 
     const take_editor_focus = useTakeEditorFocus();
@@ -137,31 +165,37 @@ const OftFolder: React.FC<Props> = (props) => {
             </OftTitleContainer>
             {folder_open && (
                 <div className="oft-indented-children">
-                    {folder.children.map((child_oft, index) => (
-                        <OftExplorer
-                            key={`${folder.folder_name}--${index}`}
-                            parent_path={props.path}
-                            oft={child_oft}
-                            indents={props.indents + 1}
-                            default_open={children_default_open}
-                            set_get_open_nodes={(set) => {
-                                set_get_open_nodes_list((prev) => {
-                                    const next = [...prev];
-                                    next[index] = set();
+                    {folder.children.map((child_oft, index) => {
+                        if (!is_oft_ignored(child_oft)) {
+                            return (
+                                <OftExplorer
+                                    key={`${folder.folder_name}--${index}`}
+                                    parent_path={props.path}
+                                    oft={child_oft}
+                                    indents={props.indents + 1}
+                                    default_open={children_default_open}
+                                    set_get_open_nodes={(set) => {
+                                        set_get_open_nodes_list((prev) => {
+                                            const next = [...prev];
+                                            next[index] = set();
 
-                                    return next;
-                                });
-                            }}
-                            set_get_open_folders={(set) => {
-                                set_get_open_folders((prev) => {
-                                    const next = [...prev];
-                                    next[index] = set();
+                                            return next;
+                                        });
+                                    }}
+                                    set_get_open_folders={(set) => {
+                                        set_get_open_folders((prev) => {
+                                            const next = [...prev];
+                                            next[index] = set();
 
-                                    return next;
-                                });
-                            }}
-                        />
-                    ))}
+                                            return next;
+                                        });
+                                    }}
+                                />
+                            );
+                        } else {
+                            return null;
+                        }
+                    })}
                 </div>
             )}
         </div>

@@ -130,6 +130,11 @@ impl FileSystemAdapter {
     fn open_config_file(mut base_path: PathBuf) -> io::Result<OrchidConfig> {
         /* Add the path to the config file */
         base_path.push(ORCHID_CONFIG_FOLDER);
+
+        /* This will create the .orch config folder if it doesn't exist
+        (This throws an error if it already exists, so we just don't handle the error)*/
+        let res = fs::create_dir(base_path.clone());
+
         base_path.push(ORCHID_CONFIG_FILE);
 
         let config_raw = File::open(base_path)?;
@@ -202,7 +207,10 @@ impl FSAControl for FileSystemAdapter {
         Err(OFPError::BadPath)
     }
 
-    fn save_open_folders(&self, open_folders: OrchidOpenFolders) -> Result<(), OFTError> {
+    fn save_open_folders(
+        &self,
+        open_folders: OrchidOpenFolders,
+    ) -> Result<OrchidFileTree, OFTError> {
         /* First just start off by reading what's in the current directory */
         let (current_path, _) = self.get_current_directory()?;
 
@@ -212,6 +220,6 @@ impl FSAControl for FileSystemAdapter {
         and persist open_folders to the config file */
         FileSystemAdapter::save_config_file(current_path, OrchidConfig { open_folders })?;
 
-        Ok(())
+        self.get_root_file_tree()
     }
 }
