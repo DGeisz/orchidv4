@@ -1,6 +1,10 @@
 import { OrchidFilePath } from "../../../../../../../file_explorer/sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
 import { v4 } from "uuid";
-import { add_latex_color, create_tex_text } from "../../utils/latex_utils";
+import {
+    add_latex_color,
+    create_tex_text,
+    LATEX_SPACE,
+} from "../../utils/latex_utils";
 import { palette } from "../../../../../../../../../global_styles/palette";
 
 export interface VisualRepSkeleton {
@@ -131,9 +135,59 @@ export const exampleVRS: VRSNodeSocket = {
                                                 id: v4(),
                                                 element: {
                                                     tex_template: [
-                                                        "\\frac{\\zeta_1}{\\Omega^\\eta}",
+                                                        add_latex_color(
+                                                            create_tex_text(
+                                                                "Let"
+                                                            ),
+                                                            palette.mediumPink
+                                                        ) + LATEX_SPACE,
+                                                        LATEX_SPACE +
+                                                            ":=" +
+                                                            LATEX_SPACE,
+                                                        "",
                                                     ],
-                                                    tex_sockets: [],
+                                                    tex_sockets: [
+                                                        {
+                                                            id: v4(),
+                                                            element: null,
+                                                        },
+                                                        {
+                                                            id: v4(),
+                                                            element: {
+                                                                tex_template: [
+                                                                    "\\frac{",
+                                                                    "}{",
+                                                                    "}",
+                                                                ],
+                                                                tex_sockets: [
+                                                                    {
+                                                                        id: v4(),
+                                                                        element:
+                                                                            {
+                                                                                tex_template:
+                                                                                    [
+                                                                                        "\\zeta_1",
+                                                                                    ],
+                                                                                tex_sockets:
+                                                                                    [],
+                                                                            },
+                                                                    },
+                                                                    {
+                                                                        id: v4(),
+                                                                        element:
+                                                                            {
+                                                                                tex_template:
+                                                                                    [
+                                                                                        "\\Omega^\\eta",
+                                                                                    ],
+                                                                                tex_sockets:
+                                                                                    [],
+                                                                            },
+                                                                    },
+                                                                ],
+                                                            },
+                                                        },
+                                                    ],
                                                 },
                                             },
                                             right_tex: null,
@@ -219,12 +273,7 @@ export const exampleVRS: VRSNodeSocket = {
                                             comment: null,
                                             main_tex: {
                                                 id: v4(),
-                                                element: {
-                                                    tex_template: [
-                                                        "\\frac{\\zeta_1}{\\Omega^\\eta}",
-                                                    ],
-                                                    tex_sockets: [],
-                                                },
+                                                element: null,
                                             },
                                             right_tex: null,
                                             label_tex: null,

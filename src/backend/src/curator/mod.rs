@@ -7,7 +7,7 @@ use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_
     OFPError, OrchidFilePath,
 };
 use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_tree::{
-    OFTError, OrchidFileTree,
+    OFTError, OrchidFileTree, OrchidOpenFolders,
 };
 use crate::kernel::port::KernelControl;
 use crate::parser::port::ParserControl;
@@ -109,5 +109,9 @@ impl CuratorControl for Curator {
 
         /* Return vrs */
         Ok(visual_rep_skeleton)
+    }
+
+    fn save_open_folders(&mut self, open_folders: OrchidOpenFolders) -> Result<(), OFTError> {
+        self.file_system_adapter.save_open_folders(open_folders)
     }
 }

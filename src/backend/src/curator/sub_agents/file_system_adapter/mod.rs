@@ -1,19 +1,22 @@
 use crate::curator::sub_agents::file_system_adapter::port::FSAControl;
+use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_config::OrchidConfig;
 use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_path::{
     OFPError, OrchidFilePath,
 };
 use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_tree::{
-    OFTError, OrchidFileTree,
+    OFTError, OrchidFileTree, OrchidOpenFolders,
 };
 use crate::curator::sub_agents::file_system_adapter::utils::clean_file_name::clean_file_name;
 use std::cmp::Ordering;
-use std::env;
 use std::fs;
 use std::fs::{File, ReadDir};
 use std::path::PathBuf;
+use std::{env, io};
 use tokio::io::{Error, ErrorKind};
 
 pub const ORCHID_FILE_EXTENSION: &str = ".orch";
+pub const ORCHID_CONFIG_FOLDER: &str = ".orch";
+pub const ORCHID_CONFIG_FILE: &str = "config.json";
 
 pub mod port;
 pub mod portable_reps;
@@ -62,6 +65,7 @@ impl FileSystemAdapter {
                                     if let Ok(children) = self.get_file_tree_from_path(new_path) {
                                         oft_vec.push(Box::new(OrchidFileTree::Folder {
                                             folder_name: file_name,
+                                            open: false,
                                             children,
                                         }))
                                     }
@@ -122,6 +126,31 @@ impl FileSystemAdapter {
             Err(_) => Err(OFTError::Err),
         }
     }
+
+    fn open_config_file(mut base_path: PathBuf) -> io::Result<OrchidConfig> {
+        /* Add the path to the config file */
+        base_path.push(ORCHID_CONFIG_FOLDER);
+        base_path.push(ORCHID_CONFIG_FILE);
+
+        let config_raw = File::open(base_path)?;
+        let config: OrchidConfig = serde_json::from_reader(config_raw)?;
+
+        Ok(config)
+    }
+
+    fn save_config_file(
+        mut base_path: PathBuf,
+        config: OrchidConfig,
+    ) -> Result<(), std::io::Error> {
+        /* Add the path to the config file */
+        base_path.push(ORCHID_CONFIG_FOLDER);
+        base_path.push(ORCHID_CONFIG_FILE);
+
+        let page_file = File::create(base_path)?;
+        serde_json::to_writer(page_file, &config)?;
+
+        Ok(())
+    }
 }
 
 impl FSAControl for FileSystemAdapter {
@@ -129,13 +158,25 @@ impl FSAControl for FileSystemAdapter {
         /* First just start off by reading what's in the current directory */
         let (current_path, current_dir) = self.get_current_directory()?;
 
+        let mut path_clone = current_path.clone();
+
         /* Then get the children in this dir */
         let children = self.get_file_tree_from_path(current_path)?;
 
-        Ok(OrchidFileTree::Folder {
+        /* Assemble the root file tree */
+        let mut root = OrchidFileTree::Folder {
             folder_name: current_dir,
+            open: false,
             children,
-        })
+        };
+
+        /* If we're able to properly read the config file,
+        apply the open folders object from the file */
+        if let Ok(config) = FileSystemAdapter::open_config_file(path_clone) {
+            root.apply_open_folders(&config.open_folders);
+        }
+
+        Ok(root)
     }
 
     fn open_file(&self, path: &OrchidFilePath) -> Result<(), OFPError> {
@@ -159,5 +200,18 @@ impl FSAControl for FileSystemAdapter {
         }
 
         Err(OFPError::BadPath)
+    }
+
+    fn save_open_folders(&self, open_folders: OrchidOpenFolders) -> Result<(), OFTError> {
+        /* First just start off by reading what's in the current directory */
+        let (current_path, _) = self.get_current_directory()?;
+
+        /* TODO: Handle the case where we modify existing contents*/
+
+        /* For now, assume that it's just open folders in Orchid config
+        and persist open_folders to the config file */
+        FileSystemAdapter::save_config_file(current_path, OrchidConfig { open_folders })?;
+
+        Ok(())
     }
 }

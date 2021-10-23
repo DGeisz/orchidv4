@@ -88,7 +88,10 @@ export class FileEditorMaster {
                 this.file_id = file_id;
                 this.file_name = file_name;
                 this.formatted_name = formatted_name;
-                this.root_node_socket = new VRTNodeSocket(root_node_socket);
+                this.root_node_socket = new VRTNodeSocket(
+                    exampleVRS
+                    // root_node_socket
+                );
 
                 this.configure_initial_cursor();
 

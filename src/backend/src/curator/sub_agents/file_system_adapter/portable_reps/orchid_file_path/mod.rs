@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
+use std::io::Error;
 use std::path::PathBuf;
-use tokio::io::Error;
 
 #[cfg(test)]
 mod tests;

@@ -28,3 +28,7 @@ yarn-error.log*
 
 # Rust
 /src/backend/target
+
+# Orchid
+# /.orch
+# .orch

@@ -18,10 +18,6 @@ import {
     useTakeEditorFocus,
 } from "../../service_providers/editor_focus/editor_focus";
 
-interface Props {
-    set_keydown_handler: (handler: () => KeyboardHandler) => void;
-}
-
 const FileExplorer: React.FC = () => {
     const [oft, set_oft] = useState<OrchidFileTree>();
 
