@@ -12,6 +12,7 @@ import {
     append_file_link,
     OrchidFilePath,
 } from "../../sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
+import { OrchidOpenFolders } from "../../sub_agents/file_explorer_ws/portable_reps/orchid_open_folders";
 
 interface Props {
     oft: OrchidFileTree;
@@ -19,6 +20,7 @@ interface Props {
     indents: number;
     default_open: boolean;
     set_get_open_nodes: (set: () => () => OrchidFilePath[]) => void;
+    set_get_open_folders: (set: () => () => OrchidOpenFolders) => void;
 }
 
 const OftExplorer: React.FC<Props> = (props) => {
@@ -62,6 +64,7 @@ const OftExplorer: React.FC<Props> = (props) => {
                 indents={indents}
                 default_open={props.default_open}
                 set_get_open_nodes={props.set_get_open_nodes}
+                set_get_open_folders={props.set_get_open_folders}
             />
         );
     } else if (is_orchid_module(oft)) {

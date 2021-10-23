@@ -14,6 +14,7 @@ export function is_orchid_file(oft: OrchidFileTree): oft is OrchidFile {
 export interface OrchidFolder {
     Folder: {
         folder_name: string;
+        open: boolean;
         children: OrchidFileTree[];
     };
 }
@@ -26,6 +27,7 @@ export interface OrchidModule {
     OrchidModule: {
         folder_name: string;
         formatted_name: string;
+        open: boolean;
         children: OrchidFileTree[];
     };
 }

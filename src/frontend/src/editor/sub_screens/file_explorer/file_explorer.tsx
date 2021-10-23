@@ -17,6 +17,11 @@ import {
     EditorFocus,
     useTakeEditorFocus,
 } from "../../service_providers/editor_focus/editor_focus";
+import { OrchidOpenFolders } from "./sub_agents/file_explorer_ws/portable_reps/orchid_open_folders";
+import {
+    useSaveFoldersHandler,
+    withConfigEvents,
+} from "./service_providers/config_events/config_events";
 
 const FileExplorer: React.FC = () => {
     const [oft, set_oft] = useState<OrchidFileTree>();
@@ -45,6 +50,9 @@ const FileExplorer: React.FC = () => {
     const [get_open_nodes, set_get_open_nodes] = useState<
         () => OrchidFilePath[]
     >(() => () => []);
+
+    const [get_open_folders, set_get_open_folders] =
+        useState<() => OrchidOpenFolders>();
 
     useOnExplorerKeydown(
         (e) => {
@@ -85,6 +93,12 @@ const FileExplorer: React.FC = () => {
         [get_open_nodes, file_cursor, cursor_keydown]
     );
 
+    useSaveFoldersHandler(() => {
+        if (!!get_open_folders) {
+            file_explorer_ws.save_open_folders(get_open_folders());
+        }
+    }, [get_open_folders]);
+
     if (!!oft) {
         return (
             <FileCursorContext.Provider
@@ -106,6 +120,7 @@ const FileExplorer: React.FC = () => {
                         default_open={false}
                         parent_path={null}
                         set_get_open_nodes={set_get_open_nodes}
+                        set_get_open_folders={set_get_open_folders}
                     />
                 </div>
             </FileCursorContext.Provider>
@@ -124,4 +139,4 @@ const FileExplorer: React.FC = () => {
     }
 };
 
-export default FileExplorer;
+export default withConfigEvents(FileExplorer);

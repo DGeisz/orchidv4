@@ -9,14 +9,14 @@ pub enum OrchidFileTree {
     },
     Folder {
         folder_name: String,
-        children: Vec<Box<OrchidFileTree>>,
         open: bool,
+        children: Vec<Box<OrchidFileTree>>,
     },
     OrchidModule {
         folder_name: String,
         formatted_name: String,
-        children: Vec<Box<OrchidFileTree>>,
         open: bool,
+        children: Vec<Box<OrchidFileTree>>,
     },
 }
 

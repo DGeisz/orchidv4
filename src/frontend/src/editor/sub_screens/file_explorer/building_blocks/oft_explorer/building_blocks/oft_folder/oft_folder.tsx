@@ -13,6 +13,7 @@ import {
     EditorFocus,
     useTakeEditorFocus,
 } from "../../../../../../service_providers/editor_focus/editor_focus";
+import { OrchidOpenFolders } from "../../../../sub_agents/file_explorer_ws/portable_reps/orchid_open_folders";
 
 interface Props {
     folder: OrchidFolder;
@@ -20,6 +21,7 @@ interface Props {
     indents: number;
     default_open: boolean;
     set_get_open_nodes: (set: () => () => OrchidFilePath[]) => void;
+    set_get_open_folders: (set: () => () => OrchidOpenFolders) => void;
 }
 
 const OftFolder: React.FC<Props> = (props) => {
@@ -50,7 +52,31 @@ const OftFolder: React.FC<Props> = (props) => {
         });
     }, [get_open_nodes_list]);
 
-    const [folder_open, set_open] = useState<boolean>(props.default_open);
+    const [folder_open, set_open] = useState<boolean>(folder.open);
+
+    const [get_open_folders, set_get_open_folders] = useState<
+        (() => OrchidOpenFolders)[]
+    >([]);
+
+    useEffect(() => {
+        props.set_get_open_folders(() => () => {
+            if (folder_open) {
+                const children = get_open_folders.map((get) => get());
+
+                return {
+                    name: folder.folder_name,
+                    open: true,
+                    children,
+                };
+            } else {
+                return {
+                    name: folder.folder_name,
+                    open: false,
+                    children: [],
+                };
+            }
+        });
+    }, [folder_open, get_open_folders]);
 
     const toggle = () => {
         if (folder_open) {
@@ -121,7 +147,14 @@ const OftFolder: React.FC<Props> = (props) => {
                             set_get_open_nodes={(set) => {
                                 set_get_open_nodes_list((prev) => {
                                     const next = [...prev];
+                                    next[index] = set();
 
+                                    return next;
+                                });
+                            }}
+                            set_get_open_folders={(set) => {
+                                set_get_open_folders((prev) => {
+                                    const next = [...prev];
                                     next[index] = set();
 
                                     return next;

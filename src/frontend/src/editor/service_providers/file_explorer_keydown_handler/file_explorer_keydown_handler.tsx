@@ -32,9 +32,7 @@ export function withFileExplorerKeydown(Component: React.FC): React.FC {
 }
 
 export function useExplorerKeydown(): KeyboardHandler {
-    const { keydown_handler } = useContext(FEKHContext);
-
-    return keydown_handler;
+    return useContext(FEKHContext).keydown_handler;
 }
 
 export function useOnExplorerKeydown(

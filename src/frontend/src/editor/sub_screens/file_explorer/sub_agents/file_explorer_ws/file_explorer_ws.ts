@@ -1,7 +1,8 @@
 import { WsIo } from "../../../../../global_ws_io/ws_io";
-import { GetRootOFT } from "./basic_msgs/fe_ws_cmds";
+import { GetRootOFT, SaveOpenFoldersCmd } from "./basic_msgs/fe_ws_cmds";
 import { FeWsRes, res_is_oft } from "./basic_msgs/fe_ws_res";
 import { useMemo } from "react";
+import { OrchidOpenFolders } from "./portable_reps/orchid_open_folders";
 
 export class FileExplorerWs {
     ws_io: WsIo;
@@ -13,6 +14,16 @@ export class FileExplorerWs {
 
     get_root_oft = () => {
         this.ws_io.send_message(GetRootOFT);
+    };
+
+    save_open_folders = (open_folders: OrchidOpenFolders) => {
+        const cmd: SaveOpenFoldersCmd = {
+            SaveOpenFolders: {
+                open_folders,
+            },
+        };
+
+        this.ws_io.send_message(JSON.stringify(cmd));
     };
 }
 
