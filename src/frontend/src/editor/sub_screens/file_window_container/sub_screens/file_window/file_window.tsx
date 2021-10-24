@@ -74,7 +74,6 @@ const FileWindow: React.FC<Props> = (props) => {
         <div className="fw-container">
             <DragDropContext
                 onDragEnd={(result) => {
-                    console.log("Got your destination");
                     if (!!result.destination) {
                         rearrange_file_masters(
                             result.source.index,
@@ -85,7 +84,7 @@ const FileWindow: React.FC<Props> = (props) => {
                 }}
             >
                 <Droppable droppableId="d1" direction="horizontal">
-                    {(provided, snapshot) => (
+                    {(provided) => (
                         <div
                             ref={provided.innerRef}
                             {...provided.droppableProps}
@@ -98,24 +97,6 @@ const FileWindow: React.FC<Props> = (props) => {
                                     index={i}
                                 >
                                     {(provided1) => {
-                                        let transform;
-                                        //
-                                        // // /* Hack to keep fix the axis to horizontal */
-                                        // if (
-                                        //     !!provided1.draggableProps.style
-                                        //         ?.transform
-                                        // ) {
-                                        //     //@ts-ignore
-                                        //     provided1.draggableProps.style.transform =
-                                        //         //@ts-ignore
-                                        //         provided1.draggableProps.style.transform.replace(
-                                        //             //@ts-ignore
-                                        //             /\,.+\)/,
-                                        //             //@ts-ignore
-                                        //             ",0px)"
-                                        //         );
-                                        // }
-
                                         return (
                                             <div
                                                 ref={provided1.innerRef}
