@@ -3,7 +3,10 @@ import "./file_window_styles.scss";
 import FileTab from "./building_blocks/file_tab/file_tab";
 import { FileEditorMaster } from "./sub_screens/file_editor/sub_agents/file_editor_master/file_editor_master";
 import { useSetFileWindowFocusHandler } from "../../service_providers/file_window_focus/file_window_focus";
-import { useRemoveFileMasterFromCluster } from "../../service_providers/file_master_clusters/file_master_clusters";
+import {
+    useRearrangeFileMasterCluster,
+    useRemoveFileMasterFromCluster,
+} from "../../service_providers/file_master_clusters/file_master_clusters";
 import FileEditor from "./sub_screens/file_editor/file_editor";
 import {
     useOnFwKeydown,
@@ -14,6 +17,7 @@ import {
     noOpHandler,
 } from "../../../../../global_types/keyboard_events";
 import { OrchidFilePath } from "../../../file_explorer/sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 interface Props {
     window_index: number;
@@ -25,6 +29,10 @@ const FileWindow: React.FC<Props> = (props) => {
     const [child_focus, set_child_focus] = useState<number>(0);
 
     const remove_file_master = useRemoveFileMasterFromCluster(
+        props.window_index
+    );
+
+    const rearrange_file_masters = useRearrangeFileMasterCluster(
         props.window_index
     );
 
@@ -64,17 +72,79 @@ const FileWindow: React.FC<Props> = (props) => {
 
     return (
         <div className="fw-container">
-            <div className="fw-file-bar">
-                {props.file_editor_masters.map((master, i) => (
-                    <FileTab
-                        key={master.get_file_id()}
-                        file_editor_master={master}
-                        tab_active={i === child_focus}
-                        on_select={() => set_child_focus(i)}
-                        close_tab={() => remove_file_master(i)}
-                    />
-                ))}
-            </div>
+            <DragDropContext
+                onDragEnd={(result) => {
+                    console.log("Got your destination");
+                    if (!!result.destination) {
+                        rearrange_file_masters(
+                            result.source.index,
+                            result.destination.index
+                        );
+                        set_child_focus(result.destination.index);
+                    }
+                }}
+            >
+                <Droppable droppableId="d1" direction="horizontal">
+                    {(provided, snapshot) => (
+                        <div
+                            ref={provided.innerRef}
+                            {...provided.droppableProps}
+                            className="fw-file-bar"
+                        >
+                            {props.file_editor_masters.map((master, i) => (
+                                <Draggable
+                                    key={master.get_file_id()}
+                                    draggableId={master.get_file_id()}
+                                    index={i}
+                                >
+                                    {(provided1) => {
+                                        let transform;
+                                        //
+                                        // // /* Hack to keep fix the axis to horizontal */
+                                        // if (
+                                        //     !!provided1.draggableProps.style
+                                        //         ?.transform
+                                        // ) {
+                                        //     //@ts-ignore
+                                        //     provided1.draggableProps.style.transform =
+                                        //         //@ts-ignore
+                                        //         provided1.draggableProps.style.transform.replace(
+                                        //             //@ts-ignore
+                                        //             /\,.+\)/,
+                                        //             //@ts-ignore
+                                        //             ",0px)"
+                                        //         );
+                                        // }
+
+                                        return (
+                                            <div
+                                                ref={provided1.innerRef}
+                                                {...provided1.draggableProps}
+                                                {...provided1.dragHandleProps}
+                                                // style={{ transform }}
+                                            >
+                                                <FileTab
+                                                    file_editor_master={master}
+                                                    tab_active={
+                                                        i === child_focus
+                                                    }
+                                                    on_select={() =>
+                                                        set_child_focus(i)
+                                                    }
+                                                    close_tab={() =>
+                                                        remove_file_master(i)
+                                                    }
+                                                />
+                                            </div>
+                                        );
+                                    }}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </div>
+                    )}
+                </Droppable>
+            </DragDropContext>
             <div className="fw-body">
                 <div className="left-swoosh">
                     <div className="left-swoosh-inner" />

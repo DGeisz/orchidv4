@@ -75,3 +75,37 @@ export function useRemoveFileMasterFromCluster(
         }
     };
 }
+
+export function useRearrangeFileMasterCluster(
+    cluster_index: number
+): (source_index: number, destination_index: number) => void {
+    const { file_master_clusters, set_fmc } = useContext(FMCContext);
+
+    return (source_index, destination_index) => {
+        if (!!file_master_clusters[cluster_index]) {
+            const cluster = file_master_clusters[cluster_index];
+
+            if (
+                !!cluster[source_index] &&
+                destination_index >= 0 &&
+                destination_index < cluster.length
+            ) {
+                const new_clusters = [...file_master_clusters];
+                const new_cluster = [...cluster];
+
+                const fm = cluster[source_index];
+
+                /* Remove the fm from the old location */
+                new_cluster.splice(source_index, 1);
+
+                /* Add the fm to the new location */
+                new_cluster.splice(destination_index, 0, fm);
+
+                /* Set the new clusters */
+                new_clusters[cluster_index] = new_cluster;
+
+                set_fmc(() => new_clusters);
+            }
+        }
+    };
+}
