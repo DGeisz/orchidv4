@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./file_window_styles.scss";
 import FileTab from "./building_blocks/file_tab/file_tab";
 import { FileEditorMaster } from "./sub_screens/file_editor/sub_agents/file_editor_master/file_editor_master";
-import { useSetFileWindowFocusHandler } from "../../service_providers/file_window_focus/file_window_focus";
 import {
+    useClusterChildFocus,
     useRearrangeFileMasterCluster,
     useRemoveFileMasterFromCluster,
 } from "../../service_providers/file_master_clusters/file_master_clusters";
@@ -26,7 +26,10 @@ interface Props {
 }
 
 const FileWindow: React.FC<Props> = (props) => {
-    const [child_focus, set_child_focus] = useState<number>(0);
+    // const [child_focus, set_child_focus] = useState<number>(0);
+    const [child_focus, set_child_focus] = useClusterChildFocus(
+        props.window_index
+    );
 
     const remove_file_master = useRemoveFileMasterFromCluster(
         props.window_index
@@ -42,13 +45,13 @@ const FileWindow: React.FC<Props> = (props) => {
         }
     }, [props.file_editor_masters.length]);
 
-    useSetFileWindowFocusHandler(
-        props.window_index,
-        (focus) => {
-            set_child_focus(focus);
-        },
-        []
-    );
+    // useSetFileWindowFocusHandler(
+    //     props.window_index,
+    //     (focus) => {
+    //         set_child_focus(focus);
+    //     },
+    //     []
+    // );
 
     /* Set file window keyboard event handlers */
     let keydown: KeyboardHandler;
@@ -102,7 +105,6 @@ const FileWindow: React.FC<Props> = (props) => {
                                                 ref={provided1.innerRef}
                                                 {...provided1.draggableProps}
                                                 {...provided1.dragHandleProps}
-                                                // style={{ transform }}
                                             >
                                                 <FileTab
                                                     file_editor_master={master}

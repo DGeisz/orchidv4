@@ -34,6 +34,16 @@ export function is_module_link(ofp: OrchidFilePath): ofp is ModuleLink {
 
 export type OrchidFilePath = FileLink | FolderLink | ModuleLink | null;
 
+/* Now add the Orchid open files */
+export interface OrchidOpenFiles {
+    clusters: OrchidFileCluster[];
+}
+
+interface OrchidFileCluster {
+    focused_child: number;
+    file_paths: OrchidFilePath[];
+}
+
 export function clone_file_path(ofp: OrchidFilePath): OrchidFilePath {
     if (is_file_link(ofp)) {
         return { ...ofp };

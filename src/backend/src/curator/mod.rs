@@ -4,7 +4,7 @@ use crate::abstract_file_master::portable_reps::visual_rep_skeleton::VisualRepSk
 use crate::curator::port::CuratorControl;
 use crate::curator::sub_agents::file_system_adapter::port::FSAControl;
 use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_path::{
-    OFPError, OrchidFilePath,
+    OFPError, OrchidFilePath, OrchidOpenFiles,
 };
 use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_tree::{
     OFTError, OrchidFileTree, OrchidOpenFolders,
@@ -116,5 +116,13 @@ impl CuratorControl for Curator {
         open_folders: OrchidOpenFolders,
     ) -> Result<OrchidFileTree, OFTError> {
         self.file_system_adapter.save_open_folders(open_folders)
+    }
+
+    fn save_open_files(&mut self, open_files: OrchidOpenFiles) -> Result<OrchidFileTree, OFTError> {
+        self.file_system_adapter.save_open_files(open_files)
+    }
+
+    fn get_open_files(&self) -> Option<OrchidOpenFiles> {
+        self.file_system_adapter.get_open_files()
     }
 }

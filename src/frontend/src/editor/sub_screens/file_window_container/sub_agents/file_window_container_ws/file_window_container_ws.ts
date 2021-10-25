@@ -1,9 +1,17 @@
 import { WsIo } from "../../../../../global_ws_io/ws_io";
 import { FwcWsRes } from "./basic_msgs/fwc_ws_res";
-import { OrchidFilePath } from "../../../file_explorer/sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
-import { OpenFileCmd } from "./basic_msgs/fwc_ws_cmd";
+import {
+    OrchidFilePath,
+    OrchidOpenFiles,
+} from "../../../file_explorer/sub_agents/file_explorer_ws/portable_reps/orchid_file_path/orchid_file_path";
+import {
+    GetOpenFiles,
+    OpenFileCmd,
+    SaveOpenFilesCmd,
+} from "./basic_msgs/fwc_ws_cmd";
 import { useMemo } from "react";
 import { v4 } from "uuid";
+import { SaveOpenFoldersCmd } from "../../../file_explorer/sub_agents/file_explorer_ws/basic_msgs/fe_ws_cmds";
 
 export class FileWindowContainerWs {
     private ws_io: WsIo;
@@ -24,6 +32,22 @@ export class FileWindowContainerWs {
                 caller_id: this.id,
             },
         };
+
+        this.ws_io.send_message(JSON.stringify(cmd));
+    };
+
+    get_open_files = () => {
+        this.ws_io.send_message(JSON.stringify(GetOpenFiles));
+    };
+
+    save_open_files = (open_files: OrchidOpenFiles) => {
+        const cmd: SaveOpenFilesCmd = {
+            SaveOpenFiles: {
+                open_files,
+            },
+        };
+
+        console.log("Saving open files", cmd);
 
         this.ws_io.send_message(JSON.stringify(cmd));
     };

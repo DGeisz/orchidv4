@@ -45,5 +45,7 @@ export function useSaveFoldersHandler(handler: () => void, dep_array: any[]) {
 
     useEffect(() => {
         set_save_handler(handler);
+
+        return () => set_save_handler(() => {});
     }, dep_array);
 }

@@ -78,3 +78,13 @@ pub struct OrchidOpenFolders {
     open: bool,
     children: Vec<Box<OrchidOpenFolders>>,
 }
+
+impl OrchidOpenFolders {
+    pub fn new_dummy() -> OrchidOpenFolders {
+        OrchidOpenFolders {
+            name: String::new(),
+            open: false,
+            children: vec![],
+        }
+    }
+}

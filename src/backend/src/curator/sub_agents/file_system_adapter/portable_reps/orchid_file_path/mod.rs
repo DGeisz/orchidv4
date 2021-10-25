@@ -120,3 +120,20 @@ impl From<std::io::Error> for OFPError {
         OFPError::Err
     }
 }
+
+#[derive(Serialize, Deserialize, Debug, Eq, PartialEq, Clone)]
+pub struct OrchidOpenFiles {
+    clusters: Vec<OrchidFileCluster>,
+}
+
+impl OrchidOpenFiles {
+    pub fn new_empty() -> OrchidOpenFiles {
+        OrchidOpenFiles { clusters: vec![] }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Eq, PartialEq, Clone)]
+pub struct OrchidFileCluster {
+    focused_child: u8,
+    file_paths: Vec<OrchidFilePath>,
+}

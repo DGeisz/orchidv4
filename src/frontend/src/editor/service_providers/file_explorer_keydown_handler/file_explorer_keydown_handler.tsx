@@ -43,5 +43,7 @@ export function useOnExplorerKeydown(
 
     useEffect(() => {
         set_keydown_handler(handler);
+
+        return () => set_keydown_handler(() => {});
     }, dep_array);
 }

@@ -1,7 +1,7 @@
 use crate::curator::sub_agents::file_system_adapter::port::FSAControl;
 use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_config::OrchidConfig;
 use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_path::{
-    OFPError, OrchidFilePath,
+    OFPError, OrchidFilePath, OrchidOpenFiles,
 };
 use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_tree::{
     OFTError, OrchidFileTree, OrchidOpenFolders,
@@ -214,12 +214,49 @@ impl FSAControl for FileSystemAdapter {
         /* First just start off by reading what's in the current directory */
         let (current_path, _) = self.get_current_directory()?;
 
-        /* TODO: Handle the case where we modify existing contents*/
-
-        /* For now, assume that it's just open folders in Orchid config
-        and persist open_folders to the config file */
-        FileSystemAdapter::save_config_file(current_path, OrchidConfig { open_folders })?;
+        if let Ok(mut config) = FileSystemAdapter::open_config_file(current_path.clone()) {
+            config.open_folders = open_folders;
+            FileSystemAdapter::save_config_file(current_path, config);
+        } else {
+            FileSystemAdapter::save_config_file(
+                current_path,
+                OrchidConfig {
+                    open_folders,
+                    open_files: OrchidOpenFiles::new_empty(),
+                },
+            )?;
+        }
 
         self.get_root_file_tree()
+    }
+
+    fn save_open_files(&self, open_files: OrchidOpenFiles) -> Result<OrchidFileTree, OFTError> {
+        /* First just start off by reading what's in the current directory */
+        let (current_path, _) = self.get_current_directory()?;
+
+        if let Ok(mut config) = FileSystemAdapter::open_config_file(current_path.clone()) {
+            config.open_files = open_files;
+            FileSystemAdapter::save_config_file(current_path, config);
+        } else {
+            FileSystemAdapter::save_config_file(
+                current_path,
+                OrchidConfig {
+                    open_folders: OrchidOpenFolders::new_dummy(),
+                    open_files,
+                },
+            )?;
+        }
+
+        self.get_root_file_tree()
+    }
+
+    fn get_open_files(&self) -> Option<OrchidOpenFiles> {
+        let (current_path, _) = self.get_current_directory().ok()?;
+
+        if let Ok(config) = FileSystemAdapter::open_config_file(current_path.clone()) {
+            Some(config.open_files)
+        } else {
+            None
+        }
     }
 }
