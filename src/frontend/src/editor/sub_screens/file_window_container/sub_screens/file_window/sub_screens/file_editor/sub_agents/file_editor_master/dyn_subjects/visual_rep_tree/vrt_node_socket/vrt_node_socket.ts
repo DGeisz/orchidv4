@@ -13,6 +13,7 @@ import { VRTLine } from "../vrt_node/vrt_line/vrt_line";
 import { VRTContainer } from "../vrt_node/vrt_container/vrt_container";
 import {
     active_socket_tex,
+    create_tex_text,
     LATEX_EMPTY_SOCKET,
     text_with_cursor,
     wrap_html_id,
@@ -80,7 +81,10 @@ export class VRTNodeSocket implements VRTStruct, VRTCursorSocket {
 
             return avr;
         } else {
-            let main_tex = wrap_html_id(LATEX_EMPTY_SOCKET, this.id);
+            let main_tex = wrap_html_id(
+                create_tex_text(LATEX_EMPTY_SOCKET),
+                this.id
+            );
 
             if (cursor_position.id === this.id) {
                 main_tex = wrap_html_id(

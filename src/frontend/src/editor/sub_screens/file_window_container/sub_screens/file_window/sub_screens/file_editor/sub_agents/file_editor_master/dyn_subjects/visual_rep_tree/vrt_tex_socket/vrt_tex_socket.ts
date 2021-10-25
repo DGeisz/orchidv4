@@ -2,6 +2,7 @@ import { VRTTexElement } from "../vrt_tex_element/vrt_tex_element";
 import { VRSTexSocket } from "../../../../../portable_reps/visual_rep_skeleton/visual_rep_skeleton";
 import {
     active_socket_tex,
+    create_tex_text,
     LATEX_EMPTY_SOCKET,
     LATEX_SPACE,
     text_with_cursor,
@@ -87,7 +88,7 @@ export class VRTTexSocket implements VRTEntity, VRTTex, VRTCursorSocket {
                     cursor_position.position
                 );
             } else {
-                base_tex = LATEX_EMPTY_SOCKET;
+                base_tex = create_tex_text(LATEX_EMPTY_SOCKET);
             }
 
             base_tex = wrap_html_id(base_tex, this.id);

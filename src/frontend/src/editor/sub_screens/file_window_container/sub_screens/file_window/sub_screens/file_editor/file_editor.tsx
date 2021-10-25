@@ -6,7 +6,11 @@ import { AVRNode } from "./editor_types/assembled_visual_rep/assembled_visual_re
 import { GridLoader } from "react-spinners";
 import { palette } from "../../../../../../../global_styles/palette";
 import { FileEditorMaster } from "./sub_agents/file_editor_master/file_editor_master";
-import { useWindowFocus } from "../../../../../../service_providers/editor_focus/editor_focus";
+import {
+    EditorFocus,
+    useEditorFocus,
+    useWindowFocus,
+} from "../../../../../../service_providers/editor_focus/editor_focus";
 import { useRestartCursor } from "../../../../service_providers/cursor_blink/cursor_blink";
 
 interface Props {
@@ -30,16 +34,21 @@ const FileEditor: React.FC<Props> = (props) => {
     const [assembled_visual_rep, set_avr] = useState<AVRNode>();
 
     const window_in_focus = useWindowFocus();
+    const editor_focus = useEditorFocus();
 
     const restart_cursor = useRestartCursor();
 
     useEffect(() => {
-        if (window_in_focus && props.has_file_window_focus) {
+        if (
+            window_in_focus &&
+            props.has_file_window_focus &&
+            editor_focus === EditorFocus.file_window_container
+        ) {
             props.file_editor_master.set_has_focus(true);
         } else {
             props.file_editor_master.set_has_focus(false);
         }
-    }, [window_in_focus, props.has_file_window_focus]);
+    }, [window_in_focus, props.has_file_window_focus, editor_focus]);
 
     useEffect(() => {
         props.file_editor_master.set_set_avr(set_avr);

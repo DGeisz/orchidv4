@@ -21,10 +21,13 @@ const FileTab: React.FC<Props> = (props) => {
             set_loading(false);
             set_name(props.file_editor_master.get_formatted_name());
         } else {
-            props.file_editor_master.add_on_hydrated(() => {
+            const callback_id = props.file_editor_master.add_on_hydrated(() => {
                 set_loading(false);
                 set_name(props.file_editor_master.get_formatted_name());
             });
+
+            return () =>
+                props.file_editor_master.remove_hydrated_callback(callback_id);
         }
     }, []);
 

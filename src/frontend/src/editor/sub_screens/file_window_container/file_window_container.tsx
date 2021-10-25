@@ -41,6 +41,10 @@ const FileWindowContainer: React.FC = () => {
     const ws = useFileWindowContainerWs((res) => {
         if (res_is_open_files(res)) {
             set_clusters(res.OpenFiles);
+            if (res.OpenFiles.clusters.length > 0) {
+                take_focus();
+                set_focused_file_window(0);
+            }
         }
     }, []);
 

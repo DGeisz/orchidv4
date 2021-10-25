@@ -42,5 +42,5 @@ export const palette = {
     // Other
     linkBlue: "#149cdb",
     term_hover: "#8fcad9",
-    socket_active_blue: "#f5f9fa",
+    socket_active_blue: "#ebf3f5", //"#f5f9fa",
 };

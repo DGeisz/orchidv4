@@ -60,7 +60,7 @@ export class FileEditorMaster {
 
     private set_avr: (avr: AVRNode) => void = () => {};
 
-    private on_hydrated_callbacks: (() => void)[] = [];
+    private on_hydrated_callbacks: { id: string; callback: () => void }[] = [];
     private hydrated: boolean = false;
 
     private has_focus: boolean = true;
@@ -98,9 +98,7 @@ export class FileEditorMaster {
                 /* Handle hydration callbacks */
                 if (!this.hydrated) {
                     this.hydrated = true;
-                    this.on_hydrated_callbacks.forEach((callback) =>
-                        callback()
-                    );
+                    this.on_hydrated_callbacks.forEach((c) => c.callback());
                 }
             }
         }
@@ -678,7 +676,16 @@ export class FileEditorMaster {
     };
 
     add_on_hydrated = (callback: () => void) => {
-        this.on_hydrated_callbacks.push(callback);
+        const id = v4();
+        this.on_hydrated_callbacks.push({ id, callback });
+
+        return id;
+    };
+
+    remove_hydrated_callback = (id: string) => {
+        this.on_hydrated_callbacks = this.on_hydrated_callbacks.filter(
+            (c) => c.id !== id
+        );
     };
 
     is_hydrated = () => {

@@ -69,7 +69,9 @@ export function withFwKeyboardHandlers<T>(Component: React.FC<T>): React.FC<T> {
     };
 }
 
-function defaultHandler() {}
+function defaultHandler() {
+    console.log("From default handler");
+}
 
 /* First return is keydown, second is keypress,
 third is a string that uniquely ids these handlers*/
