@@ -12,6 +12,7 @@ pub enum Expression {
     Application(AppExpr),
     Lambda(LambdaExpr),
     Pi(PiExpr),
+    None,
 }
 
 pub struct SortExpr {}
@@ -36,6 +37,7 @@ pub enum Declaration {
     Mod(ModDec),
     Use(UseModDec),
     Syntax(SyntaxDec),
+    None,
 }
 
 pub struct TermDef {

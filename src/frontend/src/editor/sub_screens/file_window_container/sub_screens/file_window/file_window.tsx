@@ -45,14 +45,6 @@ const FileWindow: React.FC<Props> = (props) => {
         }
     }, [props.file_editor_masters.length]);
 
-    // useSetFileWindowFocusHandler(
-    //     props.window_index,
-    //     (focus) => {
-    //         set_child_focus(focus);
-    //     },
-    //     []
-    // );
-
     /* Set file window keyboard event handlers */
     let keydown: KeyboardHandler;
     let keypress: KeyboardHandler;

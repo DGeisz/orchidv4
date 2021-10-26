@@ -47,8 +47,6 @@ export class FileWindowContainerWs {
             },
         };
 
-        console.log("Saving open files", cmd);
-
         this.ws_io.send_message(JSON.stringify(cmd));
     };
 

@@ -78,11 +78,19 @@ third is a string that uniquely ids these handlers*/
 export function useFwKeyboardHandlers(
     window_index: number
 ): [KeyboardHandler, KeyboardHandler, string] {
-    const { keypress_handlers, keydown_handlers, handlers_id } =
-        useContext(HandlerContext);
+    const {
+        keypress_handlers,
+        keydown_handlers,
+        handlers_id,
+        set_handlers_id,
+    } = useContext(HandlerContext);
 
     let keydown = keydown_handlers[window_index];
     let keypress = keypress_handlers[window_index];
+
+    useEffect(() => {
+        setTimeout(() => set_handlers_id(v4()), 200);
+    }, []);
 
     if (!keydown) {
         keydown = defaultHandler;

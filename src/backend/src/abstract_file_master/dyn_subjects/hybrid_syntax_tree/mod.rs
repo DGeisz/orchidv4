@@ -10,9 +10,9 @@ pub mod latex_utils;
 /// Here HST is hybrid syntax tree
 pub struct HSTStructureSocket {
     id: String,
-    structure: HSTStructure,
-    left_input: Option<String>,
-    right_input: Option<String>,
+    pub structure: HSTStructure,
+    pub left_input: Option<String>,
+    pub right_input: Option<String>,
 }
 
 impl HSTStructureSocket {
@@ -27,6 +27,25 @@ impl HSTStructureSocket {
 
     pub fn to_vrs_node_socket(&self) -> VRSNodeSocket {
         VRSNodeSocket::new(self.id.clone(), self.structure.to_vrs_node())
+    }
+
+    pub fn append_input(
+        &mut self,
+        input: String,
+        socket_id: String,
+        left: bool,
+    ) -> Result<(), HSTError> {
+        if socket_id == self.id {
+            if left {
+                self.left_input = Some(input);
+            } else {
+                self.right_input = Some(input);
+            }
+
+            Ok(())
+        } else {
+            self.structure.append_input(input, socket_id, left)
+        }
     }
 }
 
@@ -45,6 +64,15 @@ impl HSTStructure {
             }
             HSTStructure::None => None,
         }
+    }
+
+    pub fn append_input(
+        &mut self,
+        input: String,
+        socket_id: String,
+        left: bool,
+    ) -> Result<(), HSTError> {
+        Err(HSTError::SocketNotFound)
     }
 }
 
@@ -205,4 +233,8 @@ impl HSTLexElement {
 
         unimplemented!()
     }
+}
+
+pub enum HSTError {
+    SocketNotFound,
 }

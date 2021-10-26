@@ -1,4 +1,4 @@
-use crate::abstract_file_master::dyn_subjects::hybrid_syntax_tree::HSTStructureSocket;
+use crate::abstract_file_master::dyn_subjects::hybrid_syntax_tree::{HSTError, HSTStructureSocket};
 use crate::abstract_file_master::generator::port::AFMGeneratorControl;
 use crate::abstract_file_master::port::AFMControl;
 use crate::abstract_file_master::portable_reps::visual_rep_skeleton::{
@@ -72,5 +72,14 @@ impl AFMControl for AbstractFileMaster {
 
     fn process_kernel_diagnostics(&mut self, diagnostics: Vec<KernelDiagnostic>) {
         unimplemented!()
+    }
+
+    fn append_input(
+        &mut self,
+        input: String,
+        socket_id: String,
+        left: bool,
+    ) -> Result<(), HSTError> {
+        self.hst_root.append_input(input, socket_id, left)
     }
 }

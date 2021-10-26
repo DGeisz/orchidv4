@@ -44,6 +44,12 @@ const FileEditor: React.FC<Props> = (props) => {
             props.has_file_window_focus &&
             editor_focus === EditorFocus.file_window_container
         ) {
+            console.log(
+                "We got it all:",
+                window_in_focus,
+                props.has_file_window_focus,
+                editor_focus === EditorFocus.file_window_container
+            );
             props.file_editor_master.set_has_focus(true);
         } else {
             props.file_editor_master.set_has_focus(false);

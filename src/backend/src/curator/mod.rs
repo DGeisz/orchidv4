@@ -1,7 +1,9 @@
+use crate::abstract_file_master::dyn_subjects::hybrid_syntax_tree::HSTError;
 use crate::abstract_file_master::generator::port::AFMGeneratorControl;
 use crate::abstract_file_master::port::AFMControl;
 use crate::abstract_file_master::portable_reps::visual_rep_skeleton::VisualRepSkeleton;
-use crate::curator::port::CuratorControl;
+use crate::abstract_file_master::AbstractFileMaster;
+use crate::curator::port::{CuratorControl, CuratorError};
 use crate::curator::sub_agents::file_system_adapter::port::FSAControl;
 use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_path::{
     OFPError, OrchidFilePath, OrchidOpenFiles,
@@ -53,23 +55,50 @@ impl Curator {
     /// afm and that the afm just made a change to its hst.
     /// Now we use the parser and the kernel to parse and
     /// check any changes that occurred within the hst
-    pub fn process_file_change(&mut self, afm: &mut Box<dyn AFMControl>) {
-        /* First get the hst */
-        let hst = afm.get_hybrid_syntax_tree();
+    pub fn process_file_change(&mut self, file_id: &String) {
+        if let Some(afm) = self.abstract_file_masters.get_mut(file_id) {
+            /* First get the hst */
+            let hst = afm.get_hybrid_syntax_tree();
 
-        /* Now we're going to parse the hst, which also
-        attempts to parse any string socket inputs into
-        hst structures */
-        let prt = self.parser.parse_hybrid_syntax_tree(hst);
+            /* Now we're going to parse the hst, which also
+            attempts to parse any string socket inputs into
+            hst structures */
+            let prt = self.parser.parse_hybrid_syntax_tree(hst);
 
-        /* Now that we have the parsed rep tree,
-        we simply have to type check it, so we invoke the
-        kernel, and grab the diagnostics from the kernel*/
-        let diagnostics = self.kernel.check_parsed_rep_tree(prt);
+            /* Now that we have the parsed rep tree,
+            we simply have to type check it, so we invoke the
+            kernel, and grab the diagnostics from the kernel*/
+            let diagnostics = self.kernel.check_parsed_rep_tree(prt);
 
-        /* Finally we let the afm process the diagnostics from the kernel
-        to make any check edits to the hst*/
-        afm.process_kernel_diagnostics(diagnostics);
+            /* Finally we let the afm process the diagnostics from the kernel
+            to make any check edits to the hst*/
+            afm.process_kernel_diagnostics(diagnostics);
+        }
+    }
+
+    pub fn modify_file<F: FnOnce(&mut Box<dyn AFMControl>) -> Result<(), HSTError>>(
+        &mut self,
+        file_id: String,
+        modifier: F,
+    ) -> Result<VisualRepSkeleton, CuratorError> {
+        match self.abstract_file_masters.get_mut(&file_id) {
+            Some(afm) => {
+                modifier(afm)?;
+            }
+            None => return Err(CuratorError::FileNotFound),
+        };
+
+        /* Process the change */
+        self.process_file_change(&file_id);
+
+        /* Return the new rep skeleton */
+        match self.abstract_file_masters.get_mut(&file_id) {
+            Some(afm) => {
+                /* Append the input */
+                Ok(afm.get_visual_rep_skeleton())
+            }
+            None => return Err(CuratorError::FileNotFound),
+        }
     }
 }
 
@@ -124,5 +153,15 @@ impl CuratorControl for Curator {
 
     fn get_open_files(&self) -> Option<OrchidOpenFiles> {
         self.file_system_adapter.get_open_files()
+    }
+
+    fn append_input(
+        &mut self,
+        file_id: String,
+        input: String,
+        socket_id: String,
+        left: bool,
+    ) -> Result<VisualRepSkeleton, CuratorError> {
+        self.modify_file(file_id, |afm| afm.append_input(input, socket_id, left))
     }
 }

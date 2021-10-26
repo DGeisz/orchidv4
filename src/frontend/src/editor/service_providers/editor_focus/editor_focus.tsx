@@ -27,7 +27,9 @@ export function withEditorFocus(Component: React.FC): React.FC {
             EditorFocus.file_explorer
         );
 
-        const [window_focus, set_window_focus] = useState<boolean>(true);
+        const [window_focus, set_window_focus] = useState<boolean>(
+            document.hasFocus()
+        );
 
         return (
             <EFContext.Provider
