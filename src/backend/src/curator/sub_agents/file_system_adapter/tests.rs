@@ -31,6 +31,7 @@ fn test_get_root_file_tree() {
 
     if let OrchidFileTree::Folder {
         folder_name,
+        open,
         children,
     } = file_tree
     {
@@ -45,9 +46,11 @@ fn test_get_root_file_tree() {
 
         let asserted_tree = Box::new(OrchidFileTree::Folder {
             folder_name: "examples".to_string(),
+            open: false,
             children: vec![
                 Box::new(OrchidFileTree::Folder {
                     folder_name: "ex_folder".to_string(),
+                    open: false,
                     children: vec![
                         Box::new(OrchidFileTree::File {
                             file_name: "ex__orch1.orch".to_string(),
@@ -79,6 +82,7 @@ fn test_get_root_file_tree() {
 
             if let OrchidFileTree::Folder {
                 children,
+                open: false,
                 folder_name,
             } = &**ex_folder
             {

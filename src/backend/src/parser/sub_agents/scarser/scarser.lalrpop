@@ -1,0 +1,66 @@
+use std::str::FromStr;
+use crate::parser::sub_agents::scarser::portable_reps::intermediate_syntax_tree::{
+    IstDec, IstDecArg, IstDecOp, IstExpr, IstSymbolDef, IstTermDef,
+};
+
+grammar;
+
+match {
+    r"(?i)l(?-i)et" => LET,
+    r"(?i)t(?-i)heorem" => THEOREM,
+    r"(?i)l(?-i)emma" => LEMMA,
+    r"(?i)p(?-i)rop" => PROP,
+    "" => EMPTY,
+} else {
+    r"[a-zA-Z_]\w*" => SYM,
+    _
+}
+
+pub Dec: IstDec = {
+    DecOp DecArg => IstDec::Full(<>),
+    <o: DecOp> => IstDec::Full(o, IstDecArg::None),
+//    EMPTY => IstDecOp::None
+}
+
+DecOp: IstDecOp = {
+    LET => IstDecOp::Let,
+    THEOREM => IstDecOp::Theorem,
+    LEMMA => IstDecOp::Lemma,
+    PROP => IstDecOp::Prop,
+}
+
+DecArg: IstDecArg = {
+    <TermDef> ":=" <Expr> => IstDecArg::Full(<>),
+    TermDef => IstDecArg::Partial(<>),
+//    EMPTY => IstDecArg::None
+}
+
+TermDef: IstTermDef = {
+    <SymbolDef> ":" <Expr> => IstTermDef::Full(<>),
+    "(" <SymbolDef> ":" <Expr> ")" => IstTermDef::Full(<>),
+    SymbolDef => IstTermDef::TermPartial(<>),
+    Expr => IstTermDef::TypePartial(<>),
+    // EMPTY => IstTermDef::None,
+}
+
+SymbolDef: IstSymbolDef = {
+    <s: Symbol> "::" <t: TeX> => IstSymbolDef::WithRep {seq: s, repr: t},
+    "(" <s: Symbol> "::" <t: TeX> ")" => IstSymbolDef::WithRep {seq: s, repr: t},
+    Symbol => IstSymbolDef::Solo(<>),
+    // EMPTY => IstSymbolDef::None,
+}
+
+Symbol: String = SYM => String::from(<>);
+TeX: String = <t: r"\$[\w\W]+\$"> => {
+    // Remove first and last char
+    let mut chars = t.chars();
+    chars.next();
+    chars.next_back();
+
+    chars.as_str().to_string()
+};
+
+pub Expr: IstExpr = {
+    "(" <Expr> ")",
+    // EMPTY => IstExpr::None,
+}

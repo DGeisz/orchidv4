@@ -13,6 +13,7 @@ fn test_get_root_oft() {
 
     let oft = OrchidFileTree::Folder {
         folder_name: "ex".to_string(),
+        open: false,
         children: vec![Box::new(OrchidFileTree::File {
             file_name: "ex.orch".to_string(),
             formatted_name: "Ex".to_string(),
