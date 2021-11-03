@@ -1,6 +1,6 @@
 use std::str::FromStr;
-use crate::parser::sub_agents::scarser::portable_reps::intermediate_syntax_tree::{
-    IstDec, IstDecArg, IstDecOp, IstExpr, IstSymbolDef, IstTermDef,
+use crate::parser::sub_agents::scarser::sub_agents::text_parser::portable_reps::intermediate_syntax_tree::{
+    IstDecOp, IstDec, IstDecArg, IstExpr, IstSymbolDef, IstTermDef
 };
 
 grammar;

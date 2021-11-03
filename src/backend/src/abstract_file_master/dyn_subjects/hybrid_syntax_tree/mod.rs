@@ -8,8 +8,9 @@ use crate::abstract_file_master::portable_reps::visual_rep_skeleton::{
 pub mod latex_utils;
 
 /// Here HST is hybrid syntax tree
+#[derive(Debug, PartialEq, Eq)]
 pub struct HSTStructureSocket {
-    id: String,
+    pub id: String,
     pub structure: HSTStructure,
     pub left_input: Option<String>,
     pub right_input: Option<String>,
@@ -49,6 +50,7 @@ impl HSTStructureSocket {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum HSTStructure {
     Line(Box<HSTLine>),
     Container(Box<HSTContainer>),
@@ -76,6 +78,7 @@ impl HSTStructure {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum HSTLineType {
     Axiom,
     Theorem,
@@ -83,13 +86,14 @@ pub enum HSTLineType {
     Basic,
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct HSTLine {
-    id: String,
-    line_type: HSTLineType,
-    comment: Option<String>,
-    main_lex: HSTLexSocket,
-    right_lex: Option<HSTLexSocket>,
-    label_lex: Option<HSTLexSocket>,
+    pub id: String,
+    pub line_type: HSTLineType,
+    pub comment: Option<String>,
+    pub main_lex: HSTLexSocket,
+    pub right_lex: Option<HSTLexSocket>,
+    pub label_lex: Option<HSTLexSocket>,
 }
 
 impl HSTLine {
@@ -143,11 +147,12 @@ impl HSTLine {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct HSTContainer {
-    id: String,
-    left_border: bool,
-    indented: bool,
-    children: Vec<HSTStructureSocket>,
+    pub id: String,
+    pub left_border: bool,
+    pub indented: bool,
+    pub children: Vec<HSTStructureSocket>,
 }
 
 impl HSTContainer {
@@ -164,11 +169,12 @@ impl HSTContainer {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct HSTLexSocket {
-    id: String,
-    left_input: Option<String>,
-    right_input: Option<String>,
-    element: Option<Box<HSTLexElement>>,
+    pub id: String,
+    pub left_input: Option<String>,
+    pub right_input: Option<String>,
+    pub element: Option<Box<HSTLexElement>>,
 }
 
 impl HSTLexSocket {
@@ -183,6 +189,7 @@ impl HSTLexSocket {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum HSTLexType {
     Let,
     // TypeMap,
@@ -199,10 +206,11 @@ pub enum HSTLexType {
     // CustomLabel(String),
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct HSTLexElement {
-    lex_type: HSTLexType,
-    lex_sockets: Vec<HSTLexSocket>,
-    tex_template: Option<Vec<String>>,
+    pub lex_type: HSTLexType,
+    pub lex_sockets: Vec<HSTLexSocket>,
+    pub tex_template: Option<Vec<String>>,
 }
 
 impl HSTLexElement {
@@ -235,6 +243,7 @@ impl HSTLexElement {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum HSTError {
     SocketNotFound,
 }

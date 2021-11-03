@@ -1,6 +1,8 @@
-lalrpop_mod!(pub scarser, "/parser/sub_agents/scarser/scarser.rs"); // synthesized by LALRPOP
+use crate::parser::sub_agents::scarser::port::ScarserControl;
 
-pub mod portable_reps;
+pub mod port;
+pub mod sub_agents;
 
-#[cfg(test)]
-pub mod tests;
+pub struct Scarser {}
+
+impl ScarserControl for Scarser {}
