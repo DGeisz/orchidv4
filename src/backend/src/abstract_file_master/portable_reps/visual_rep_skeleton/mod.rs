@@ -30,14 +30,8 @@ impl VisualRepSkeleton {
 
 #[derive(Eq, PartialEq, Serialize, Deserialize, Debug, Clone)]
 pub struct VRSNodeSocket {
-    id: String,
-    node: Option<Box<VRSNode>>,
-}
-
-impl VRSNodeSocket {
-    pub fn new(id: String, node: Option<Box<VRSNode>>) -> VRSNodeSocket {
-        VRSNodeSocket { id, node }
-    }
+    pub id: String,
+    pub node: Option<Box<VRSNode>>,
 }
 
 #[derive(Eq, PartialEq, Serialize, Deserialize, Debug, Clone)]
@@ -48,74 +42,28 @@ pub enum VRSNode {
 
 #[derive(Eq, PartialEq, Serialize, Deserialize, Debug, Clone)]
 pub struct VRSContainer {
-    id: String,
-    left_border: bool,
-    indented: bool,
-    children: Vec<VRSNodeSocket>,
-}
-
-impl VRSContainer {
-    pub fn new(
-        id: String,
-        left_border: bool,
-        indented: bool,
-        children: Vec<VRSNodeSocket>,
-    ) -> VRSContainer {
-        VRSContainer {
-            id,
-            left_border,
-            indented,
-            children,
-        }
-    }
+    pub id: String,
+    pub left_border: bool,
+    pub indented: bool,
+    pub children: Vec<VRSNodeSocket>,
 }
 
 #[derive(Eq, PartialEq, Serialize, Deserialize, Debug, Clone)]
 pub struct VRSLine {
-    id: String,
-    title: Option<String>,
-    comment: Option<String>,
-    main_tex: VRSTexSocket,
-    right_tex: Option<VRSTexSocket>,
-    label_tex: Option<VRSTexSocket>,
-    border_bottom: bool,
-    border_top: bool,
-}
-
-impl VRSLine {
-    pub fn new(
-        id: String,
-        title: Option<String>,
-        comment: Option<String>,
-        main_tex: VRSTexSocket,
-        right_tex: Option<VRSTexSocket>,
-        label_tex: Option<VRSTexSocket>,
-        border_bottom: bool,
-        border_top: bool,
-    ) -> VRSLine {
-        VRSLine {
-            id,
-            title,
-            comment,
-            main_tex,
-            right_tex,
-            label_tex,
-            border_bottom,
-            border_top,
-        }
-    }
+    pub id: String,
+    pub title: Option<String>,
+    pub comment: Option<String>,
+    pub main_tex: VRSTexSocket,
+    pub right_tex: Option<VRSTexSocket>,
+    pub label_tex: Option<VRSTexSocket>,
+    pub border_bottom: bool,
+    pub border_top: bool,
 }
 
 #[derive(Eq, PartialEq, Serialize, Deserialize, Debug, Clone)]
 pub struct VRSTexSocket {
-    id: String,
-    element: Option<Box<VRSTexElement>>,
-}
-
-impl VRSTexSocket {
-    pub fn new(id: String, element: Option<Box<VRSTexElement>>) -> VRSTexSocket {
-        VRSTexSocket { id, element }
-    }
+    pub id: String,
+    pub element: Option<Box<VRSTexElement>>,
 }
 
 #[derive(Eq, PartialEq, Serialize, Deserialize, Debug, Clone)]

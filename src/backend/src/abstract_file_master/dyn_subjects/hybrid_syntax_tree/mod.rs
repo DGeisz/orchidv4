@@ -11,7 +11,7 @@ pub mod latex_utils;
 #[derive(Debug, PartialEq, Eq)]
 pub struct HSTStructureSocket {
     pub id: String,
-    pub structure: HSTStructure,
+    pub structure: Option<HSTStructure>,
     pub left_input: Option<String>,
     pub right_input: Option<String>,
 }
@@ -20,7 +20,7 @@ impl HSTStructureSocket {
     pub fn new_empty(id: String) -> HSTStructureSocket {
         HSTStructureSocket {
             id,
-            structure: HSTStructure::None,
+            structure: None,
             left_input: None,
             right_input: None,
         }
@@ -54,7 +54,6 @@ impl HSTStructureSocket {
 pub enum HSTStructure {
     Line(Box<HSTLine>),
     Container(Box<HSTContainer>),
-    None,
 }
 
 impl HSTStructure {
