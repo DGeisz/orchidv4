@@ -18,6 +18,7 @@ pub fn test_simple_parse_hst() {
         structure: HSTStructure::None,
         left_input: Some("let".to_string()),
         right_input: None,
+        error_msg: None,
     };
 
     /* Now we're going to parse this bad boi */
@@ -31,7 +32,8 @@ pub fn test_simple_parse_hst() {
             id: "root".to_string(),
             left_input: None,
             right_input: None,
-            structure: HSTStructure::Container(Box::new(HSTContainer {
+            error_msg: None,
+            structure: Some(HSTStructure::Container(Box::new(HSTContainer {
                 // TODO: Figure out what this id should be
                 id: "fill in later".to_string(),
                 left_border: false,
@@ -40,7 +42,8 @@ pub fn test_simple_parse_hst() {
                     id: "fill".to_string(),
                     left_input: None,
                     right_input: None,
-                    structure: HSTStructure::Line(Box::new(HSTLine {
+                    error_msg: None,
+                    structure: Some(HSTStructure::Line(Box::new(HSTLine {
                         id: "fill".to_string(),
                         line_type: HSTLineType::Basic,
                         comment: None,
@@ -69,9 +72,9 @@ pub fn test_simple_parse_hst() {
                                 ]
                             }))
                         }
-                    }))
+                    })))
                 }]
-            })),
+            }))),
         }
     );
 

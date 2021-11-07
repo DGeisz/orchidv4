@@ -63,16 +63,16 @@ impl Curator {
             /* Now we're going to parse the hst, which also
             attempts to parse any string socket inputs into
             hst structures */
-            let prt = self.parser.parse_hybrid_syntax_tree(hst);
+            if let Ok(prt) = self.parser.parse_hybrid_syntax_tree(hst) {
+                /* Now that we have the parsed rep tree,
+                we simply have to type check it, so we invoke the
+                kernel, and grab the diagnostics from the kernel*/
+                let diagnostics = self.kernel.check_parsed_rep_tree(prt);
 
-            /* Now that we have the parsed rep tree,
-            we simply have to type check it, so we invoke the
-            kernel, and grab the diagnostics from the kernel*/
-            let diagnostics = self.kernel.check_parsed_rep_tree(prt);
-
-            /* Finally we let the afm process the diagnostics from the kernel
-            to make any check edits to the hst*/
-            afm.process_kernel_diagnostics(diagnostics);
+                /* Finally we let the afm process the diagnostics from the kernel
+                to make any check edits to the hst*/
+                afm.process_kernel_diagnostics(diagnostics);
+            }
         }
     }
 

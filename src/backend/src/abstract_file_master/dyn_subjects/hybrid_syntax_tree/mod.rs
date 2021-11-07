@@ -14,6 +14,7 @@ pub struct HSTStructureSocket {
     pub structure: Option<HSTStructure>,
     pub left_input: Option<String>,
     pub right_input: Option<String>,
+    pub error_msg: Option<String>,
 }
 
 impl HSTStructureSocket {
@@ -23,11 +24,18 @@ impl HSTStructureSocket {
             structure: None,
             left_input: None,
             right_input: None,
+            error_msg: None,
         }
     }
 
     pub fn to_vrs_node_socket(&self) -> VRSNodeSocket {
-        VRSNodeSocket::new(self.id.clone(), self.structure.to_vrs_node())
+        VRSNodeSocket {
+            id: self.id.clone(),
+            node: match &self.structure {
+                Some(s) => Some(s.to_vrs_node()),
+                None => None,
+            },
+        }
     }
 
     pub fn append_input(
@@ -45,7 +53,10 @@ impl HSTStructureSocket {
 
             Ok(())
         } else {
-            self.structure.append_input(input, socket_id, left)
+            self.structure
+                .as_mut()
+                .ok_or(HSTError::SocketNotFound)?
+                .append_input(input, socket_id, left)
         }
     }
 }
@@ -57,13 +68,12 @@ pub enum HSTStructure {
 }
 
 impl HSTStructure {
-    pub fn to_vrs_node(&self) -> Option<Box<VRSNode>> {
+    pub fn to_vrs_node(&self) -> Box<VRSNode> {
         match &self {
-            HSTStructure::Line(line) => Some(Box::new(VRSNode::Line(line.to_vrs_line()))),
+            HSTStructure::Line(line) => Box::new(VRSNode::Line(line.to_vrs_line())),
             HSTStructure::Container(container) => {
-                Some(Box::new(VRSNode::Container(container.to_vrs_container())))
+                Box::new(VRSNode::Container(container.to_vrs_container()))
             }
-            HSTStructure::None => None,
         }
     }
 
@@ -127,22 +137,22 @@ impl HSTLine {
             }
         }
 
-        VRSLine::new(
-            self.id.clone(),
+        VRSLine {
+            id: self.id.clone(),
             title,
-            self.comment.clone(),
-            self.main_lex.to_vrs_tex_socket(),
-            match &self.right_lex {
-                Some(lex) => Some(lex.to_vrs_tex_socket()),
-                None => None,
-            },
-            match &self.label_lex {
-                Some(lex) => Some(lex.to_vrs_tex_socket()),
-                None => None,
-            },
+            comment: self.comment.clone(),
+            main_tex: self.main_lex.to_vrs_tex_socket(),
+            right_tex: self
+                .label_lex
+                .as_ref()
+                .and_then(|lex| Some(lex.to_vrs_tex_socket())),
+            label_tex: self
+                .label_lex
+                .as_ref()
+                .and_then(|lex| Some(lex.to_vrs_tex_socket())),
             border_bottom,
             border_top,
-        )
+        }
     }
 }
 
@@ -156,15 +166,16 @@ pub struct HSTContainer {
 
 impl HSTContainer {
     pub fn to_vrs_container(&self) -> VRSContainer {
-        VRSContainer::new(
-            self.id.clone(),
-            self.left_border,
-            self.indented,
-            self.children
+        VRSContainer {
+            id: self.id.clone(),
+            left_border: self.left_border,
+            indented: self.indented,
+            children: self
+                .children
                 .iter()
                 .map(|child| child.to_vrs_node_socket())
                 .collect(),
-        )
+        }
     }
 }
 
@@ -174,24 +185,27 @@ pub struct HSTLexSocket {
     pub left_input: Option<String>,
     pub right_input: Option<String>,
     pub element: Option<Box<HSTLexElement>>,
+    pub error_msg: Option<String>,
 }
 
 impl HSTLexSocket {
     pub fn to_vrs_tex_socket(&self) -> VRSTexSocket {
-        VRSTexSocket::new(
-            self.id.clone(),
-            match &self.element {
+        VRSTexSocket {
+            id: self.id.clone(),
+            element: match &self.element {
                 Some(element) => Some(Box::new(element.to_vrs_tex_element())),
                 None => None,
             },
-        )
+        }
     }
 }
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum HSTLexType {
     Let,
-    // TypeMap,
+    TypeMap,
+    Term,
+    TermType,
     // UseMod,
     // Mod,
     // Theory,
@@ -202,7 +216,7 @@ pub enum HSTLexType {
     // ForAll,
     // Syntax,
     // TreeNode,
-    // CustomLabel(String),
+    CustomLabel(String),
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -213,6 +227,7 @@ pub struct HSTLexElement {
 }
 
 impl HSTLexElement {
+    // TODO: Make this into a result, and deal with it
     pub fn to_vrs_tex_element(&self) -> VRSTexElement {
         let tex_template: Vec<String>;
 
