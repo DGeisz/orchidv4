@@ -12,3 +12,4 @@ pub const LATEX_SPACE: &str = "\\;";
 pub const MEDIUM_FOREST_GREEN: &str = "#53b030";
 pub const MEDIUM_PINK: &str = "#fb607f";
 pub const DEEP_BLUE: &str = "#32afdd";
+pub const DANGER: &str = "#dc3545";

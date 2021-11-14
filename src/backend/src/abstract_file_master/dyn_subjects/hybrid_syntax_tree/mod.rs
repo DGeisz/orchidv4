@@ -2,7 +2,7 @@ use crate::abstract_file_master::dyn_subjects::hybrid_syntax_tree::latex_utils::
     add_tex_color, tex_text, DEEP_BLUE, MEDIUM_FOREST_GREEN, MEDIUM_PINK,
 };
 use crate::abstract_file_master::portable_reps::visual_rep_skeleton::{
-    VRSContainer, VRSLine, VRSNode, VRSNodeSocket, VRSTexElement, VRSTexSocket,
+    vrs_error, VRSContainer, VRSLine, VRSNode, VRSNodeSocket, VRSTexElement, VRSTexSocket,
 };
 
 pub mod latex_utils;
@@ -206,16 +206,6 @@ pub enum HSTLexType {
     TypeMap,
     Term,
     TermType,
-    // UseMod,
-    // Mod,
-    // Theory,
-    // Given,
-    // Assume,
-    // Fn,
-    // Pi,
-    // ForAll,
-    // Syntax,
-    // TreeNode,
     CustomLabel(String),
 }
 
@@ -238,19 +228,19 @@ impl HSTLexElement {
                     add_tex_color(tex_text("Let").as_str(), ""),
                     1
                 )];
-            } // HSTLexType::TypeMap => {}
-              // HSTLexType::UseMod => {}
-              // HSTLexType::Mod => {}
-              // HSTLexType::Theory => {}
-              // HSTLexType::Given => {}
-              // HSTLexType::Assume => {}
-              // HSTLexType::Fn => {}
-              // HSTLexType::Pi => {}
-              // HSTLexType::ForAll => {}
-              //
-              // HSTLexType::Syntax => {}
-              // HSTLexType::TreeNode => {}
-              // HSTLexType::CustomLabel(_) => {}
+            }
+            HSTLexType::Term => {
+                tex_template = match &self.tex_template {
+                    Some(tt) => tt.clone(),
+                    None => vrs_error(),
+                }
+            }
+            HSTLexType::TermType => {
+                tex_template = if let [type_lex] = &self.lex_sockets.as_slice() {
+                    unimplemented!()
+                } else {
+                }
+            }
         }
 
         unimplemented!()

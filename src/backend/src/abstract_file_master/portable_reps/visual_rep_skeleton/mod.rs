@@ -1,3 +1,6 @@
+use crate::abstract_file_master::dyn_subjects::hybrid_syntax_tree::latex_utils::{
+    add_tex_color, DANGER,
+};
 use crate::curator::sub_agents::file_system_adapter::portable_reps::orchid_file_path::OrchidFilePath;
 use serde::{Deserialize, Serialize};
 
@@ -70,4 +73,11 @@ pub struct VRSTexSocket {
 pub struct VRSTexElement {
     tex_template: Vec<String>,
     tex_sockets: Vec<VRSTexSocket>,
+}
+
+pub fn vrs_error() -> VRSTexElement {
+    VRSTexElement {
+        tex_template: vec![add_tex_color("ERROR", DANGER)],
+        tex_sockets: vec![],
+    }
 }
