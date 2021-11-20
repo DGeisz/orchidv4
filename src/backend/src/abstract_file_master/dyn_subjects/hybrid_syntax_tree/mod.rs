@@ -17,6 +17,23 @@ pub struct HSTStructureSocket {
     pub error_msg: Option<String>,
 }
 
+pub fn empty_socket() -> HSTStructureSocket {
+    HSTStructureSocket {
+        id: "".to_string(),
+        structure: None,
+        left_input: None,
+        right_input: None,
+        error_msg: None,
+    }
+}
+
+/// Parse template for the structure socket
+pub enum PTStructSocket<'a> {
+    Socket(&'a mut &'a mut HSTStructureSocket),
+    Line(PTLine<'a>),
+    Container(PTContainer<'a>),
+}
+
 impl HSTStructureSocket {
     pub fn new_empty(id: String) -> HSTStructureSocket {
         HSTStructureSocket {
@@ -105,6 +122,14 @@ pub struct HSTLine {
     pub label_lex: Option<HSTLexSocket>,
 }
 
+/// Parse template for a line
+pub struct PTLine<'a> {
+    pub line_type: HSTLineType,
+    pub main_lex: PTLexSocket<'a>,
+    pub right_lex: Option<PTLexSocket<'a>>,
+    pub label_lex: Option<PTLexSocket<'a>>,
+}
+
 impl HSTLine {
     pub fn to_vrs_line(&self) -> VRSLine {
         let title: Option<String>;
@@ -160,8 +185,22 @@ impl HSTLine {
 pub struct HSTContainer {
     pub id: String,
     pub left_border: bool,
+    pub bottom_border: bool,
     pub indented: bool,
     pub children: Vec<HSTStructureSocket>,
+}
+
+/// Template for a container
+pub struct PTContainer<'a> {
+    pub left_border: bool,
+    pub indented: bool,
+    pub bottom_border: bool,
+    pub children: PTContainerChildren<'a>,
+}
+
+pub enum PTContainerChildren<'a> {
+    Refs(&'a mut &'a Vec<HSTStructureSocket>),
+    Template(Vec<PTStructSocket<'a>>),
 }
 
 impl HSTContainer {
@@ -186,6 +225,11 @@ pub struct HSTLexSocket {
     pub right_input: Option<String>,
     pub element: Option<Box<HSTLexElement>>,
     pub error_msg: Option<String>,
+}
+
+pub enum PTLexSocket<'a> {
+    Socket(&'a mut &'a HSTLexSocket),
+    Element(Option<PTLexElement<'a>>),
 }
 
 impl HSTLexSocket {
@@ -216,32 +260,42 @@ pub struct HSTLexElement {
     pub tex_template: Option<Vec<String>>,
 }
 
+pub struct PTLexElement<'a> {
+    pub lex_type: HSTLexType,
+    pub sockets: PTLexElementSockets<'a>,
+}
+
+pub enum PTLexElementSockets<'a> {
+    Refs(&'a mut &'a Vec<HSTLexSocket>),
+    Template(Vec<PTLexSocket<'a>>),
+}
+
 impl HSTLexElement {
     // TODO: Make this into a result, and deal with it
     pub fn to_vrs_tex_element(&self) -> VRSTexElement {
         let tex_template: Vec<String>;
 
-        match &self.lex_type {
-            HSTLexType::Let => {
-                tex_template = vec![format!(
-                    "{} {} {{",
-                    add_tex_color(tex_text("Let").as_str(), ""),
-                    1
-                )];
-            }
-            HSTLexType::Term => {
-                tex_template = match &self.tex_template {
-                    Some(tt) => tt.clone(),
-                    None => vrs_error(),
-                }
-            }
-            HSTLexType::TermType => {
-                tex_template = if let [type_lex] = &self.lex_sockets.as_slice() {
-                    unimplemented!()
-                } else {
-                }
-            }
-        }
+        // match &self.lex_type {
+        //     HSTLexType::Let => {
+        //         tex_template = vec![format!(
+        //             "{} {} {{",
+        //             add_tex_color(tex_text("Let").as_str(), ""),
+        //             1
+        //         )];
+        //     }
+        //     HSTLexType::Term => {
+        //         tex_template = match &self.tex_template {
+        //             Some(tt) => tt.clone(),
+        //             None => vrs_error(),
+        //         }
+        //     }
+        //     HSTLexType::TermType => {
+        //         tex_template = if let [type_lex] = &self.lex_sockets.as_slice() {
+        //             unimplemented!()
+        //         } else {
+        //         }
+        //     }
+        // }
 
         unimplemented!()
     }
