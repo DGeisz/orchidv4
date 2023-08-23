@@ -1,5 +1,7 @@
+use crate::abstract_file_master::dyn_subjects::hybrid_syntax_tree::HSTLexType::TypeMap;
 use crate::abstract_file_master::dyn_subjects::hybrid_syntax_tree::{
-    empty_socket, HSTLexElement, PTLexElement, PTLexElementSockets, PTLexSocket, PTStructSocket,
+    empty_lex_element, empty_lex_socket, empty_socket, HSTLexElement, PTLexElement,
+    PTLexElementSockets, PTLexSocket, PTLine, PTStructSocket,
 };
 use crate::abstract_file_master::dyn_subjects::hybrid_syntax_tree::{
     HSTLexSocket, HSTLexType, HSTLineType, HSTStructure, HSTStructureSocket,
@@ -8,12 +10,14 @@ use crate::abstract_file_master::dyn_subjects::hybrid_syntax_tree::{
     PTContainer, PTContainerChildren,
 };
 use crate::parser::port::ParserControl;
-use crate::parser::portable_reps::parsed_rep_tree::Module;
-use crate::parser::portable_reps::parsed_rep_tree::ParsedRepTree;
+use crate::parser::portable_reps::parsed_rep_tree::{Declaration, Expression, Import, Module};
+use crate::parser::portable_reps::parsed_rep_tree::{ParsedRepTree, TermDef};
 use crate::parser::sub_agents::hst_formatter::HSTFormatter;
 use crate::parser::sub_agents::syntax_env::port::SyntaxEnvControl;
 use crate::parser::sub_agents::syntax_env::SyntaxEnv;
 use lalrpop_util::ParseError;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 pub mod port;
 pub mod portable_reps;
@@ -32,10 +36,10 @@ impl Parser {
     fn parse_module(&self, hst: &mut HSTStructureSocket) -> Result<Module, ParserError> {
         /* First see if there is actually a structure here */
         if let Some(_) = &hst.structure {
-            let mut imports = &vec![];
-            let mut args = &vec![];
-            let mut body = &vec![];
-            let mut return_expr = &mut empty_socket();
+            let hst_imports = Rc::new(RefCell::new(None));
+            let hst_parameters = Rc::new(RefCell::new(None));
+            let hst_body = Rc::new(RefCell::new(None));
+            let hst_return_expr = Rc::new(RefCell::new(None));
 
             /* Create the module's template */
             let template = PTStructSocket::Container(PTContainer {
@@ -47,31 +51,103 @@ impl Parser {
                         left_border: false,
                         bottom_border: true,
                         indented: false,
-                        children: PTContainerChildren::Refs(&mut imports),
+                        children: PTContainerChildren::Refs(Rc::clone(&hst_imports)),
                     }),
                     PTStructSocket::Container(PTContainer {
                         left_border: false,
                         bottom_border: true,
                         indented: false,
-                        children: PTContainerChildren::Refs(&mut args),
+                        children: PTContainerChildren::Refs(Rc::clone(&hst_parameters)),
                     }),
                     PTStructSocket::Container(PTContainer {
                         left_border: false,
                         bottom_border: true,
                         indented: false,
-                        children: PTContainerChildren::Refs(&mut body),
+                        children: PTContainerChildren::Refs(Rc::clone(&hst_body)),
                     }),
-                    PTStructSocket::Socket(&mut return_expr),
+                    PTStructSocket::Socket(Rc::clone(&hst_return_expr)),
                 ]),
             });
 
             Parser::match_hst_to_struct_socket_template(hst, template)?;
+
+            let mut imports = vec![];
+            for import in (hst_imports.borrow_mut()).as_mut().unwrap().iter_mut() {
+                imports.push(self.parse_import(import)?);
+            }
+
+            let mut parameters = vec![];
+            for parameter in (hst_parameters.borrow_mut()).as_mut().unwrap().iter_mut() {
+                parameters.push(self.parse_term_def_line(parameter)?)
+            }
+
+            let mut body = vec![];
+            for declaration in (hst_body.borrow_mut()).as_mut().unwrap().iter_mut() {
+                body.push(self.parse_declaration(declaration)?)
+            }
+
+            let return_expr =
+                self.parse_structure_expression(hst_return_expr.borrow_mut().as_mut().unwrap())?;
+
+            Ok(Module {
+                imports,
+                parameters,
+                body,
+                return_expr: Some(return_expr),
+            })
         } else {
             /* In this case we scarse the left input,
             and if successful, we call this method again*/
-        }
 
-        unimplemented!();
+            unimplemented!()
+        }
+    }
+
+    fn parse_import(&self, hst: &mut HSTStructureSocket) -> Result<Import, ParserError> {
+        unimplemented!()
+    }
+
+    fn parse_term_def_line(&self, hst: &mut HSTStructureSocket) -> Result<TermDef, ParserError> {
+        let mut term_ref = &empty_lex_element();
+        let mut hst_type = &empty_lex_socket();
+
+        let template = PTStructSocket::Line(PTLine {
+            line_type: HSTLineType::Basic,
+            right_lex: None,
+            label_lex: None,
+            main_lex: PTLexSocket::Element(Some(PTLexElement {
+                lex_type: TypeMap,
+                sockets: PTLexElementSockets::Template(vec![
+                    PTLexSocket::ElementRef(&mut term_ref),
+                    PTLexSocket::Socket(&mut hst_type),
+                ]),
+            })),
+        });
+
+        unimplemented!()
+    }
+
+    fn extract_term_string_from_element(
+        &self,
+        element: &HSTLexElement,
+    ) -> Result<String, ParserError> {
+        if let HSTLexType::CustomLabel(term) = &element.lex_type {
+            Ok(term.clone())
+        } else {
+            /* Here we are */
+            Err(ParserError)
+        }
+    }
+
+    fn parse_declaration(&self, hst: &mut HSTStructureSocket) -> Result<Declaration, ParserError> {
+        unimplemented!()
+    }
+
+    fn parse_structure_expression(
+        &self,
+        hst: &mut HSTStructureSocket,
+    ) -> Result<Expression, ParserError> {
+        unimplemented!()
     }
 
     /// This takes in a template, and matches an HST to the template,
@@ -84,7 +160,7 @@ impl Parser {
     ) -> Result<(), ParserError> {
         match template {
             PTStructSocket::Socket(socket_ref) => {
-                *socket_ref = hst;
+                *socket_ref.borrow_mut() = Some(hst);
             }
             PTStructSocket::Container(container_template) => {
                 if let Some(structure) = &mut hst.structure {
@@ -97,7 +173,8 @@ impl Parser {
                         /* Now handle the children */
                         match container_template.children {
                             PTContainerChildren::Refs(refs_vec) => {
-                                *refs_vec = &container.children;
+                                *refs_vec.borrow_mut() = Some(&mut container.children);
+                                // *refs_vec = &mut container.children;
                             }
                             PTContainerChildren::Template(mut template_children) => {
                                 if container.children.len() == template_children.len() {
@@ -137,10 +214,7 @@ impl Parser {
                             /* First work with right lex */
                             match (&mut line.right_lex, line_template.right_lex) {
                                 (Some(right), Some(right_template)) => {
-                                    Parser::parse_hst_from_lex_socket_template(
-                                        right,
-                                        right_template,
-                                    )?
+                                    Parser::match_hst_to_lex_socket_template(right, right_template)?
                                 }
                                 (None, None) => (),
                                 _ => {
@@ -153,10 +227,7 @@ impl Parser {
                             /* Then label lex */
                             match (&mut line.label_lex, line_template.label_lex) {
                                 (Some(label), Some(label_template)) => {
-                                    Parser::parse_hst_from_lex_socket_template(
-                                        label,
-                                        label_template,
-                                    )?
+                                    Parser::match_hst_to_lex_socket_template(label, label_template)?
                                 }
                                 (None, None) => (),
                                 _ => {
@@ -167,7 +238,7 @@ impl Parser {
                             }
 
                             /* And finally, main lex */
-                            Parser::parse_hst_from_lex_socket_template(
+                            Parser::match_hst_to_lex_socket_template(
                                 &mut line.main_lex,
                                 line_template.main_lex,
                             )?;
@@ -200,6 +271,14 @@ impl Parser {
         match template {
             PTLexSocket::Socket(socket_ref) => {
                 *socket_ref = hst;
+            }
+            PTLexSocket::ElementRef(element_ref) => {
+                if let Some(element) = &mut hst.element {
+                    *element_ref = element;
+                } else {
+                    hst.error_msg = Some("Expected non-empty socket".to_string());
+                    return Err(ParserError::UnexpectedEmptySocket);
+                }
             }
             PTLexSocket::Element(template_option) => match (&mut hst.element, template_option) {
                 (Some(element), Some(element_template)) => {

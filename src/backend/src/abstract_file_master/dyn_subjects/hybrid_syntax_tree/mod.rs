@@ -4,6 +4,8 @@ use crate::abstract_file_master::dyn_subjects::hybrid_syntax_tree::latex_utils::
 use crate::abstract_file_master::portable_reps::visual_rep_skeleton::{
     vrs_error, VRSContainer, VRSLine, VRSNode, VRSNodeSocket, VRSTexElement, VRSTexSocket,
 };
+use std::cell::RefCell;
+use std::rc::Rc;
 
 pub mod latex_utils;
 
@@ -29,7 +31,7 @@ pub fn empty_socket() -> HSTStructureSocket {
 
 /// Parse template for the structure socket
 pub enum PTStructSocket<'a> {
-    Socket(&'a mut &'a mut HSTStructureSocket),
+    Socket(Rc<RefCell<Option<&'a mut HSTStructureSocket>>>),
     Line(PTLine<'a>),
     Container(PTContainer<'a>),
 }
@@ -199,7 +201,9 @@ pub struct PTContainer<'a> {
 }
 
 pub enum PTContainerChildren<'a> {
-    Refs(&'a mut &'a Vec<HSTStructureSocket>),
+    Refs(Rc<RefCell<Option<&'a mut Vec<HSTStructureSocket>>>>),
+    // Refs(&'a mut &'a mut &'a mut Vec<HSTStructureSocket>),
+    // Refs(&'a mut &'a mut Vec<HSTStructureSocket>),
     Template(Vec<PTStructSocket<'a>>),
 }
 
@@ -227,9 +231,20 @@ pub struct HSTLexSocket {
     pub error_msg: Option<String>,
 }
 
+pub fn empty_lex_socket() -> HSTLexSocket {
+    HSTLexSocket {
+        id: "".to_string(),
+        left_input: None,
+        right_input: None,
+        element: None,
+        error_msg: None,
+    }
+}
+
 pub enum PTLexSocket<'a> {
     Socket(&'a mut &'a HSTLexSocket),
     Element(Option<PTLexElement<'a>>),
+    ElementRef(&'a mut &'a HSTLexElement),
 }
 
 impl HSTLexSocket {
@@ -258,6 +273,14 @@ pub struct HSTLexElement {
     pub lex_type: HSTLexType,
     pub lex_sockets: Vec<HSTLexSocket>,
     pub tex_template: Option<Vec<String>>,
+}
+
+pub fn empty_lex_element() -> HSTLexElement {
+    HSTLexElement {
+        lex_type: HSTLexType::Let,
+        lex_sockets: vec![],
+        tex_template: None,
+    }
 }
 
 pub struct PTLexElement<'a> {
